@@ -1,5 +1,5 @@
 #include "fsevent_watcher.h"
-#include "log.h"
+#include "fsw_log.h"
 #include <ctime>
 #include <iostream>
 

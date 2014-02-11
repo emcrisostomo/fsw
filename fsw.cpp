@@ -1,6 +1,6 @@
 #include "config.h"
 #include "fsw.h"
-#include "log.h"
+#include "fsw_log.h"
 #include <iostream>
 #include <CoreServices/CoreServices.h>
 #include <unistd.h>
