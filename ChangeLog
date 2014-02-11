@@ -1,0 +1,72 @@
+ChangeLog
+*********
+
+2014-02-10  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
+
+        release: stable micro release 1.0.5.
+        
+        * configure.ac: bump version number to 1.0.5.
+        * Makefile.am: add fsw man page.
+        * fsevent_watcher.h: add class to encapsulate watcher logic.
+        * fsevent_watcher.cpp: add class to encapsulate watcher logic.
+        * fsw.cpp: move watcher code into fsevent_watcher class and refactor.
+
+2014-02-10  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
+
+        release: stable micro release 1.0.4.
+        
+        * configure.ac: bump version number to 1.0.4.
+        * fsw.cpp:
+          - format date with user-specified format with -t/--time-format.
+          - convert time to UTC time with -u/--utc-time.
+
+2014-02-10  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
+
+        release: stable micro release 1.0.3.
+        
+          * configure.ac: bump version number to 1.0.3.
+          * fsw.cpp:
+            - improve the event flag printing function.
+            - add verbose output with -v/--verbose.
+          * fsw.h: export definition of bool is_verbose().
+          * log.cpp:
+            - add.
+            - implement fsw_log(const char *) writing to stdout.
+          * log.h:
+            - add.
+            - export definition of void fsw_log(const char *).
+
+2014-02-10  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
+
+        release: stable micro release 1.0.2.
+        
+          * configure.ac:
+            - bump version number to 1.0.2.
+            - check that host_os >= darwin 10.0 and fails otherwise.
+            - add stdlib.h to AC_CHECK_HEADERS.
+            - add AC_FUNC_STRTOD.
+          * fsw.cpp: add support for latency configuration with -l/--latency.
+          * fsw.cpp: reorganize code.
+          * fsw.h: add.
+          * fsw.h: define exit codes.
+          
+2014-02-10  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
+
+        release: stable micro release 1.0.1.
+
+          * configure.ac: bump version number to 1.0.1.
+          * AUTHORS: update.
+          * ChangeLog: update.
+          * COPYING: update.
+          * INSTALL: add.
+          * NEWS: update.
+          * README: update.
+
+2014-02-09  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
+
+        release: stable minor release 1.0.0.
+        
+          * configure.ac: add initial version.
+          * Makefile.am: add initial version.
+          * fsw.cpp: add initial version.	        
+	        

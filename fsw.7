@@ -1,0 +1,152 @@
+.\"   $Id$
+.\"
+.\"   Man page for the fsw command.
+.\"
+.\"   $Log$
+.\"
+.Dd February 10, 2014
+.Dt FSW "" "FSEvent watcher"
+.Os "Darwin 10.0"
+.An Enrico Maria Crisostomo
+.Ad enrico.m.crisostomo@gmail.com
+.Pp
+.Sh NAME
+.Nm fsw
+.Nd Ask for notification when the contents of the specified files or directory
+hierarchies are modified.
+
+.Sh SYNOPSIS
+.Nm fsw
+.Op Fl hnuv
+.Op Fl l Ar latency
+.Op Fl t Ar time-format
+
+.Sh DESCRIPTION
+The 
+.Nm
+command uses the File System Events API introduced in Apple OS X v. 10.6 to
+request a notification when the contents of the specified files or directory
+hierarchies are modified.
+.Nm
+writes a record for each event it receives containing:
+.Bl -tag -width indent
+.It -
+The timestamp when the event was
+.Em received.
+.It -
+The path affected by the current event.
+.It -
+A space-separated list of
+.Em event types
+(see 
+.Sx EVENT TYPES
+).
+.El
+
+.Pp
+.Nm
+enters an infinite loop and never returns.
+When it receives a SIGABRT, SIGINT or SIGTERM signal,
+.Nm
+closes the notification streams and exits gracefully returning 0 to the calling
+process.
+
+.Pp
+The following options are available:
+.Bl -tag -width indent
+.It Fl h
+Show the help message.
+
+.It Fl l Ar latency
+Set the
+.Ar latency 
+in seconds.
+The latency is a double value greater than 0.1.
+Smaller values are currently not allowed in order not to compromise the
+performance of the system.
+The default latency is 1 second.
+
+.It Fl n
+Print the numeric value of the event flag, instead of the array of symbolic
+names.
+The numeric value of the event flags are system-specific and may vary across
+different versions of OS X.
+As a consequence, the use of numeric values is discouraged. 
+
+.It Fl t, -time-format Ar format
+Print the event time using the specified
+.Ar format .
+Supported formats are specified by
+.Sy strftime (3) .
+
+.It Fl u, -utf-time
+Print the event time in UTC format.
+When this option is not specified, the time is printed using the system
+.Em
+local
+time, as defined by
+.Sy localtime (3) .
+
+.It Fl v
+Print verbose output.
+
+.El
+
+.Sh EVENT TYPES
+The event types currently supported and the corresponding record symbols are:
+.Bl -tag -width indent
+.It -
+kFSEventStreamEventFlagItemCreated, "created".
+
+.It -
+kFSEventStreamEventFlagItemRemoved, "removed".
+
+.It -
+kFSEventStreamEventFlagItemInodeMetaMod, "inodeMetaMod".
+
+.It -
+kFSEventStreamEventFlagItemRenamed, "renamed".
+
+.It -
+kFSEventStreamEventFlagItemModified, "modified".
+
+.It -
+kFSEventStreamEventFlagItemFinderInfoMod, "finderInfoMod".
+
+.It -
+kFSEventStreamEventFlagItemChangeOwner, "changeOwner".
+
+.It -
+kFSEventStreamEventFlagItemXattrMod, "xattrMod".
+
+.It -
+kFSEventStreamEventFlagItemIsFile, "isFile".
+
+.It -
+kFSEventStreamEventFlagItemIsDir, "isDir".
+
+.It -
+kFSEventStreamEventFlagItemIsSymlink, "isSymLink".
+
+.El 
+
+.Sh EXAMPLES
+The following command listens for changes in the current directory and events
+are delivered every 5 seconds:
+.Pp
+.Dl "$ fsw -l 5 ."
+.Pp 
+The following command listens for changes in the current user home directory and
+/var/log:
+.Pp
+.Dl "$ fsw ~ /var/log"
+
+.Sh DIAGNOSTICS
+The
+.Nm
+utility exits 0 on success, and >0 if an error occurs.
+.Sh COMPATIBILITY
+This utility can be built on Apple OS X v. 10.6 or greater.
+
+.Sh BUGS
+No bugs are known.

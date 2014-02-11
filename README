@@ -1,0 +1,54 @@
+README
+******
+
+This is fsw, a program which uses the File System Events API of the Apple Mac
+OS X operating system to receive notification when the contents of the specified
+files or directories are modified.
+
+Installation
+============
+
+See the INSTALL file for detailed information about how to configure and install
+fsw.
+
+  fsw is a C++ program and a C++ compiler compliant with the C++11 standard is
+required to compile it.  A complete C/C++ toolchain for OS X is provided with
+Apple XCode, which can freely installed from the Apple App Store.
+
+  No other software packages or dependencies are required to configure and
+install fsw.
+
+Usage
+=====
+
+fsw accepts a list of paths for which change events should be received:
+
+  $ fsw [options] ... path0 ... pathn
+
+The event stream is created even if any of the paths do not exist yet.  If they
+are created after fsw is launched, change events will be properly received.
+This behaviour is possible thanks to the File System Events API.
+
+  For more information, refer to the fsw man page.
+
+Bug Reports
+===========
+
+Bug reports can be sent directly to the authors.
+
+-----
+
+Copyright (C) 2014 Enrico M. Crisostomo
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3, or (at your option)
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.

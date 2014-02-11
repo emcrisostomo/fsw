@@ -1,0 +1,46 @@
+NEWS
+****
+
+New in 1.0.4:
+
+  * Output time can be formatted using -t/--format-time and providing a strftime
+    format string.
+  * Output time can be specified in either local time or UTC time using the
+    -u/--utc-time option.  
+   
+New in 1.0.3:
+
+  * Verbose output can be printed using the -v/--verbose option.
+  
+New in 1.0.2:
+
+  * Supports OS X darwin >= 10.0.
+  * Latency can be specified by the user using the -l/--latency option.
+
+New in 1.0.1:
+
+  * Event flags can be dumped in numeric format.
+  * Multiple paths can be passed as a parameter and registered on the event
+    stream.
+
+New in 1.0.0:
+
+  * Short and long options.
+  * FSEvent's are watched on the specified path.
+  
+-----
+
+Copyright (C) 2014 Enrico M. Crisostomo
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3, or (at your option)
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
