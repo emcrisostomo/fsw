@@ -1,6 +1,18 @@
 NEWS
 ****
 
+New in 1.0.7:
+
+  * No features were added.
+  
+New in 1.0.6:
+
+  * No features were added.
+  
+New in 1.0.5:
+
+  * Man page for fsw has been added.
+
 New in 1.0.4:
 
   * Output time can be formatted using -t/--format-time and providing a strftime

@@ -1,6 +1,25 @@
 ChangeLog
 *********
 
+2014-02-14  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
+
+        release: stable micro release 1.0.7.
+
+		* configure.ac: bump version number to 1.0.7.
+		* fsevent_watcher.cpp: throw fsw_exception instead of int.
+		* fsw.cpp:
+		  - define fsw_exception.
+		  - throw fsw_exception instead of int.
+		* fsw.h: declare fsw_exception.
+		
+2014-02-11  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
+
+        release: stable micro release 1.0.6.
+
+		* configure.ac: bump version number to 1.0.6.
+		* fsw_log.cpp: rename from log.cpp.
+		* fsw_log.h: rename from log.h. 
+
 2014-02-10  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
 
         release: stable micro release 1.0.5.

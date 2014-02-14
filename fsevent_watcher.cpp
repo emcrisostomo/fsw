@@ -1,3 +1,4 @@
+#include "fsw.h"
 #include "fsevent_watcher.h"
 #include "fsw_log.h"
 #include <ctime>
@@ -110,9 +111,7 @@ void fsevent_watcher::run()
 
   if (!stream)
   {
-    throw 1;
-    // cerr << "Event stream could not be created." << endl;
-    // exit(FSW_EXIT_STREAM);
+    throw new fsw_exception("Event stream could not be created.");
   }
 
   fsw_log("Scheduling stream with run loop...\n");
@@ -157,7 +156,7 @@ void fsevent_watcher::fsevent_callback(
 
   if (!watcher)
   {
-    throw 2;
+    throw new fsw_exception("The callback info cannot be cast to fsevent_watcher.");
   }
 
   time_t curr_time;

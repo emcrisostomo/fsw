@@ -11,7 +11,6 @@
 #endif
 #include <vector>
 #include <ctime>
-#include <string>
 #include "fsevent_watcher.h"
 
 using namespace std;
@@ -24,6 +23,20 @@ static bool uflag = false;
 static bool vflag = false;
 static double lvalue = 1.0;
 static string tformat = "%c";
+
+fsw_exception::fsw_exception(string cause) :
+    cause(cause)
+{
+}
+
+const char * fsw_exception::what() const throw ()
+{
+  return (string("Error: ") + this->cause).c_str();
+}
+
+fsw_exception::~fsw_exception() throw ()
+{
+}
 
 bool is_verbose()
 {
@@ -242,11 +255,25 @@ int main(int argc, char ** argv)
     exit(FSW_EXIT_UNK_OPT);
   }
 
-  // registering handlers to clean up resources
-  register_signal_handlers();
+  try
+  {
+    // registering handlers to clean up resources
+    register_signal_handlers();
 
-  // configure and start the event loop
-  start_event_loop(argc, argv, optind);
+    // configure and start the event loop
+    start_event_loop(argc, argv, optind);
+  } catch (exception & conf)
+  {
+    cerr << "An error occurred and the program will be terminated.\n";
+    cerr << conf.what() << endl;
 
-  return 0;
+    return FSW_EXIT_ERROR;
+  } catch (...)
+  {
+    cerr << "An unknown error occurred and the program will be terminated.\n";
+
+    return FSW_EXIT_ERROR;
+  }
+
+  return FSW_EXIT_OK;
 }
