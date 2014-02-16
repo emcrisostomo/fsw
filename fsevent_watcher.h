@@ -19,7 +19,6 @@ public:
   virtual ~fsevent_watcher();
 
   void run();
-  void set_latency(double latency);
   void set_time_format(const string &format);
   void set_utc_time(bool utc);
   void set_numeric_event(bool numeric);
@@ -37,7 +36,6 @@ private:
       const FSEventStreamEventId eventIds[]);
 
   FSEventStreamRef stream = nullptr;
-  double event_latency = 1.0;
   string time_format = "%c";
   bool utc_time = false;
   bool numeric_event = false;

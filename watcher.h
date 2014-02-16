@@ -19,7 +19,7 @@ public:
 
 protected:
   vector<string> paths;
-  double latency = 1;
+  double latency = 1.0;
 };
 
 #endif  /* FSW__WATCHER_H */

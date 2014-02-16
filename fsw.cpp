@@ -163,7 +163,8 @@ void start_event_loop(int argc, char ** argv, int optind)
 #else
   watcher = new kqueue_watcher(paths, nullptr);
 #endif
-//  watcher->set_latency(lvalue);
+  watcher->set_latency(lvalue);
+
 //  watcher->set_numeric_event(nflag);
 //  watcher->set_time_format(tformat);
 //  watcher->set_utc_time(uflag);

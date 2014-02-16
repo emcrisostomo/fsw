@@ -58,11 +58,6 @@ fsevent_watcher::~fsevent_watcher()
   stream = nullptr;
 }
 
-void fsevent_watcher::set_latency(double latency)
-{
-  event_latency = latency;
-}
-
 void fsevent_watcher::set_time_format(const string &format)
 {
   time_format = string(format);
@@ -108,8 +103,6 @@ void fsevent_watcher::run()
   context->retain = nullptr;
   context->release = nullptr;
   context->copyDescription = nullptr;
-
-  CFAbsoluteTime latency = event_latency;
 
   fsw_log("Creating FSEvent stream...\n");
   stream = FSEventStreamCreate(
