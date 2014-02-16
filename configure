@@ -630,6 +630,8 @@ am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
 POW_LIB
+USE_FRAMEWORK_FALSE
+USE_FRAMEWORK_TRUE
 EGREP
 GREP
 CXXCPP
@@ -4693,8 +4695,16 @@ fi
 
 done
 
+ if test "x${ac_cv_header_CoreServices_CoreServices_h}" = "xyes"; then
+  USE_FRAMEWORK_TRUE=
+  USE_FRAMEWORK_FALSE='#'
+else
+  USE_FRAMEWORK_TRUE='#'
+  USE_FRAMEWORK_FALSE=
+fi
 
-if test "x${ac_cv_header_sys_event_h}" == x"" && test "x${ac_cv_header_CoreServices_CoreServices_h}" == x""
+
+if test "x${ac_cv_header_sys_event_h}" == "x" && test "x${ac_cv_header_CoreServices_CoreServices_h}" == "x"
 then
   as_fn_error $? "Either sys/event.h or CoreServices/CoreServices.h must be available." "$LINENO" 5
 fi
@@ -5063,6 +5073,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${am__fastdepCXX_TRUE}" && test -z "${am__fastdepCXX_FALSE}"; then
   as_fn_error $? "conditional \"am__fastdepCXX\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${USE_FRAMEWORK_TRUE}" && test -z "${USE_FRAMEWORK_FALSE}"; then
+  as_fn_error $? "conditional \"USE_FRAMEWORK\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 

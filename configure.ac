@@ -10,7 +10,7 @@ AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_MACRO_DIRS([m4])
 AC_CANONICAL_HOST
-    
+
 # Configure language
 AC_LANG(C++)
 
@@ -25,8 +25,9 @@ AC_PROG_CXX
 
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h unistd.h getopt.h fcntl.h CoreServices/CoreServices.h sys/event.h])
+AM_CONDITIONAL([USE_FRAMEWORK], [test "x${ac_cv_header_CoreServices_CoreServices_h}" = "xyes"])
 
-if test "x${ac_cv_header_sys_event_h}" == x"" && test "x${ac_cv_header_CoreServices_CoreServices_h}" == x""
+if test "x${ac_cv_header_sys_event_h}" == "x" && test "x${ac_cv_header_CoreServices_CoreServices_h}" == "x"
 then
   AC_MSG_ERROR([Either sys/event.h or CoreServices/CoreServices.h must be available.])
 fi
