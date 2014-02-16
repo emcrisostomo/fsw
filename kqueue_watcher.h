@@ -1,6 +1,10 @@
 #ifndef FSW_KQUEUE_WATCHER_H
 #define FSW_KQUEUE_WATCHER_H
 
+#include "config.h"
+
+#ifdef HAVE_SYS_EVENT_H
+
 #include <string>
 #include <vector>
 
@@ -23,4 +27,5 @@ private:
   int myfile = -1;
 };
 
+#endif  /* HAVE_SYS_EVENT_H */
 #endif  /* FSW_KQUEUE_WATCHER_H */

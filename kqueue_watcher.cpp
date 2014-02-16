@@ -1,10 +1,11 @@
 #include "kqueue_watcher.h"
+
+#ifdef HAVE_SYS_EVENT_H
+
 #include "fsw.h"
 #include "fsw_log.h"
 #include <iostream>
-#include <sys/types.h>
 #include <sys/event.h>
-#include <sys/time.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -93,3 +94,5 @@ void kqueue_watcher::run()
     }
   }
 }
+
+#endif  /* HAVE_SYS_EVENT_H */
