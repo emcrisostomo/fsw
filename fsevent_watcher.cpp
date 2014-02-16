@@ -12,6 +12,15 @@ typedef struct FSEventFlagName
 
 static vector<FSEventFlagName> event_names =
 {
+{ kFSEventStreamEventFlagNone, "none" },
+{ kFSEventStreamEventFlagMustScanSubDirs, "mustScanSubdir" },
+{ kFSEventStreamEventFlagUserDropped, "userDropped" },
+{ kFSEventStreamEventFlagKernelDropped, "kernelDropped" },
+{ kFSEventStreamEventFlagEventIdsWrapped, "idsWrapped" },
+{ kFSEventStreamEventFlagHistoryDone, "historyDone" },
+{ kFSEventStreamEventFlagRootChanged, "rootChanged" },
+{ kFSEventStreamEventFlagMount, "mount" },
+{ kFSEventStreamEventFlagUnmount, "unmount" },
 { kFSEventStreamEventFlagItemCreated, "created" },
 { kFSEventStreamEventFlagItemRemoved, "removed" },
 { kFSEventStreamEventFlagItemInodeMetaMod, "inodeMetaMod" },
@@ -156,7 +165,8 @@ void fsevent_watcher::fsevent_callback(
 
   if (!watcher)
   {
-    throw new fsw_exception("The callback info cannot be cast to fsevent_watcher.");
+    throw new fsw_exception(
+        "The callback info cannot be cast to fsevent_watcher.");
   }
 
   time_t curr_time;
