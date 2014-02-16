@@ -2,7 +2,7 @@
 
 #ifdef HAVE_SYS_EVENT_H
 
-#include "fsw.h"
+#include "fsw_exception.h"
 #include "fsw_log.h"
 #include <iostream>
 #include <sys/event.h>

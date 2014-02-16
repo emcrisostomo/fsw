@@ -2,7 +2,7 @@
 
 #ifdef HAVE_CORESERVICES_CORESERVICES_H
 
-#include "fsw.h"
+#include "fsw_exception.h"
 #include "fsw_log.h"
 #include <ctime>
 #include <iostream>
