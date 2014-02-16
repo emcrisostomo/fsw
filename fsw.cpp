@@ -2,20 +2,23 @@
 #include "fsw.h"
 #include "fsw_log.h"
 #include <iostream>
-#include <CoreServices/CoreServices.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <signal.h>
+#include <csignal>
+#include <cstdlib>
+#include <cmath>
+#include <cerrno>
+#include <vector>
 #ifdef HAVE_GETOPT_LONG
 #include <getopt.h>
 #endif
-#include <vector>
-#include <ctime>
+#ifdef HAVE_CORESERVICES_CORESERVICES_H
 #include "fsevent_watcher.h"
+#else
+#include "kqueue_watcher.h"
+#endif
 
 using namespace std;
 
-static fsevent_watcher *watcher = nullptr;
+static watcher *watcher = nullptr;
 static bool nflag = false;
 static bool lflag = false;
 static bool tflag = false;
@@ -169,12 +172,15 @@ void start_event_loop(int argc, char ** argv, int optind)
     paths.push_back(argv[i]);
   }
 
+#ifdef HAVE_CORESERVICES_CORESERVICES_H
   watcher = new fsevent_watcher(paths);
-
-  watcher->set_latency(lvalue);
-  watcher->set_numeric_event(nflag);
-  watcher->set_time_format(tformat);
-  watcher->set_utc_time(uflag);
+#else
+  watcher = new kqueue_watcher(paths);
+#endif
+//  watcher->set_latency(lvalue);
+//  watcher->set_numeric_event(nflag);
+//  watcher->set_time_format(tformat);
+//  watcher->set_utc_time(uflag);
 
   watcher->run();
 }
