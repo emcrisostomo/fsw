@@ -101,8 +101,8 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man7dir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_fsw_OBJECTS = fsw.$(OBJEXT) fsw_log.$(OBJEXT) watcher.$(OBJEXT) \
-	fsw_exception.$(OBJEXT) fsevent_watcher.$(OBJEXT) \
-	kqueue_watcher.$(OBJEXT)
+	fsw_exception.$(OBJEXT) event.$(OBJEXT) \
+	fsevent_watcher.$(OBJEXT) kqueue_watcher.$(OBJEXT)
 fsw_OBJECTS = $(am_fsw_OBJECTS)
 fsw_LDADD = $(LDADD)
 fsw_LINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(fsw_LDFLAGS) \
@@ -322,7 +322,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 fsw_SOURCES = fsw.cpp fsw.h fsw_log.cpp fsw_log.h watcher.cpp \
-	watcher.h fsw_exception.cpp fsw_exception.h \
+	watcher.h fsw_exception.cpp fsw_exception.h event.cpp event.h \
 	fsevent_watcher.cpp fsevent_watcher.h kqueue_watcher.cpp \
 	kqueue_watcher.h
 @USE_FRAMEWORK_TRUE@fsw_LDFLAGS = -framework CoreServices
@@ -435,6 +435,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/event.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fsevent_watcher.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fsw.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fsw_exception.Po@am__quote@
