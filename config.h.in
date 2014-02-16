@@ -6,6 +6,14 @@
 /* define if the compiler supports basic C++11 syntax */
 #undef HAVE_CXX11
 
+/* Define to 1 if you have the declaration of `kevent', and to 0 if you don't.
+   */
+#undef HAVE_DECL_KEVENT
+
+/* Define to 1 if you have the declaration of `kqueue', and to 0 if you don't.
+   */
+#undef HAVE_DECL_KQUEUE
+
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
 
@@ -17,12 +25,6 @@
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
-
-/* Define to 1 if you have the `kevent' function. */
-#undef HAVE_KEVENT
-
-/* Define to 1 if you have the `kqueue' function. */
-#undef HAVE_KQUEUE
 
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
