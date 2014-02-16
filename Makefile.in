@@ -100,7 +100,7 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man7dir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_fsw_OBJECTS = fsw.$(OBJEXT) fsw_log.$(OBJEXT) \
+am_fsw_OBJECTS = fsw.$(OBJEXT) fsw_log.$(OBJEXT) watcher.$(OBJEXT) \
 	fsevent_watcher.$(OBJEXT) kqueue_watcher.$(OBJEXT)
 fsw_OBJECTS = $(am_fsw_OBJECTS)
 fsw_LDADD = $(LDADD)
@@ -320,8 +320,9 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-fsw_SOURCES = fsw.cpp fsw.h fsw_log.cpp fsw_log.h fsevent_watcher.cpp \
-	fsevent_watcher.h kqueue_watcher.cpp kqueue_watcher.h
+fsw_SOURCES = fsw.cpp fsw.h fsw_log.cpp fsw_log.h watcher.cpp \
+	watcher.h fsevent_watcher.cpp fsevent_watcher.h \
+	kqueue_watcher.cpp kqueue_watcher.h
 fsw_LDFLAGS = -framework CoreServices
 man_MANS = fsw.7
 EXTRA_DIST = $(man_MANS)
@@ -436,6 +437,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fsw.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fsw_log.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/kqueue_watcher.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/watcher.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
