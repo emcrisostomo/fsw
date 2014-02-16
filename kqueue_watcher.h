@@ -5,12 +5,13 @@
 
 #ifdef HAVE_SYS_EVENT_H
 
+#include "watcher.h"
 #include <string>
 #include <vector>
 
 using namespace std;
 
-class kqueue_watcher
+class kqueue_watcher : public watcher
 {
 public:
   kqueue_watcher(vector<string> paths);
@@ -22,7 +23,6 @@ private:
   kqueue_watcher(const kqueue_watcher& orig);
   kqueue_watcher& operator=(const kqueue_watcher & that);
 
-  vector<string> paths;
   int kq = -1;
   int myfile = -1;
 };

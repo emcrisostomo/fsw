@@ -11,7 +11,7 @@
 #include <fcntl.h>
 
 kqueue_watcher::kqueue_watcher(vector<string> paths_to_monitor) :
-    paths(paths_to_monitor)
+    watcher(paths_to_monitor)
 {
 }
 

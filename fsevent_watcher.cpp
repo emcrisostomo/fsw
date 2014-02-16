@@ -1,5 +1,8 @@
-#include "fsw.h"
 #include "fsevent_watcher.h"
+
+#ifdef HAVE_CORESERVICES_CORESERVICES_H
+
+#include "fsw.h"
 #include "fsw_log.h"
 #include <ctime>
 #include <iostream>
@@ -34,7 +37,7 @@ static vector<FSEventFlagName> event_names =
 { kFSEventStreamEventFlagItemIsSymlink, "isSymLink" } };
 
 fsevent_watcher::fsevent_watcher(vector<string> paths_to_monitor) :
-    paths(paths_to_monitor)
+    watcher(paths_to_monitor)
 {
 }
 
@@ -197,3 +200,5 @@ void fsevent_watcher::fsevent_callback(
     cout << endl;
   }
 }
+
+#endif  /* HAVE_CORESERVICES_CORESERVICES_H */
