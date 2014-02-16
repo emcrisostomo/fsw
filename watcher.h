@@ -6,10 +6,12 @@
 
 using namespace std;
 
+typedef void (*EVENT_CALLBACK)();
+
 class watcher
 {
 public:
-  watcher(vector<string> paths);
+  watcher(vector<string> paths, EVENT_CALLBACK callback);
   virtual ~watcher();
 
   virtual void run() = 0;

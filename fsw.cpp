@@ -173,9 +173,9 @@ void start_event_loop(int argc, char ** argv, int optind)
   }
 
 #ifdef HAVE_CORESERVICES_CORESERVICES_H
-  watcher = new fsevent_watcher(paths);
+  watcher = new fsevent_watcher(paths, nullptr);
 #else
-  watcher = new kqueue_watcher(paths);
+  watcher = new kqueue_watcher(paths, nullptr);
 #endif
 //  watcher->set_latency(lvalue);
 //  watcher->set_numeric_event(nflag);

@@ -14,7 +14,7 @@ using namespace std;
 class kqueue_watcher : public watcher
 {
 public:
-  kqueue_watcher(vector<string> paths);
+  kqueue_watcher(vector<string> paths, EVENT_CALLBACK callback);
   virtual ~kqueue_watcher();
 
   void run();

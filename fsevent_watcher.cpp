@@ -36,8 +36,8 @@ static vector<FSEventFlagName> event_names =
 { kFSEventStreamEventFlagItemIsDir, "isDir" },
 { kFSEventStreamEventFlagItemIsSymlink, "isSymLink" } };
 
-fsevent_watcher::fsevent_watcher(vector<string> paths_to_monitor) :
-    watcher(paths_to_monitor)
+fsevent_watcher::fsevent_watcher(vector<string> paths_to_monitor, EVENT_CALLBACK callback) :
+    watcher(paths_to_monitor, callback)
 {
 }
 

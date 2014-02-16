@@ -10,8 +10,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-kqueue_watcher::kqueue_watcher(vector<string> paths_to_monitor) :
-    watcher(paths_to_monitor)
+kqueue_watcher::kqueue_watcher(vector<string> paths_to_monitor, EVENT_CALLBACK callback) :
+    watcher(paths_to_monitor, callback)
 {
 }
 
