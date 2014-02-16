@@ -120,7 +120,7 @@ void fsevent_watcher::run()
 
   if (!stream)
   {
-    throw new fsw_exception("Event stream could not be created.");
+    throw fsw_exception("Event stream could not be created.");
   }
 
   fsw_log("Scheduling stream with run loop...\n");
@@ -165,8 +165,7 @@ void fsevent_watcher::fsevent_callback(
 
   if (!watcher)
   {
-    throw new fsw_exception(
-        "The callback info cannot be cast to fsevent_watcher.");
+    throw fsw_exception("The callback info cannot be cast to fsevent_watcher.");
   }
 
   time_t curr_time;
