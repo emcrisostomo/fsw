@@ -2901,14 +2901,6 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
 
 
-case "${host_os}" in
-  darwin1[0-3].*)
-    ;;
-  *)
-    as_fn_error $? "Unsupported OS: ${host} - ${host_os}" "$LINENO" 5
-    ;;
-esac
-
 # Configure language
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
@@ -3617,7 +3609,7 @@ fi
 
 
 
-    ax_cxx_compile_cxx11_required=truednl
+    ax_cxx_compile_cxx11_required=true
   ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -3638,6 +3630,13 @@ else
       static_assert(sizeof(int) <= sizeof(T), "not big enough");
     };
 
+    struct Base {
+    virtual void f() {}
+    };
+    struct Child : public Base {
+    virtual void f() override {}
+    };
+
     typedef check<check<bool>> right_angle_brackets;
 
     int a;
@@ -3648,6 +3647,7 @@ else
     check_type&& cr = static_cast<check_type&&>(c);
 
     auto d = a;
+    auto l = [](){};
 
 _ACEOF
 if ac_fn_cxx_try_compile "$LINENO"; then :
@@ -3682,6 +3682,13 @@ else
       static_assert(sizeof(int) <= sizeof(T), "not big enough");
     };
 
+    struct Base {
+    virtual void f() {}
+    };
+    struct Child : public Base {
+    virtual void f() override {}
+    };
+
     typedef check<check<bool>> right_angle_brackets;
 
     int a;
@@ -3692,6 +3699,7 @@ else
     check_type&& cr = static_cast<check_type&&>(c);
 
     auto d = a;
+    auto l = [](){};
 
 _ACEOF
 if ac_fn_cxx_try_compile "$LINENO"; then :
@@ -3732,6 +3740,13 @@ else
       static_assert(sizeof(int) <= sizeof(T), "not big enough");
     };
 
+    struct Base {
+    virtual void f() {}
+    };
+    struct Child : public Base {
+    virtual void f() override {}
+    };
+
     typedef check<check<bool>> right_angle_brackets;
 
     int a;
@@ -3742,6 +3757,7 @@ else
     check_type&& cr = static_cast<check_type&&>(c);
 
     auto d = a;
+    auto l = [](){};
 
 _ACEOF
 if ac_fn_cxx_try_compile "$LINENO"; then :

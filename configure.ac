@@ -10,14 +10,6 @@ AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_MACRO_DIRS([m4])
 AC_CANONICAL_HOST
-
-case "${host_os}" in
-  darwin1[[0-3]].*)
-    ;;
-  *)
-    AC_MSG_ERROR([Unsupported OS: ${host} - ${host_os}])
-    ;;
-esac
     
 # Configure language
 AC_LANG(C++)
