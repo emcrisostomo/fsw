@@ -27,20 +27,6 @@ static bool vflag = false;
 static double lvalue = 1.0;
 static string tformat = "%c";
 
-fsw_exception::fsw_exception(string cause) :
-    cause(cause)
-{
-}
-
-const char * fsw_exception::what() const throw ()
-{
-  return (string("Error: ") + this->cause).c_str();
-}
-
-fsw_exception::~fsw_exception() throw ()
-{
-}
-
 bool is_verbose()
 {
   return vflag;

@@ -15,13 +15,4 @@ using namespace std;
 
 bool is_verbose();
 
-class fsw_exception: public exception {
-public:
-  fsw_exception(string cause);
-  virtual const char * what() const throw ();
-  virtual ~fsw_exception() throw ();
-private:
-  const string cause;
-};
-
 #endif  /* FSW_H */
