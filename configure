@@ -4664,7 +4664,7 @@ fi
 done
 
 
-for ac_header in stdlib.h unistd.h getopt.h CoreServices/CoreServices.h
+for ac_header in stdlib.h unistd.h getopt.h fcntl.h CoreServices/CoreServices.h sys/event.h
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 ac_fn_cxx_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
@@ -4677,6 +4677,11 @@ fi
 
 done
 
+
+if test "x${ac_cv_header_sys_event_h}" == x"" && test "x${ac_cv_header_CoreServices_CoreServices_h}" == x""
+then
+  as_fn_error $? "Either sys/event.h or CoreServices/CoreServices.h must be available." "$LINENO" 5
+fi
 
 # Checks for typedefs, structures, and compiler characteristics.
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for stdbool.h that conforms to C99" >&5

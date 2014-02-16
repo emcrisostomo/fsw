@@ -32,7 +32,12 @@ AC_PROG_CXX
 # Checks for libraries.
 
 # Checks for header files.
-AC_CHECK_HEADERS([stdlib.h unistd.h getopt.h CoreServices/CoreServices.h])
+AC_CHECK_HEADERS([stdlib.h unistd.h getopt.h fcntl.h CoreServices/CoreServices.h sys/event.h])
+
+if test "x${ac_cv_header_sys_event_h}" == x"" && test "x${ac_cv_header_CoreServices_CoreServices_h}" == x""
+then
+  AC_MSG_ERROR([Either sys/event.h or CoreServices/CoreServices.h must be available.])
+fi
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADER_STDBOOL
