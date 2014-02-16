@@ -144,6 +144,13 @@ void register_signal_handlers()
   }
 }
 
+void notify_events(vector<event> events)
+{
+  for (event evt : events) {
+    cout << evt.get_path() << endl;
+  }
+}
+
 void start_event_loop(int argc, char ** argv, int optind)
 {
   // parsing paths
@@ -159,9 +166,9 @@ void start_event_loop(int argc, char ** argv, int optind)
   }
 
 #ifdef HAVE_CORESERVICES_CORESERVICES_H
-  watcher = new fsevent_watcher(paths, nullptr);
+  watcher = new fsevent_watcher(paths, notify_events);
 #else
-  watcher = new kqueue_watcher(paths, nullptr);
+  watcher = new kqueue_watcher(paths, notify_events);
 #endif
   watcher->set_latency(lvalue);
 

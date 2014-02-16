@@ -6,6 +6,7 @@
 #include "fsw_log.h"
 #include <ctime>
 #include <iostream>
+#include "event.h"
 
 typedef struct FSEventFlagName
 {
@@ -36,7 +37,9 @@ static vector<FSEventFlagName> event_names =
 { kFSEventStreamEventFlagItemIsDir, "isDir" },
 { kFSEventStreamEventFlagItemIsSymlink, "isSymLink" } };
 
-fsevent_watcher::fsevent_watcher(vector<string> paths_to_monitor, EVENT_CALLBACK callback) :
+fsevent_watcher::fsevent_watcher(
+    vector<string> paths_to_monitor,
+    EVENT_CALLBACK callback) :
     watcher(paths_to_monitor, callback)
 {
 }
@@ -164,23 +167,28 @@ void fsevent_watcher::fsevent_callback(
     throw fsw_exception("The callback info cannot be cast to fsevent_watcher.");
   }
 
+  vector<event> events;
+
   time_t curr_time;
   time(&curr_time);
-  char time_format_buffer[fsevent_watcher::TIME_FORMAT_BUFF_SIZE];
-  struct tm * tm_time =
-      watcher->utc_time ? gmtime(&curr_time) : localtime(&curr_time);
+//  char time_format_buffer[fsevent_watcher::TIME_FORMAT_BUFF_SIZE];
+//  struct tm * tm_time =
+//      watcher->utc_time ? gmtime(&curr_time) : localtime(&curr_time);
 
+/*
   string date =
       strftime(
           time_format_buffer,
           TIME_FORMAT_BUFF_SIZE,
           watcher->time_format.c_str(),
           tm_time) ? string(time_format_buffer) : string("<date format error>");
+*/
 
   for (size_t i = 0; i < numEvents; ++i)
   {
-    cout << date << " - " << ((char **) eventPaths)[i] << ":";
+    // cout << date << " - " << ((char **) eventPaths)[i] << ":";
 
+    /*
     if (watcher->numeric_event)
     {
       print_numeric_flag(eventFlags[i]);
@@ -191,6 +199,15 @@ void fsevent_watcher::fsevent_callback(
     }
 
     cout << endl;
+*/
+    event evt =
+    { ((char **) eventPaths)[i], curr_time };
+    events.push_back(evt);
+  }
+
+  if (events.size() > 0)
+  {
+    watcher->callback(events);
   }
 }
 

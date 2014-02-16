@@ -2,8 +2,12 @@
 #include "fsw_exception.h"
 
 watcher::watcher(vector<string> paths_to_watch, EVENT_CALLBACK callback) :
-    paths(paths_to_watch)
+    paths(paths_to_watch), callback(callback)
 {
+  if (callback == nullptr)
+  {
+    throw new fsw_exception("Callback cannot be null.");
+  }
 }
 
 void watcher::set_latency(double latency)

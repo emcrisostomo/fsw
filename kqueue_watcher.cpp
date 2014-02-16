@@ -5,12 +5,17 @@
 #include "fsw_exception.h"
 #include "fsw_log.h"
 #include <iostream>
+#include <sys/types.h>
 #include <sys/event.h>
+#include <sys/time.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <map>
 
-kqueue_watcher::kqueue_watcher(vector<string> paths_to_monitor, EVENT_CALLBACK callback) :
+kqueue_watcher::kqueue_watcher(
+    vector<string> paths_to_monitor,
+    EVENT_CALLBACK callback) :
     watcher(paths_to_monitor, callback)
 {
 }
@@ -35,8 +40,9 @@ void kqueue_watcher::run()
   while (true)
   {
     vector<struct kevent> changes;
-    vector<struct kevent> events;
+    vector<struct kevent> event_list;
     vector<int> open_files;
+    map<int, string> file_names;
 
     for (string path : paths)
     {
@@ -51,7 +57,6 @@ void kqueue_watcher::run()
       }
 
       struct kevent change;
-      struct kevent event;
 
       EV_SET(
           &change,
@@ -63,13 +68,15 @@ void kqueue_watcher::run()
           0);
 
       changes.push_back(change);
-      events.push_back(event);
+      struct kevent event;
+      event_list.push_back(event);
       open_files.push_back(file);
+      file_names.insert(pair<int, string>(file, path));
     }
 
     if (changes.size() == 0)
     {
-      ::sleep(1);
+      ::sleep(latency > 1 ? latency : 1);
       continue;
     }
 
@@ -77,8 +84,8 @@ void kqueue_watcher::run()
         kq,
         &changes[0],
         changes.size(),
-        &events[0],
-        events.size(),
+        &event_list[0],
+        event_list.size(),
         nullptr);
 
     if (event_num == -1)
@@ -86,7 +93,26 @@ void kqueue_watcher::run()
       throw new fsw_exception("Invalid event number.");
     }
 
-    cout << "Modified" << endl;
+    time_t curr_time;
+    time(&curr_time);
+    vector<event> events;
+
+    for (auto i = 0; i < event_list.size(); ++i)
+    {
+      struct kevent e = event_list[i];
+
+      if (e.fflags)
+      {
+        event evt =
+        { file_names[e.ident], curr_time };
+        events.push_back(evt);
+      }
+    }
+
+    if (events.size() > 0)
+    {
+      callback(events);
+    }
 
     for (int file : open_files)
     {

@@ -1,5 +1,5 @@
-#ifndef FSW__EXCEPTION_H
-#define FSW__EXCEPTION_H
+#ifndef FSW_EXCEPTION_H
+#define FSW_EXCEPTION_H
 
 #include <exception>
 #include <string>
@@ -15,4 +15,4 @@ private:
   const string cause;
 };
 
-#endif  /* FSW__EXCEPTION_H */
+#endif  /* FSW_EXCEPTION_H */
