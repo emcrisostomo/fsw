@@ -27,7 +27,7 @@ AC_PROG_CXX
 AC_CHECK_HEADERS([stdlib.h unistd.h getopt.h fcntl.h CoreServices/CoreServices.h sys/event.h])
 AM_CONDITIONAL([USE_FRAMEWORK], [test "x${ac_cv_header_CoreServices_CoreServices_h}" = "xyes"])
 
-if test "x${ac_cv_header_sys_event_h}" == "x" && test "x${ac_cv_header_CoreServices_CoreServices_h}" == "x"
+if test "x${ac_cv_header_sys_event_h}" != "xyes" && test "x${ac_cv_header_CoreServices_CoreServices_h}" != "xyes"
 then
   AC_MSG_ERROR([Either sys/event.h or CoreServices/CoreServices.h must be available.])
 fi
@@ -43,5 +43,14 @@ AC_CHECK_FUNCS(
   ,
   AC_MSG_ERROR([getopt_long function cannot be found.]) 
 )
+
+if test "x${ac_cv_header_CoreServices_CoreServices_h}" != "xyes"
+then
+  AC_CHECK_FUNCS(
+    [kqueue kevent]
+    ,
+    AC_MSG_ERROR([kqueue support cannot be found.])
+  )
+fi
 
 AC_OUTPUT

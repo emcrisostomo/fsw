@@ -1,6 +1,27 @@
 ChangeLog
 *********
 
+2014-02-16  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
+
+		release: stable micro release 1.0.8:
+		
+		* configure.ac:
+		  - bump version to 1.0.8.
+		  - check for either FSEvents (CoreServices/CoreServices.h) or kqueue
+		    (sys/event.h) to be available.
+		  - remove OS check and check for available headers instead.
+		* fsevent_watcher.cpp: check for all the existing FSEventFlagName flags.
+		* fsw.cpp:
+		  - use watcher base class.
+		  - fix includes so that fsw builds on FreeBSD (v. 10.0 was checked).
+		* kqueue_watcher.cpp: add kqueue-based watcher for systems with kqueue.
+		* kqueue_watcher.h: add kqueue-based watcher for systems with kqueue.
+		* Makefile.am:
+		  - add new files.
+		  - use conditional to use the -framework linker flag on OS X.
+		* watcher.cpp: add watcher base class.
+		* watcher.h: add watcher base class.
+
 2014-02-14  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
 
         release: stable micro release 1.0.7.

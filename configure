@@ -4704,7 +4704,7 @@ else
 fi
 
 
-if test "x${ac_cv_header_sys_event_h}" == "x" && test "x${ac_cv_header_CoreServices_CoreServices_h}" == "x"
+if test "x${ac_cv_header_sys_event_h}" != "xyes" && test "x${ac_cv_header_CoreServices_CoreServices_h}" != "xyes"
 then
   as_fn_error $? "Either sys/event.h or CoreServices/CoreServices.h must be available." "$LINENO" 5
 fi
@@ -4937,6 +4937,24 @@ else
 fi
 done
 
+
+if test "x${ac_cv_header_CoreServices_CoreServices_h}" != "xyes"
+then
+  for ac_func in kqueue kevent
+
+do :
+  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+ac_fn_cxx_check_func "$LINENO" "$ac_func" "$as_ac_var"
+if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
+_ACEOF
+ as_fn_error $? "kqueue support cannot be found." "$LINENO" 5
+
+fi
+done
+
+fi
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
