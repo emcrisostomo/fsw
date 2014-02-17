@@ -8,34 +8,34 @@
 #include <iostream>
 #include "event.h"
 
-typedef struct FSEventFlagName
+typedef struct FSEventFlagType
 {
   FSEventStreamEventFlags flag;
-  string name;
-} FSEventFlagName;
+  event_flag type;
+} FSEventFlagType;
 
-static vector<FSEventFlagName> event_names =
+static vector<FSEventFlagType> event_flag_type =
 {
-{ kFSEventStreamEventFlagNone, "none" },
-{ kFSEventStreamEventFlagMustScanSubDirs, "mustScanSubdir" },
-{ kFSEventStreamEventFlagUserDropped, "userDropped" },
-{ kFSEventStreamEventFlagKernelDropped, "kernelDropped" },
-{ kFSEventStreamEventFlagEventIdsWrapped, "idsWrapped" },
-{ kFSEventStreamEventFlagHistoryDone, "historyDone" },
-{ kFSEventStreamEventFlagRootChanged, "rootChanged" },
-{ kFSEventStreamEventFlagMount, "mount" },
-{ kFSEventStreamEventFlagUnmount, "unmount" },
-{ kFSEventStreamEventFlagItemCreated, "created" },
-{ kFSEventStreamEventFlagItemRemoved, "removed" },
-{ kFSEventStreamEventFlagItemInodeMetaMod, "inodeMetaMod" },
-{ kFSEventStreamEventFlagItemRenamed, "renamed" },
-{ kFSEventStreamEventFlagItemModified, "modified" },
-{ kFSEventStreamEventFlagItemFinderInfoMod, "finderInfoMod" },
-{ kFSEventStreamEventFlagItemChangeOwner, "changeOwner" },
-{ kFSEventStreamEventFlagItemXattrMod, "xattrMod" },
-{ kFSEventStreamEventFlagItemIsFile, "isFile" },
-{ kFSEventStreamEventFlagItemIsDir, "isDir" },
-{ kFSEventStreamEventFlagItemIsSymlink, "isSymLink" } };
+{ kFSEventStreamEventFlagNone, event_flag::PlatformSpecific },
+{ kFSEventStreamEventFlagMustScanSubDirs, event_flag::PlatformSpecific },
+{ kFSEventStreamEventFlagUserDropped, event_flag::PlatformSpecific },
+{ kFSEventStreamEventFlagKernelDropped, event_flag::PlatformSpecific },
+{ kFSEventStreamEventFlagEventIdsWrapped, event_flag::PlatformSpecific },
+{ kFSEventStreamEventFlagHistoryDone, event_flag::PlatformSpecific },
+{ kFSEventStreamEventFlagRootChanged, event_flag::PlatformSpecific },
+{ kFSEventStreamEventFlagMount, event_flag::PlatformSpecific },
+{ kFSEventStreamEventFlagUnmount, event_flag::PlatformSpecific },
+{ kFSEventStreamEventFlagItemCreated, event_flag::Created },
+{ kFSEventStreamEventFlagItemRemoved, event_flag::Removed },
+{ kFSEventStreamEventFlagItemInodeMetaMod, event_flag::PlatformSpecific },
+{ kFSEventStreamEventFlagItemRenamed, event_flag::Renamed },
+{ kFSEventStreamEventFlagItemModified, event_flag::Updated },
+{ kFSEventStreamEventFlagItemFinderInfoMod, event_flag::PlatformSpecific },
+{ kFSEventStreamEventFlagItemChangeOwner, event_flag::OwnerModified },
+{ kFSEventStreamEventFlagItemXattrMod, event_flag::AttributeModified },
+{ kFSEventStreamEventFlagItemIsFile, event_flag::IsFile },
+{ kFSEventStreamEventFlagItemIsDir, event_flag::IsDir },
+{ kFSEventStreamEventFlagItemIsSymlink, event_flag::IsSymLink } };
 
 fsevent_watcher::fsevent_watcher(
     vector<string> paths_to_monitor,
@@ -135,20 +135,19 @@ void fsevent_watcher::run()
   CFRunLoopRun();
 }
 
-void print_numeric_flag(FSEventStreamEventFlags flag)
+static vector<event_flag> decode_flags(FSEventStreamEventFlags flag)
 {
-  cout << flag;
-}
+  vector<event_flag> evt_flags;
 
-void print_text_flag(FSEventStreamEventFlags flag)
-{
-  for (FSEventFlagName name : event_names)
+  for (FSEventFlagType type : event_flag_type)
   {
-    if (flag & name.flag)
+    if (flag & type.flag)
     {
-      cout << name.name << " ";
+      evt_flags.push_back(type.type);
     }
   }
+
+  return evt_flags;
 }
 
 void fsevent_watcher::fsevent_callback(
@@ -175,33 +174,20 @@ void fsevent_watcher::fsevent_callback(
 //  struct tm * tm_time =
 //      watcher->utc_time ? gmtime(&curr_time) : localtime(&curr_time);
 
-/*
-  string date =
-      strftime(
-          time_format_buffer,
-          TIME_FORMAT_BUFF_SIZE,
-          watcher->time_format.c_str(),
-          tm_time) ? string(time_format_buffer) : string("<date format error>");
-*/
+  /*
+   string date =
+   strftime(
+   time_format_buffer,
+   TIME_FORMAT_BUFF_SIZE,
+   watcher->time_format.c_str(),
+   tm_time) ? string(time_format_buffer) : string("<date format error>");
+   */
 
   for (size_t i = 0; i < numEvents; ++i)
   {
-    // cout << date << " - " << ((char **) eventPaths)[i] << ":";
-
-    /*
-    if (watcher->numeric_event)
-    {
-      print_numeric_flag(eventFlags[i]);
-    }
-    else
-    {
-      print_text_flag(eventFlags[i]);
-    }
-
-    cout << endl;
-*/
+    vector<event_flag> flags = decode_flags(eventFlags[i]);
     event evt =
-    { ((char **) eventPaths)[i], curr_time };
+    { ((char **) eventPaths)[i], curr_time, flags };
     events.push_back(evt);
   }
 

@@ -144,10 +144,69 @@ void register_signal_handlers()
   }
 }
 
+vector<string> decode_event_flag_name(vector<event_flag> flags)
+{
+  vector<string> names;
+
+  for (event_flag flag : flags)
+  {
+    switch (flag)
+    {
+    case event_flag::PlatformSpecific:
+      names.push_back("PlatformSpecific");
+      break;
+    case event_flag::Created:
+      names.push_back("Created");
+      break;
+    case event_flag::Updated:
+      names.push_back("Updated");
+      break;
+    case event_flag::Removed:
+      names.push_back("Removed");
+      break;
+    case event_flag::Renamed:
+      names.push_back("Renamed");
+      break;
+    case event_flag::OwnerModified:
+      names.push_back("OwnerModified");
+      break;
+    case event_flag::AttributeModified:
+      names.push_back("AttributeModified");
+      break;
+    case event_flag::IsFile:
+      names.push_back("IsFile");
+      break;
+    case event_flag::IsDir:
+      names.push_back("IsDir");
+      break;
+    case event_flag::IsSymLink:
+      names.push_back("IsSymLink");
+      break;
+    default:
+      names.push_back("<Unknown>");
+      break;
+    }
+  }
+
+  return names;
+}
+
 void notify_events(vector<event> events)
 {
-  for (event evt : events) {
-    cout << evt.get_path() << endl;
+  for (event evt : events)
+  {
+    vector<event_flag> flags = evt.get_flags();
+    vector<string> flag_names = decode_event_flag_name(flags);
+
+    cout << evt.get_path();
+    cout << " - ";
+
+    for (string name : flag_names)
+    {
+      cout << name << " ";
+    }
+
+    cout << endl;
   }
 }
 

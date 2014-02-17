@@ -13,6 +13,22 @@
 #include <fcntl.h>
 #include <map>
 
+typedef struct KqueueFlagType
+{
+  uint32_t flag;
+  event_flag type;
+} FSEventFlagType;
+
+static vector<KqueueFlagType> event_flag_type =
+{
+{ NOTE_DELETE, event_flag::Removed },
+{ NOTE_WRITE, event_flag::Updated },
+{ NOTE_EXTEND, event_flag::PlatformSpecific },
+{ NOTE_ATTRIB, event_flag::AttributeModified },
+{ NOTE_LINK, event_flag::PlatformSpecific },
+{ NOTE_RENAME, event_flag::Renamed },
+{ NOTE_REVOKE, event_flag::PlatformSpecific } };
+
 kqueue_watcher::kqueue_watcher(
     vector<string> paths_to_monitor,
     EVENT_CALLBACK callback) :
@@ -26,6 +42,21 @@ kqueue_watcher::~kqueue_watcher()
     ::close(kq);
   if (kq != -1)
     ::close(myfile);
+}
+
+static vector<event_flag> decode_flags(uint32_t flag)
+{
+  vector<event_flag> evt_flags;
+
+  for (KqueueFlagType type : event_flag_type)
+  {
+    if (flag & type.flag)
+    {
+      evt_flags.push_back(type.type);
+    }
+  }
+
+  return evt_flags;
 }
 
 void kqueue_watcher::run()
@@ -103,8 +134,10 @@ void kqueue_watcher::run()
 
       if (e.fflags)
       {
+        vector<event_flag> evt_flags = decode_flags(e.fflags);
         event evt =
-        { file_names[e.ident], curr_time };
+        { file_names[e.ident], curr_time, evt_flags };
+
         events.push_back(evt);
       }
     }

@@ -1,7 +1,7 @@
 #include "event.h"
 
-event::event(string path, time_t evt_time) :
-    path(path), evt_time(evt_time)
+event::event(string path, time_t evt_time, vector<event_flag> flags) :
+    path(path), evt_time(evt_time), evt_flags(flags)
 {
 }
 
@@ -17,4 +17,9 @@ string event::get_path()
 time_t event::get_time()
 {
   return evt_time;
+}
+
+vector<event_flag> event::get_flags()
+{
+  return evt_flags;
 }
