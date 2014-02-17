@@ -6,7 +6,8 @@ specified files or directories are modified.  fsw implements two kind of
 watcher:
 
   * A watcher based on the File System Events API of Apple OS X.
-  * A watcher based on kqueue.
+  * A watcher based on kqueue, an event notification interface introduced in
+    FreeBSD 4.1 and supported on most *BSD systems (including OS X).
 
   As a consequence, fsw should build and work correctly on any system shipping
 either of the aforementioned APIs.

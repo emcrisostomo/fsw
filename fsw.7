@@ -24,9 +24,18 @@ hierarchies are modified.
 .Sh DESCRIPTION
 The 
 .Nm
-command uses the File System Events API introduced in Apple OS X v. 10.6 to
-request a notification when the contents of the specified files or directory
-hierarchies are modified.
+command receives notifications when the contents of the specified files or
+directories are modified.
+fsw implements two kind of
+watcher:
+.Bl -tag -width indent
+.It -
+A watcher based on the File System Events API of Apple OS X.
+.It -
+A watcher based on kqueue, an event notification interface introduces in
+FreeBSD 4.1 and supported on most *BSD systems (including OS X).
+-El
+
 .Nm
 writes a record for each event it receives containing:
 .Bl -tag -width indent
