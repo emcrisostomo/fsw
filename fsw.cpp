@@ -19,9 +19,9 @@
 using namespace std;
 
 static watcher *watcher = nullptr;
+static bool fflag = false;
 static bool nflag = false;
 static bool lflag = false;
-static bool tflag = false;
 static bool uflag = false;
 static bool vflag = false;
 static double lvalue = 1.0;
@@ -40,11 +40,11 @@ void usage()
   cout << PACKAGE_NAME << " [OPTION] ... path ...\n";
   cout << "\n";
   cout << "Options:\n";
+  cout << " -f, --format-time     Print the event time using the specified\n";
+  cout << "                       format.\n";
   cout << " -h, --help            Show this message.\n";
   cout << " -l, --latency=DOUBLE  Set the latency.\n";
   cout << " -n, --numeric         Print numeric event mask.\n";
-  cout << " -t, --time-format     Print the event time using the specified\n";
-  cout << "                       format.\n";
   cout << " -u, --utc-time        Print the event time as UTC time.\n";
   cout << " -v, --verbose         Print verbose output.\n";
   cout << "\n";
@@ -53,13 +53,13 @@ void usage()
 #else
   cout << PACKAGE_STRING << "\n\n";
   cout << "Syntax:\n";
-  cout << PACKAGE_NAME << " [-hlntuv] path ...\n";
+  cout << PACKAGE_NAME << " [-fhlnuv] path ...\n";
   cout << "\n";
   cout << "Usage:\n";
+  cout << " -f  Print the event time stamp with the specified format.\n";
   cout << " -h  Show this message.\n";
   cout << " -l  Set the latency.\n";
   cout << " -n  Print numeric event masks.\n";
-  cout << " -t  Print the event time stamp with the specified format.\n";
   cout << " -u  Print the event time as UTC time.\n";
   cout << " -v  Print verbose output.\n";
   cout << "\n";
@@ -241,16 +241,16 @@ void start_event_loop(int argc, char ** argv, int optind)
 int main(int argc, char ** argv)
 {
   int ch;
-  const char *short_options = "hl:nt:uv";
+  const char *short_options = "f:hl:nuv";
 
 #ifdef HAVE_GETOPT_LONG
   int option_index = 0;
   static struct option long_options[] =
   {
+  { "format-time", required_argument, 0, 'f' },
   { "help", no_argument, 0, 'h' },
   { "latency", required_argument, 0, 'l' },
   { "numeric", no_argument, 0, 'n' },
-  { "time-format", required_argument, 0, 't' },
   { "utc-time", no_argument, 0, 'u' },
   { "verbose", no_argument, 0, 'v' },
   { 0, 0, 0, 0 } };
@@ -270,6 +270,11 @@ int main(int argc, char ** argv)
     switch (ch)
     {
 
+    case 'f':
+      fflag = true;
+      tformat = string(optarg);
+      break;
+
     case 'h':
       usage();
       exit(FSW_EXIT_USAGE);
@@ -287,11 +292,6 @@ int main(int argc, char ** argv)
 
     case 'n':
       nflag = true;
-      break;
-
-    case 't':
-      tflag = true;
-      tformat = string(optarg);
       break;
 
     case 'u':

@@ -128,12 +128,12 @@ void kqueue_watcher::run()
       struct kevent event;
       event_list.push_back(event);
       open_files.push_back(file);
-      file_names.insert(pair<int, string>(file, path));
+      file_names[file] = path;
     }
 
     if (changes.size() == 0)
     {
-      ::sleep(latency > 1 ? latency : 1);
+      ::sleep(latency > MIN_SPIN_LATENCY ? latency : MIN_SPIN_LATENCY);
       continue;
     }
 
@@ -163,10 +163,8 @@ void kqueue_watcher::run()
       if (e.fflags)
       {
         vector<event_flag> evt_flags = decode_flags(e.fflags);
-        event evt =
-        { file_names[e.ident], curr_time, evt_flags };
 
-        events.push_back(evt);
+        events.push_back({ file_names[e.ident], curr_time, evt_flags });
       }
     }
 

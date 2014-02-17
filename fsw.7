@@ -18,8 +18,8 @@ hierarchies are modified.
 .Sh SYNOPSIS
 .Nm fsw
 .Op Fl hnuv
+.Op Fl f Ar format-time
 .Op Fl l Ar latency
-.Op Fl t Ar time-format
 
 .Sh DESCRIPTION
 The 
@@ -63,6 +63,13 @@ process.
 .Pp
 The following options are available:
 .Bl -tag -width indent
+
+.It Fl f, -format-time Ar format
+Print the event time using the specified
+.Ar format .
+Supported formats are specified by
+.Sy strftime (3) .
+
 .It Fl h
 Show the help message.
 
@@ -81,12 +88,6 @@ names.
 The numeric value of the event flags are system-specific and may vary across
 different versions of OS X.
 As a consequence, the use of numeric values is discouraged. 
-
-.It Fl t, -time-format Ar format
-Print the event time using the specified
-.Ar format .
-Supported formats are specified by
-.Sy strftime (3) .
 
 .It Fl u, -utf-time
 Print the event time in UTC format.
