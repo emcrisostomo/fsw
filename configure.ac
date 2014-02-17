@@ -18,7 +18,7 @@ AC_LANG(C++)
 AC_PROG_CXX([clang++ g++])
 
 # Configure C++ compiler
-AX_CXX_COMPILE_STDCXX_11
+AX_CXX_COMPILE_STDCXX_11(noext)
 AX_CXXFLAGS_WARN_ALL
 
 # Checks for libraries.
