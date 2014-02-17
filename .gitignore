@@ -6,3 +6,12 @@ autom4te.cache/
 .cproject
 .project
 .settings/
+
+# GNU Build System
+Makefile.in
+configure
+aclocal.m4
+config.*
+depcomp
+install-sh
+missing
