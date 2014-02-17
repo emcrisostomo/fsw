@@ -9,6 +9,7 @@ autom4te.cache/
 
 # GNU Build System
 Makefile.in
+compile
 configure
 aclocal.m4
 config.*

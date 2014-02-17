@@ -15,6 +15,7 @@ AC_CANONICAL_HOST
 AC_LANG(C++)
 
 # Checks for programs.
+AC_PROG_CC([clang gcc])
 AC_PROG_CXX([clang++ g++])
 
 # Configure C++ compiler
@@ -24,7 +25,7 @@ AX_CXXFLAGS_WARN_ALL
 # Checks for libraries.
 
 # Checks for header files.
-AC_CHECK_HEADERS([stdlib.h unistd.h getopt.h fcntl.h CoreServices/CoreServices.h sys/event.h])
+AC_CHECK_HEADERS([stdlib.h unistd.h getopt.h fcntl.h CoreServices/CoreServices.h sys/event.h sys/time.h])
 AM_CONDITIONAL([USE_CORESERVICES], [test "x${ac_cv_header_CoreServices_CoreServices_h}" = "xyes"])
 
 if test "x${ac_cv_header_sys_event_h}" != "xyes" && test "x${ac_cv_header_CoreServices_CoreServices_h}" != "xyes"
@@ -35,13 +36,15 @@ fi
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADER_STDBOOL
 AC_TYPE_SIZE_T
+AC_TYPE_UINT32_T
 
 # Checks for library functions.
 AC_FUNC_STRTOD
+AC_CHECK_FUNCS([getopt_long])
 AC_CHECK_FUNCS(
-  [getopt_long],
+  [modf],
   ,
-  AC_MSG_ERROR([getopt_long function cannot be found.]) 
+  AC_MSG_ERROR([modf function cannot be found.]) 
 )
 
 if test "x${ac_cv_header_CoreServices_CoreServices_h}" != "xyes"

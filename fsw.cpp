@@ -34,7 +34,7 @@ bool is_verbose()
   return vflag;
 }
 
-void usage()
+static void usage()
 {
 #ifdef HAVE_GETOPT_LONG
   cout << PACKAGE_STRING << "\n\n";
@@ -73,7 +73,7 @@ void usage()
   exit(FSW_EXIT_USAGE);
 }
 
-void close_stream()
+static void close_stream()
 {
   if (watcher)
   {
@@ -83,7 +83,7 @@ void close_stream()
   }
 }
 
-void close_handler(int signal)
+static void close_handler(int signal)
 {
   close_stream();
 
@@ -91,7 +91,7 @@ void close_handler(int signal)
   exit(FSW_EXIT_OK);
 }
 
-bool validate_latency(double latency, ostream &ost, ostream &est)
+static bool validate_latency(double latency, ostream &ost, ostream &est)
 {
   if (lvalue == 0.0)
   {
@@ -113,7 +113,7 @@ bool validate_latency(double latency, ostream &ost, ostream &est)
   return true;
 }
 
-void register_signal_handlers()
+static void register_signal_handlers()
 {
   struct sigaction action;
   action.sa_handler = close_handler;
@@ -148,7 +148,7 @@ void register_signal_handlers()
   }
 }
 
-vector<string> decode_event_flag_name(vector<event_flag> flags)
+static vector<string> decode_event_flag_name(vector<event_flag> flags)
 {
   vector<string> names;
 
@@ -212,7 +212,7 @@ static void print_event_timestamp(time_t evt_time)
   cout << date << " - ";
 }
 
-static void notify_events(vector<event> events)
+static void process_events(vector<event> events)
 {
   for (event evt : events)
   {
@@ -234,7 +234,7 @@ static void notify_events(vector<event> events)
   }
 }
 
-void start_event_loop(int argc, char ** argv, int optind)
+static void start_event_loop(int argc, char ** argv, int optind)
 {
   // parsing paths
   vector<string> paths;
@@ -249,9 +249,9 @@ void start_event_loop(int argc, char ** argv, int optind)
   }
 
 #ifdef HAVE_CORESERVICES_CORESERVICES_H
-  watcher = new fsevent_watcher(paths, notify_events);
+  watcher = new fsevent_watcher(paths, process_events);
 #else
-  watcher = new kqueue_watcher(paths, notify_events);
+  watcher = new kqueue_watcher(paths, process_events);
 #endif
   watcher->set_latency(lvalue);
 

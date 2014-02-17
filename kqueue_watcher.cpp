@@ -8,11 +8,11 @@
 #include <sys/types.h>
 #include <sys/event.h>
 #include <sys/time.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <fcntl.h>
+#include <cstdio>
 #include <map>
 #include <cmath>
+#include <unistd.h>
+#include <fcntl.h>
 
 typedef struct KqueueFlagType
 {
@@ -149,6 +149,7 @@ void kqueue_watcher::run()
 
     if (event_num == -1)
     {
+      perror("::kevent returned -1");
       throw new fsw_exception("Invalid event number.");
     }
 
@@ -159,6 +160,12 @@ void kqueue_watcher::run()
     for (auto i = 0; i < event_num; ++i)
     {
       struct kevent e = event_list[i];
+
+      if (e.fflags & EV_ERROR)
+      {
+        perror("Event with EV_ERROR");
+        continue;
+      }
 
       if (e.fflags)
       {

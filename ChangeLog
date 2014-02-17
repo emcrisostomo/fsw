@@ -13,7 +13,11 @@ ChangeLog
 		    (sys/event.h) to be available.
 		  - remove OS check and check for available headers instead.
 		  - require strict C++11 conformance mode for the compiler.
-		  - search for clang++ and g++ compilers. 
+		  - search for clang++ and g++ compilers.
+		  - add AC_PROG_CC after autoscan complains.
+		  - add sys/time.h to the list of AC_CHECK_HEADERS.
+		  - add AC_TYPE_UINT32_T.
+		  - add AC_CHECK_FUNCS([modf],,AC_MSG_ERROR([...])).
 		* fsevent_watcher.cpp:
 		  - check for all the existing FSEventFlagName flags.
 		  - map platform-specific event flags to generic event flags. 
@@ -21,9 +25,12 @@ ChangeLog
 		* fsw.cpp:
 		  - use watcher base class.
 		  - fix includes so that fsw builds on FreeBSD (v. 10.0 was checked).
+		  - use static linkage whenever possible.
 		* kqueue_watcher.cpp:
 		  - add kqueue-based watcher for systems with kqueue.
 		  - map platform-specific event flags to generic event flags.
+		  - check presence of the EV_ERROR event flag and print an error if
+		    found.
 		* kqueue_watcher.h: add kqueue-based watcher for systems with kqueue.
 		* Makefile.am:
 		  - add new files.
