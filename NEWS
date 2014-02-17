@@ -1,6 +1,11 @@
 NEWS
 ****
 
+New in 1.1.0:
+
+  * New kqueue-based watcher added.
+  * FreeBSD support added (FreeBSD v. >= 10.0 has been tested).
+  
 New in 1.0.7:
 
   * No features were added.

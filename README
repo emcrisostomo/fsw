@@ -1,9 +1,15 @@
 README
 ******
 
-This is fsw, a program which uses the File System Events API of the Apple Mac
-OS X operating system to receive notification when the contents of the specified
-files or directories are modified.
+This is fsw, a program which receives notifications when the contents of the
+specified files or directories are modified.  fsw implements two kind of
+watcher:
+
+  * A watcher based on the File System Events API of Apple OS X.
+  * A watcher based on kqueue.
+
+  As a consequence, fsw should build and work correctly on any system shipping
+either of the aforementioned APIs.
 
 Installation
 ============
@@ -16,18 +22,19 @@ required to compile it.  A complete C/C++ toolchain for OS X is provided with
 Apple XCode, which can freely installed from the Apple App Store.
 
   No other software packages or dependencies are required to configure and
-install fsw.
+install fsw but the aforementioned APIs used by the file system watchers.
 
 Usage
 =====
 
 fsw accepts a list of paths for which change events should be received:
 
-  $ fsw [options] ... path0 ... pathn
+  $ fsw [options] ... path-0 ... path-n
 
 The event stream is created even if any of the paths do not exist yet.  If they
 are created after fsw is launched, change events will be properly received.
-This behaviour is possible thanks to the File System Events API.
+Depending on the wathcher being used, newly created paths will be monitored
+after the amount of configured latency has elapsed.
 
   For more information, refer to the fsw man page.
 

@@ -1,12 +1,12 @@
 ChangeLog
 *********
 
-2014-02-16  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
+2014-02-17  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
 
-		release: stable micro release 1.0.8:
+		release: stable minor release 1.1.0:
 		
 		* configure.ac:
-		  - bump version to 1.0.8.
+		  - bump version to 1.1.0.
 		  - check for either FSEvents (CoreServices/CoreServices.h) or kqueue
 		    (sys/event.h) to be available.
 		  - remove OS check and check for available headers instead.
