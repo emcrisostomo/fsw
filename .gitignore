@@ -1,0 +1,10 @@
+# GNU Build System
+build/
+autom4te.cache/
+configure
+
+# Eclipse CDT
+.autotools
+.cproject
+.project
+.settings/
