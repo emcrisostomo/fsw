@@ -24,7 +24,6 @@ private:
   kqueue_watcher& operator=(const kqueue_watcher & that);
 
   int kq = -1;
-  int myfile = -1;
 };
 
 #endif  /* HAVE_SYS_EVENT_H */

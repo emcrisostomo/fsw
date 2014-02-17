@@ -55,8 +55,6 @@ kqueue_watcher::~kqueue_watcher()
 {
   if (kq != -1)
     ::close(kq);
-  if (kq != -1)
-    ::close(myfile);
 }
 
 static vector<event_flag> decode_flags(uint32_t flag)
