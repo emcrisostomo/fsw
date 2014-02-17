@@ -14,12 +14,12 @@ AC_CANONICAL_HOST
 # Configure language
 AC_LANG(C++)
 
+# Checks for programs.
+AC_PROG_CXX([clang++ g++])
+
 # Configure C++ compiler
 AX_CXX_COMPILE_STDCXX_11
 AX_CXXFLAGS_WARN_ALL
-
-# Checks for programs.
-AC_PROG_CXX
 
 # Checks for libraries.
 
