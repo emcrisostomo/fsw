@@ -12,22 +12,37 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <map>
+#include <cmath>
 
 typedef struct KqueueFlagType
 {
   uint32_t flag;
   event_flag type;
-} FSEventFlagType;
+} KqueueFlagType;
 
-static vector<KqueueFlagType> event_flag_type =
+static vector<KqueueFlagType> create_flag_type_vector();
+static const vector<KqueueFlagType> event_flag_type = create_flag_type_vector();
+
+vector<KqueueFlagType> create_flag_type_vector()
 {
-{ NOTE_DELETE, event_flag::Removed },
-{ NOTE_WRITE, event_flag::Updated },
-{ NOTE_EXTEND, event_flag::PlatformSpecific },
-{ NOTE_ATTRIB, event_flag::AttributeModified },
-{ NOTE_LINK, event_flag::PlatformSpecific },
-{ NOTE_RENAME, event_flag::Renamed },
-{ NOTE_REVOKE, event_flag::PlatformSpecific } };
+  vector<KqueueFlagType> flags;
+  flags.push_back(
+  { NOTE_DELETE, event_flag::Removed });
+  flags.push_back(
+  { NOTE_WRITE, event_flag::Updated });
+  flags.push_back(
+  { NOTE_EXTEND, event_flag::PlatformSpecific });
+  flags.push_back(
+  { NOTE_ATTRIB, event_flag::AttributeModified });
+  flags.push_back(
+  { NOTE_LINK, event_flag::PlatformSpecific });
+  flags.push_back(
+  { NOTE_RENAME, event_flag::Renamed });
+  flags.push_back(
+  { NOTE_REVOKE, event_flag::PlatformSpecific });
+
+  return flags;
+}
 
 kqueue_watcher::kqueue_watcher(
     vector<string> paths_to_monitor,
@@ -57,6 +72,19 @@ static vector<event_flag> decode_flags(uint32_t flag)
   }
 
   return evt_flags;
+}
+
+static struct timespec create_timespec_from_latency(double latency)
+{
+  double seconds;
+  double nanoseconds = modf(latency, &seconds);
+  nanoseconds *= 1000000000;
+
+  struct timespec ts;
+  ts.tv_sec = seconds;
+  ts.tv_nsec = nanoseconds;
+
+  return ts;
 }
 
 void kqueue_watcher::run()
@@ -111,13 +139,15 @@ void kqueue_watcher::run()
       continue;
     }
 
+    struct timespec ts = create_timespec_from_latency(latency);
+
     int event_num = ::kevent(
         kq,
         &changes[0],
         changes.size(),
         &event_list[0],
         event_list.size(),
-        nullptr);
+        &ts);
 
     if (event_num == -1)
     {
@@ -128,7 +158,7 @@ void kqueue_watcher::run()
     time(&curr_time);
     vector<event> events;
 
-    for (auto i = 0; i < event_list.size(); ++i)
+    for (auto i = 0; i < event_num; ++i)
     {
       struct kevent e = event_list[i];
 

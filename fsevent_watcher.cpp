@@ -14,7 +14,7 @@ typedef struct FSEventFlagType
   event_flag type;
 } FSEventFlagType;
 
-static vector<FSEventFlagType> event_flag_type =
+static const vector<FSEventFlagType> event_flag_type =
 {
 { kFSEventStreamEventFlagNone, event_flag::PlatformSpecific },
 { kFSEventStreamEventFlagMustScanSubDirs, event_flag::PlatformSpecific },
