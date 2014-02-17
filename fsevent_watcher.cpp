@@ -75,10 +75,6 @@ void fsevent_watcher::run()
 
   for (string path : paths)
   {
-    fsw_log("Adding path: ");
-    fsw_log(path.c_str());
-    fsw_log("\n");
-
     dirs.push_back(
         CFStringCreateWithCString(NULL, path.c_str(), kCFStringEncodingUTF8));
   }
