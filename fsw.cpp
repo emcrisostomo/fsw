@@ -5,6 +5,7 @@
 #include <csignal>
 #include <cstdlib>
 #include <cmath>
+#include <ctime>
 #include <cerrno>
 #include <vector>
 #ifdef HAVE_GETOPT_LONG
@@ -22,6 +23,7 @@ static watcher *watcher = nullptr;
 static bool fflag = false;
 static bool nflag = false;
 static bool lflag = false;
+static bool tflag = false;
 static bool uflag = false;
 static bool vflag = false;
 static double lvalue = 1.0;
@@ -45,6 +47,7 @@ void usage()
   cout << " -h, --help            Show this message.\n";
   cout << " -l, --latency=DOUBLE  Set the latency.\n";
   cout << " -n, --numeric         Print numeric event mask.\n";
+  cout << " -t, --timestamp       Print the event timestamp.\n";
   cout << " -u, --utc-time        Print the event time as UTC time.\n";
   cout << " -v, --verbose         Print verbose output.\n";
   cout << "\n";
@@ -60,6 +63,7 @@ void usage()
   cout << " -h  Show this message.\n";
   cout << " -l  Set the latency.\n";
   cout << " -n  Print numeric event masks.\n";
+  cout << " -t  Print the event timestamp.\n";
   cout << " -u  Print the event time as UTC time.\n";
   cout << " -v  Print verbose output.\n";
   cout << "\n";
@@ -191,12 +195,32 @@ vector<string> decode_event_flag_name(vector<event_flag> flags)
   return names;
 }
 
-void notify_events(vector<event> events)
+static const unsigned int TIME_FORMAT_BUFF_SIZE = 128;
+
+static void print_event_timestamp(time_t evt_time)
+{
+  char time_format_buffer[TIME_FORMAT_BUFF_SIZE];
+  struct tm * tm_time = uflag ? gmtime(&evt_time) : localtime(&evt_time);
+
+  string date =
+      strftime(
+          time_format_buffer,
+          TIME_FORMAT_BUFF_SIZE,
+          tformat.c_str(),
+          tm_time) ? string(time_format_buffer) : string("<date format error>");
+
+  cout << date << " - ";
+}
+
+static void notify_events(vector<event> events)
 {
   for (event evt : events)
   {
     vector<event_flag> flags = evt.get_flags();
     vector<string> flag_names = decode_event_flag_name(flags);
+
+    if (tflag)
+      print_event_timestamp(evt.get_time());
 
     cout << evt.get_path();
     cout << " - ";
@@ -231,17 +255,13 @@ void start_event_loop(int argc, char ** argv, int optind)
 #endif
   watcher->set_latency(lvalue);
 
-//  watcher->set_numeric_event(nflag);
-//  watcher->set_time_format(tformat);
-//  watcher->set_utc_time(uflag);
-
   watcher->run();
 }
 
 int main(int argc, char ** argv)
 {
   int ch;
-  const char *short_options = "f:hl:nuv";
+  const char *short_options = "f:hl:ntuv";
 
 #ifdef HAVE_GETOPT_LONG
   int option_index = 0;
@@ -292,6 +312,10 @@ int main(int argc, char ** argv)
 
     case 'n':
       nflag = true;
+      break;
+
+    case 't':
+      tflag = true;
       break;
 
     case 'u':

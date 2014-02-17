@@ -19,8 +19,6 @@ public:
   virtual ~fsevent_watcher();
 
   void run();
-  void set_time_format(const string &format);
-  void set_utc_time(bool utc);
   void set_numeric_event(bool numeric);
 
 private:
@@ -36,11 +34,7 @@ private:
       const FSEventStreamEventId eventIds[]);
 
   FSEventStreamRef stream = nullptr;
-  string time_format = "%c";
-  bool utc_time = false;
   bool numeric_event = false;
-
-  static const unsigned int TIME_FORMAT_BUFF_SIZE = 128;
 };
 
 #endif  /* HAVE_CORESERVICES_CORESERVICES_H */

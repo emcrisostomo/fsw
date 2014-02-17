@@ -4,7 +4,6 @@
 
 #include "fsw_exception.h"
 #include "fsw_log.h"
-#include <ctime>
 #include <iostream>
 #include "event.h"
 
@@ -59,16 +58,6 @@ fsevent_watcher::~fsevent_watcher()
   }
 
   stream = nullptr;
-}
-
-void fsevent_watcher::set_time_format(const string &format)
-{
-  time_format = string(format);
-}
-
-void fsevent_watcher::set_utc_time(bool utc)
-{
-  utc_time = utc;
 }
 
 void fsevent_watcher::set_numeric_event(bool numeric)
@@ -170,25 +159,12 @@ void fsevent_watcher::fsevent_callback(
 
   time_t curr_time;
   time(&curr_time);
-//  char time_format_buffer[fsevent_watcher::TIME_FORMAT_BUFF_SIZE];
-//  struct tm * tm_time =
-//      watcher->utc_time ? gmtime(&curr_time) : localtime(&curr_time);
-
-  /*
-   string date =
-   strftime(
-   time_format_buffer,
-   TIME_FORMAT_BUFF_SIZE,
-   watcher->time_format.c_str(),
-   tm_time) ? string(time_format_buffer) : string("<date format error>");
-   */
 
   for (size_t i = 0; i < numEvents; ++i)
   {
     vector<event_flag> flags = decode_flags(eventFlags[i]);
-    event evt =
-    { ((char **) eventPaths)[i], curr_time, flags };
-    events.push_back(evt);
+
+    events.push_back({ ((char **) eventPaths)[i], curr_time, flags });
   }
 
   if (events.size() > 0)
