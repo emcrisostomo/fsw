@@ -5,20 +5,35 @@ ChangeLog
 
 		release: stable minor release 1.1.0:
 		
+		* autogen.sh: add script to bootstrap the GNU Build System.
+		* ChangeLog: updated.
 		* configure.ac:
 		  - bump version to 1.1.0.
 		  - check for either FSEvents (CoreServices/CoreServices.h) or kqueue
 		    (sys/event.h) to be available.
 		  - remove OS check and check for available headers instead.
-		* fsevent_watcher.cpp: check for all the existing FSEventFlagName flags.
+		  - require strict C++11 conformance mode for the compiler.
+		  - search for clang++ and g++ compilers. 
+		* fsevent_watcher.cpp:
+		  - check for all the existing FSEventFlagName flags.
+		  - map platform-specific event flags to generic event flags. 
+		* fsw.7: update man page.
 		* fsw.cpp:
 		  - use watcher base class.
 		  - fix includes so that fsw builds on FreeBSD (v. 10.0 was checked).
-		* kqueue_watcher.cpp: add kqueue-based watcher for systems with kqueue.
+		* kqueue_watcher.cpp:
+		  - add kqueue-based watcher for systems with kqueue.
+		  - map platform-specific event flags to generic event flags.
 		* kqueue_watcher.h: add kqueue-based watcher for systems with kqueue.
 		* Makefile.am:
 		  - add new files.
 		  - use conditional to use the -framework linker flag on OS X.
+		* NEWS: updated.
+		* README: updated.
+		* README.bsd: added.
+		* README.freebsd: added.
+		* README.gnu-build-system: added.
+		* README.osx: added.
 		* watcher.cpp: add watcher base class.
 		* watcher.h: add watcher base class.
 
