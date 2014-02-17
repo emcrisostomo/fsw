@@ -56,7 +56,7 @@ static void usage()
 #else
   cout << PACKAGE_STRING << "\n\n";
   cout << "Syntax:\n";
-  cout << PACKAGE_NAME << " [-fhlnuv] path ...\n";
+  cout << PACKAGE_NAME << " [-fhlntuv] path ...\n";
   cout << "\n";
   cout << "Usage:\n";
   cout << " -f  Print the event time stamp with the specified format.\n";
