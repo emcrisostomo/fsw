@@ -267,13 +267,13 @@ int main(int argc, char ** argv)
   int option_index = 0;
   static struct option long_options[] =
   {
-  { "format-time", required_argument, 0, 'f' },
-  { "help", no_argument, 0, 'h' },
-  { "latency", required_argument, 0, 'l' },
-  { "numeric", no_argument, 0, 'n' },
-  { "utc-time", no_argument, 0, 'u' },
-  { "verbose", no_argument, 0, 'v' },
-  { 0, 0, 0, 0 } };
+  { "format-time", required_argument, nullptr, 'f' },
+  { "help", no_argument, nullptr, 'h' },
+  { "latency", required_argument, nullptr, 'l' },
+  { "numeric", no_argument, nullptr, 'n' },
+  { "utc-time", no_argument, nullptr, 'u' },
+  { "verbose", no_argument, nullptr, 'v' },
+  { nullptr, 0, nullptr, 0 } };
 
   while ((ch = getopt_long(
       argc,
