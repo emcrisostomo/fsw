@@ -11,7 +11,8 @@
 #ifdef HAVE_GETOPT_LONG
 #include <getopt.h>
 #endif
-#ifdef HAVE_CORESERVICES_CORESERVICES_H
+// TODO: invert if
+#ifndef HAVE_CORESERVICES_CORESERVICES_H
 #include "fsevent_watcher.h"
 #else
 #include "kqueue_watcher.h"
@@ -23,6 +24,7 @@ static watcher *watcher = nullptr;
 static bool fflag = false;
 static bool nflag = false;
 static bool lflag = false;
+static bool rflag = false;
 static bool tflag = false;
 static bool uflag = false;
 static bool vflag = false;
@@ -47,6 +49,7 @@ static void usage()
   cout << " -h, --help            Show this message.\n";
   cout << " -l, --latency=DOUBLE  Set the latency.\n";
   cout << " -n, --numeric         Print numeric event mask.\n";
+  cout << " -r, --recursive       Recurse subdirectories.\n";
   cout << " -t, --timestamp       Print the event timestamp.\n";
   cout << " -u, --utc-time        Print the event time as UTC time.\n";
   cout << " -v, --verbose         Print verbose output.\n";
@@ -56,13 +59,14 @@ static void usage()
 #else
   cout << PACKAGE_STRING << "\n\n";
   cout << "Syntax:\n";
-  cout << PACKAGE_NAME << " [-fhlntuv] path ...\n";
+  cout << PACKAGE_NAME << " [-fhlnrtuv] path ...\n";
   cout << "\n";
   cout << "Usage:\n";
   cout << " -f  Print the event time stamp with the specified format.\n";
   cout << " -h  Show this message.\n";
   cout << " -l  Set the latency.\n";
   cout << " -n  Print numeric event masks.\n";
+  cout << " -r  Recurse subdirectories.\n";
   cout << " -t  Print the event timestamp.\n";
   cout << " -u  Print the event time as UTC time.\n";
   cout << " -v  Print verbose output.\n";
@@ -186,6 +190,9 @@ static vector<string> decode_event_flag_name(vector<event_flag> flags)
     case event_flag::IsSymLink:
       names.push_back("IsSymLink");
       break;
+    case event_flag::Link:
+      names.push_back("Link");
+      break;
     default:
       names.push_back("<Unknown>");
       break;
@@ -234,7 +241,7 @@ static void process_events(const vector<event> &events)
   }
 }
 
-static void start_event_loop(int argc, char ** argv, int optind)
+static void start_watcher(int argc, char ** argv, int optind)
 {
   // parsing paths
   vector<string> paths;
@@ -248,20 +255,22 @@ static void start_event_loop(int argc, char ** argv, int optind)
     paths.push_back(argv[i]);
   }
 
-#ifdef HAVE_CORESERVICES_CORESERVICES_H
+// TODO: invert if
+#ifndef HAVE_CORESERVICES_CORESERVICES_H
   watcher = new fsevent_watcher(paths, process_events);
 #else
   watcher = new kqueue_watcher(paths, process_events);
 #endif
   watcher->set_latency(lvalue);
+  watcher->set_recursive(rflag);
 
   watcher->run();
 }
 
-int main(int argc, char ** argv)
+static void parse_opts(int argc, char ** argv)
 {
   int ch;
-  const char *short_options = "f:hl:ntuv";
+  const char *short_options = "f:hl:nrtuv";
 
 #ifdef HAVE_GETOPT_LONG
   int option_index = 0;
@@ -271,6 +280,7 @@ int main(int argc, char ** argv)
   { "help", no_argument, nullptr, 'h' },
   { "latency", required_argument, nullptr, 'l' },
   { "numeric", no_argument, nullptr, 'n' },
+  { "recursive", no_argument, nullptr, 'r' },
   { "timestamp", no_argument, nullptr, 't' },
   { "utc-time", no_argument, nullptr, 'u' },
   { "verbose", no_argument, nullptr, 'v' },
@@ -315,6 +325,10 @@ int main(int argc, char ** argv)
       nflag = true;
       break;
 
+    case 'r':
+      rflag = true;
+      break;
+
     case 't':
       tflag = true;
       break;
@@ -332,6 +346,11 @@ int main(int argc, char ** argv)
       exit(FSW_EXIT_UNK_OPT);
     }
   }
+}
+
+int main(int argc, char ** argv)
+{
+  parse_opts(argc, argv);
 
   if (optind == argc)
   {
@@ -345,14 +364,16 @@ int main(int argc, char ** argv)
     register_signal_handlers();
 
     // configure and start the event loop
-    start_event_loop(argc, argv, optind);
-  } catch (exception & conf)
+    start_watcher(argc, argv, optind);
+  }
+  catch (exception & conf)
   {
     cerr << "An error occurred and the program will be terminated.\n";
     cerr << conf.what() << endl;
 
     return FSW_EXIT_ERROR;
-  } catch (...)
+  }
+  catch (...)
   {
     cerr << "An unknown error occurred and the program will be terminated.\n";
 

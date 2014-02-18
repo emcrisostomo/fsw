@@ -17,7 +17,7 @@ hierarchies are modified.
 
 .Sh SYNOPSIS
 .Nm fsw
-.Op Fl hntuv
+.Op Fl hnrtuv
 .Op Fl f Ar format-time
 .Op Fl l Ar latency
 
@@ -88,6 +88,10 @@ names.
 The numeric value of the event flags are system-specific and may vary across
 different versions of OS X.
 As a consequence, the use of numeric values is discouraged. 
+
+.It Fl r
+Watch subdirectories recursively.  This option may not be supported on all
+systems.
 
 .It Fl t
 Print the event timestamp.

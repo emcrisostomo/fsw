@@ -18,7 +18,8 @@ enum class event_flag
   AttributeModified,
   IsFile,
   IsDir,
-  IsSymLink
+  IsSymLink,
+  Link
 };
 
 class event

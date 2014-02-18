@@ -26,11 +26,13 @@ ChangeLog
 		  - use watcher base class.
 		  - fix includes so that fsw builds on FreeBSD (v. 10.0 was checked).
 		  - use static linkage whenever possible.
+		  - Add -r/--recursive option.
 		* kqueue_watcher.cpp:
 		  - add kqueue-based watcher for systems with kqueue.
 		  - map platform-specific event flags to generic event flags.
 		  - check presence of the EV_ERROR event flag and print an error if
 		    found.
+		  - implement -r/--recursive directory walking.
 		* kqueue_watcher.h: add kqueue-based watcher for systems with kqueue.
 		* Makefile.am:
 		  - add new files.

@@ -20,6 +20,11 @@ void watcher::set_latency(double latency)
   this->latency = latency;
 }
 
+void watcher::set_recursive(bool recursive)
+{
+  this->recursive = recursive;
+}
+
 watcher::~watcher()
 {
 }

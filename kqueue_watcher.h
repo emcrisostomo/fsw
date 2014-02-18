@@ -8,6 +8,8 @@
 #include "watcher.h"
 #include <string>
 #include <vector>
+#include <map>
+#include <sys/stat.h>
 
 using namespace std;
 
@@ -23,7 +25,20 @@ private:
   kqueue_watcher(const kqueue_watcher& orig);
   kqueue_watcher& operator=(const kqueue_watcher & that);
 
+  bool watch_path(const string &path);
+  bool add_watch(const string & path, int & descriptor, mode_t & mode);
+  void remove_watch(const string &path);
+  void remove_watch(int fd);
+  bool is_path_watched(const string & path);
+  void rescan_pending();
+  void scan_root_paths();
+
   int kq = -1;
+  // initial load
+  map<string, int> descriptors_by_file_name;
+  map<int, string> file_names_by_descriptor;
+  map<int, bool> descriptors_to_rescan;
+  map<int, mode_t> file_modes;
 
   static const unsigned int MIN_SPIN_LATENCY = 1;
 };
