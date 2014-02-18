@@ -111,13 +111,16 @@ bool kqueue_watcher::add_watch(
 
   if (fd == -1)
   {
+    string err = string("Cannot open ") + path;
+    perror(err.c_str());
     return false;
   }
 
   struct stat fd_stat;
   if (::stat(path.c_str(), &fd_stat) != 0)
   {
-    perror("::stat()");
+    string err = string("Cannot stat() ") + path;
+    perror(err.c_str());
     return false;
   }
 
@@ -155,7 +158,9 @@ bool kqueue_watcher::watch_path(const string &path)
   mode_t mode;
   int fd;
   if (!add_watch(path, fd, mode))
+  {
     return false;
+  }
 
   if (!recursive)
     return true;
@@ -264,6 +269,9 @@ void kqueue_watcher::scan_root_paths()
 
 void kqueue_watcher::run()
 {
+  if (kq != -1)
+    throw new fsw_exception("kqueue already running.");
+
   kq = ::kqueue();
 
   if (kq == -1)
@@ -353,108 +361,6 @@ void kqueue_watcher::run()
       callback(events);
     }
   }
-
-  /*
-   while (true)
-   {
-   vector<struct kevent> changes;
-   vector<struct kevent> event_list;
-   vector<int> open_files;
-   map<int, string> file_names;
-
-   for (string path : paths)
-   {
-   int file = ::open(path.c_str(),
-   #ifdef O_EVTONLY
-   O_EVTONLY
-   #else
-   O_RDONLY
-   #endif
-   );
-
-   if (file == -1)
-   {
-   fsw_log("Notice: ");
-   fsw_log(path.c_str());
-   fsw_log(" cannot be found. Skipping.\n");
-
-   continue;
-   }
-
-   struct kevent change;
-
-   EV_SET(
-   &change,
-   file,
-   EVFILT_VNODE,
-   EV_ADD | EV_ENABLE | EV_CLEAR ,
-   NOTE_DELETE | NOTE_EXTEND | NOTE_RENAME | NOTE_WRITE | NOTE_ATTRIB | NOTE_LINK | NOTE_REVOKE,
-   0,
-   0);
-
-   changes.push_back(change);
-   struct kevent event;
-   event_list.push_back(event);
-   open_files.push_back(file);
-   file_names[file] = path;
-   }
-
-   if (changes.size() == 0)
-   {
-   ::sleep(latency > MIN_SPIN_LATENCY ? latency : MIN_SPIN_LATENCY);
-   continue;
-   }
-
-   struct timespec ts = create_timespec_from_latency(latency);
-
-   int event_num = ::kevent(
-   kq,
-   &changes[0],
-   changes.size(),
-   &event_list[0],
-   event_list.size(),
-   &ts);
-
-   if (event_num == -1)
-   {
-   perror("::kevent returned -1");
-   throw new fsw_exception("Invalid event number.");
-   }
-
-   time_t curr_time;
-   time(&curr_time);
-   vector<event> events;
-
-   for (auto i = 0; i < event_num; ++i)
-   {
-   struct kevent e = event_list[i];
-
-   if (e.fflags & EV_ERROR)
-   {
-   perror("Event with EV_ERROR");
-   continue;
-   }
-
-   if (e.fflags)
-   {
-   vector<event_flag> evt_flags = decode_flags(e.fflags);
-
-   events.push_back(
-   { file_names[e.ident], curr_time, evt_flags });
-   }
-   }
-
-   if (events.size() > 0)
-   {
-   callback(events);
-   }
-
-   for (int file : open_files)
-   {
-   ::close(file);
-   }
-   }
-   */
 }
 
 #endif  /* HAVE_SYS_EVENT_H */
