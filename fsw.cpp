@@ -271,6 +271,7 @@ int main(int argc, char ** argv)
   { "help", no_argument, nullptr, 'h' },
   { "latency", required_argument, nullptr, 'l' },
   { "numeric", no_argument, nullptr, 'n' },
+  { "timestamp", no_argument, nullptr, 't' },
   { "utc-time", no_argument, nullptr, 'u' },
   { "verbose", no_argument, nullptr, 'v' },
   { nullptr, 0, nullptr, 0 } };
