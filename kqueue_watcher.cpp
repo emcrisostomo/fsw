@@ -13,6 +13,7 @@
 #include <cmath>
 #include <unistd.h>
 #include <fcntl.h>
+#include <ftw.h>
 
 typedef struct KqueueFlagType
 {
@@ -103,7 +104,13 @@ void kqueue_watcher::run()
 
     for (string path : paths)
     {
-      int file = ::open(path.c_str(), O_RDONLY);
+      int file = ::open(path.c_str(),
+#ifdef O_EVTONLY
+          O_EVTONLY
+#else
+          O_RDONLY
+#endif
+          );
       if (file == -1)
       {
         fsw_log("Notice: ");
@@ -111,6 +118,11 @@ void kqueue_watcher::run()
         fsw_log(" cannot be found. Skipping.\n");
 
         continue;
+      }
+
+      if (recursive)
+      {
+
       }
 
       struct kevent change;
@@ -171,7 +183,8 @@ void kqueue_watcher::run()
       {
         vector<event_flag> evt_flags = decode_flags(e.fflags);
 
-        events.push_back({ file_names[e.ident], curr_time, evt_flags });
+        events.push_back(
+        { file_names[e.ident], curr_time, evt_flags });
       }
     }
 
