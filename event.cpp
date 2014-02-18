@@ -9,17 +9,17 @@ event::~event()
 {
 }
 
-string event::get_path()
+string event::get_path() const
 {
   return path;
 }
 
-time_t event::get_time()
+time_t event::get_time() const
 {
   return evt_time;
 }
 
-vector<event_flag> event::get_flags()
+vector<event_flag> event::get_flags() const
 {
   return evt_flags;
 }

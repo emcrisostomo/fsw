@@ -7,7 +7,7 @@
 
 using namespace std;
 
-typedef void (*EVENT_CALLBACK)(vector<event>);
+typedef void (*EVENT_CALLBACK)(const vector<event> &);
 
 class watcher
 {

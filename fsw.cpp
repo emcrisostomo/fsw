@@ -197,7 +197,7 @@ static vector<string> decode_event_flag_name(vector<event_flag> flags)
 
 static const unsigned int TIME_FORMAT_BUFF_SIZE = 128;
 
-static void print_event_timestamp(time_t evt_time)
+static void print_event_timestamp(const time_t &evt_time)
 {
   char time_format_buffer[TIME_FORMAT_BUFF_SIZE];
   struct tm * tm_time = uflag ? gmtime(&evt_time) : localtime(&evt_time);
@@ -212,7 +212,7 @@ static void print_event_timestamp(time_t evt_time)
   cout << date << " - ";
 }
 
-static void process_events(vector<event> events)
+static void process_events(const vector<event> &events)
 {
   for (event evt : events)
   {
