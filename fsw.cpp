@@ -363,7 +363,7 @@ int main(int argc, char ** argv)
     // registering handlers to clean up resources
     register_signal_handlers();
 
-    // configure and start the event loop
+    // configure and start the watcher loop
     start_watcher(argc, argv, optind);
   }
   catch (exception & conf)

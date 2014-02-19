@@ -117,6 +117,7 @@ bool kqueue_watcher::add_watch(
   }
 
   struct stat fd_stat;
+
   if (::stat(path.c_str(), &fd_stat) != 0)
   {
     string err = string("Cannot stat() ") + path;
@@ -339,7 +340,7 @@ void kqueue_watcher::run()
     {
       struct kevent e = event_list[i];
 
-      if (e.fflags & EV_ERROR)
+      if (e.flags & EV_ERROR)
       {
         perror("Event with EV_ERROR");
         continue;
