@@ -112,7 +112,8 @@ bool kqueue_watcher::add_watch(
   if (fd == -1)
   {
     string err = string("Cannot open ") + path;
-    perror(err.c_str());
+    fsw_perror(err.c_str());
+
     return false;
   }
 
@@ -121,7 +122,8 @@ bool kqueue_watcher::add_watch(
   if (::stat(path.c_str(), &fd_stat) != 0)
   {
     string err = string("Cannot stat() ") + path;
-    perror(err.c_str());
+    fsw_perror(err.c_str());
+
     return false;
   }
 
@@ -142,7 +144,7 @@ static void get_directory_children(const string &path, vector<string> &children)
 
   if (!dir)
   {
-    perror("opendir");
+    fsw_perror("opendir");
     return;
   }
 
@@ -158,6 +160,7 @@ bool kqueue_watcher::watch_path(const string &path)
 {
   mode_t mode;
   int fd;
+
   if (!add_watch(path, fd, mode))
   {
     return false;
@@ -224,12 +227,7 @@ void kqueue_watcher::rescan_pending()
   //for (pair<int, bool> fd_pair : descriptors_to_rescan)
   while (fd_pair != descriptors_to_rescan.end())
   {
-    int fd = fd_pair->first;
-
-    // get the path of the descriptor and remove it from the
-    // (descriptor, path) map
-    string fd_path = file_names_by_descriptor[fd];
-    remove_watch(fd);
+    string fd_path = file_names_by_descriptor[fd_pair->first];
 
     // Rescan the hierarchy rooted at fd_path.
     // If the path does not exist any longer, nothing needs to be done since
@@ -241,12 +239,7 @@ void kqueue_watcher::rescan_pending()
     // If the descriptor which has vanished is a directory, we don't bother
     // EV_DELETE-ing all its children the event from kqueue for the same
     // reason.
-    if (!watch_path(fd_path))
-    {
-      fsw_log("Notice: ");
-      fsw_log(fd_path.c_str());
-      fsw_log(" cannot be found. Will retry later.\n");
-    }
+    watch_path(fd_path);
 
     descriptors_to_rescan.erase(fd_pair++);
   }
@@ -300,7 +293,7 @@ void kqueue_watcher::run()
           &change,
           fd_path.first,
           EVFILT_VNODE,
-          EV_ADD | EV_ENABLE,
+          EV_ADD | EV_ENABLE | EV_CLEAR,
           NOTE_DELETE | NOTE_EXTEND | NOTE_RENAME | NOTE_WRITE | NOTE_ATTRIB | NOTE_LINK | NOTE_REVOKE,
           0,
           0);
@@ -346,10 +339,20 @@ void kqueue_watcher::run()
         continue;
       }
 
-      if (e.fflags)
+      // If a NOTE_DELETE, NOTE_RENAME or NOTE_REVOKE flag is found, the file
+      // descriptor should probably be closed and the file should be rescanned.
+      // If a NOTE_WRITE flag is found and the descriptor is a directory, then
+      // the directory needs to be rescanned because at least one file has
+      // either been created or deleted.
+      if ((e.fflags & NOTE_DELETE) || (e.fflags & NOTE_RENAME)
+          || (e.fflags & NOTE_REVOKE)
+          || ((e.fflags & NOTE_WRITE) && S_ISDIR(file_modes[e.ident])))
       {
         descriptors_to_rescan[e.ident] = true;
+      }
 
+      if (e.fflags)
+      {
         vector<event_flag> evt_flags = decode_flags(e.fflags);
 
         events.push_back(
