@@ -101,13 +101,27 @@ bool kqueue_watcher::add_watch(
     remove_watch(path);
   }
 
-  int fd = ::open(path.c_str(),
-#ifdef O_EVTONLY
-      O_EVTONLY
-#else
-      O_RDONLY
+  cout << "Adding " << path << endl;
+
+  if (tracked_files >= MAX_TRACKED_FILES)
+  {
+    cout << "Cannot open " << path << endl;
+    return false;
+  }
+
+  int o_flags = 0;
+#ifdef O_SYMLINK
+  o_flags |= O_SYMLINK;
+#elif defined(O_NOFOLLOW)
+  o_flags |= O_NOFOLLOW;
 #endif
-      );
+#ifdef O_EVTONLY
+  o_flags |= O_EVTONLY;
+#else
+  o_flags |= O_RDONLY;
+#endif
+
+  int fd = ::open(path.c_str(), o_flags);
 
   if (fd == -1)
   {
@@ -131,6 +145,7 @@ bool kqueue_watcher::add_watch(
   descriptors_by_file_name[path] = fd;
   file_names_by_descriptor[fd] = path;
   file_modes[fd] = fd_stat.st_mode;
+  ++tracked_files;
 
   mode = fd_stat.st_mode;
   descriptor = fd;
@@ -209,6 +224,7 @@ void kqueue_watcher::remove_watch(int fd)
   descriptors_by_file_name.erase(name);
   file_modes.erase(fd);
   ::close(fd);
+  --tracked_files;
 }
 
 void kqueue_watcher::remove_watch(const string &path)
@@ -218,13 +234,13 @@ void kqueue_watcher::remove_watch(const string &path)
   file_names_by_descriptor.erase(fd);
   file_modes.erase(fd);
   ::close(fd);
+  --tracked_files;
 }
 
 void kqueue_watcher::rescan_pending()
 {
   auto fd_pair = descriptors_to_rescan.begin();
 
-  //for (pair<int, bool> fd_pair : descriptors_to_rescan)
   while (fd_pair != descriptors_to_rescan.end())
   {
     string fd_path = file_names_by_descriptor[fd_pair->first];
@@ -254,9 +270,8 @@ void kqueue_watcher::scan_root_paths()
 
     if (!watch_path(path))
     {
-      fsw_log("Notice: ");
-      fsw_log(path.c_str());
-      fsw_log(" cannot be found. Will retry later.\n");
+      string err = "Notice: " + path + " cannot be found. Will retry later.\n";
+      fsw_log(err.c_str());
     }
   }
 }

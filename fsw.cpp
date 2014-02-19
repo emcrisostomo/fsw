@@ -44,8 +44,7 @@ static void usage()
   cout << PACKAGE_NAME << " [OPTION] ... path ...\n";
   cout << "\n";
   cout << "Options:\n";
-  cout << " -f, --format-time     Print the event time using the specified\n";
-  cout << "                       format.\n";
+  cout << " -f, --format-time     Print the event time using the specified format.\n";
   cout << " -h, --help            Show this message.\n";
   cout << " -l, --latency=DOUBLE  Set the latency.\n";
   cout << " -n, --numeric         Print numeric event mask.\n";

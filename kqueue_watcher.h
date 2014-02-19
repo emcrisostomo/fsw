@@ -39,8 +39,11 @@ private:
   map<int, string> file_names_by_descriptor;
   map<int, bool> descriptors_to_rescan;
   map<int, mode_t> file_modes;
+  unsigned int tracked_files = 0;
+  unsigned int max_tracked_files = MAX_TRACKED_FILES;
 
   static const unsigned int MIN_SPIN_LATENCY = 1;
+  static const unsigned int MAX_TRACKED_FILES = 128;
 };
 
 #endif  /* HAVE_SYS_EVENT_H */
