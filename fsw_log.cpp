@@ -11,3 +11,11 @@ void fsw_log(const char * msg)
     cout << msg;
   }
 }
+
+void fsw_perror(const char * msg)
+{
+  if (is_verbose())
+  {
+    perror(msg);
+  }
+}
