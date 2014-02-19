@@ -18,6 +18,7 @@ ChangeLog
 		  - add sys/time.h to the list of AC_CHECK_HEADERS.
 		  - add AC_TYPE_UINT32_T.
 		  - add AC_CHECK_FUNCS([modf],,AC_MSG_ERROR([...])).
+		  - add AC_TYPE_MOD_T.
 		* fsevent_watcher.cpp:
 		  - check for all the existing FSEventFlagName flags.
 		  - map platform-specific event flags to generic event flags. 
