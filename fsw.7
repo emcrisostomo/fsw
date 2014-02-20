@@ -26,7 +26,7 @@ The
 .Nm
 command receives notifications when the contents of the specified files or
 directories are modified.
-fsw implements two kind of
+fsw implements three kind of
 watcher:
 .Bl -tag -width indent
 
@@ -39,7 +39,7 @@ FreeBSD 4.1 and supported on most *BSD systems (including OS X).
 
 .It -
 A watcher which periodically stats the file system, saves file modification
-times in memory and manually detects changes.
+times in memory and manually calculates changes.
 
 .El
 
