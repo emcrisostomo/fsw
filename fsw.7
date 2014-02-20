@@ -4,7 +4,7 @@
 .\"
 .\"   $Log$
 .\"
-.Dd February 10, 2014
+.Dd February 20, 2014
 .Dt FSW "" "FSEvent watcher"
 .Os "Darwin 10.0"
 .An Enrico Maria Crisostomo
@@ -17,7 +17,7 @@ hierarchies are modified.
 
 .Sh SYNOPSIS
 .Nm fsw
-.Op Fl hnrtuv
+.Op Fl hknrtuv
 .Op Fl f Ar format-time
 .Op Fl l Ar latency
 
@@ -72,6 +72,11 @@ Supported formats are specified by
 
 .It Fl h
 Show the help message.
+
+.It Fl k
+Use the kqueue watcher.
+This option is only available when more than one watcher is available, and one
+of them is the kqueue watcher.
 
 .It Fl l Ar latency
 Set the
