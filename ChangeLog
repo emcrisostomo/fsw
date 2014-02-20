@@ -30,6 +30,8 @@ ChangeLog
 		  - Use static linkage whenever possible.
 		  - Add -r/--recursive option.
 		  - Normalize paths with ::realpath.
+		  - Add -k/--kqueue option to use a kqueue watcher when more than one
+		    kind of watcher is available.
 		* fsw_log.cpp: added wrapper function triggering perror() only if the
 		  application is in verbose mode.
 		* fsw_log.h: added wrapper function triggering perror() only if the

@@ -342,12 +342,20 @@ void kqueue_watcher::process_events(
       continue;
     }
 
-    // If a NOTE_DELETE, NOTE_RENAME or NOTE_REVOKE flag is found, the file
+    // If a NOTE_DELETE is found or a NOTE_LINK is found on a directory, then
+    // the descriptor should be closed and the node rescanned: removing a
+    // subtree in *BSD usually result in NOTE_REMOVED | NOTE_LINK being logged
+    // for each subdirectory, but sometimes NOTE_WRITE | NOTE_LINK is only
+    // observed.  For this reason we mark those descriptors as to be deleted
+    // anyway.
+    //
+    // If a NOTE_RENAME or NOTE_REVOKE flag is found, the file
     // descriptor should probably be closed and the file should be rescanned.
     // If a NOTE_WRITE flag is found and the descriptor is a directory, then
     // the directory needs to be rescanned because at least one file has
     // either been created or deleted.
-    if (e.fflags & NOTE_DELETE)
+    if ((e.fflags & NOTE_DELETE)
+        || ((e.fflags & NOTE_LINK) && S_ISDIR(file_modes[e.ident])))
     {
       descriptors_to_remove[e.ident] = true;
     }
@@ -357,6 +365,8 @@ void kqueue_watcher::process_events(
       descriptors_to_rescan[e.ident] = true;
     }
 
+    // invoke the callback passing every path for which an event has been
+    // received with a non empty filter flag.
     if (e.fflags)
     {
       vector<event_flag> evt_flags = decode_flags(e.fflags);

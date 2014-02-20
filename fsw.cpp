@@ -11,10 +11,10 @@
 #ifdef HAVE_GETOPT_LONG
 #include <getopt.h>
 #endif
-// TODO: invert if
-#ifndef HAVE_CORESERVICES_CORESERVICES_H
+#ifdef HAVE_CORESERVICES_CORESERVICES_H
 #include "fsevent_watcher.h"
-#else
+#endif
+#ifdef HAVE_SYS_EVENT_H
 #include "kqueue_watcher.h"
 #endif
 
@@ -22,6 +22,9 @@ using namespace std;
 
 static watcher *watcher = nullptr;
 static bool fflag = false;
+#if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
+static bool kflag = false;
+#endif
 static bool nflag = false;
 static bool lflag = false;
 static bool rflag = false;
@@ -44,8 +47,12 @@ static void usage()
   cout << PACKAGE_NAME << " [OPTION] ... path ...\n";
   cout << "\n";
   cout << "Options:\n";
-  cout << " -f, --format-time     Print the event time using the specified format.\n";
+  cout
+      << " -f, --format-time     Print the event time using the specified format.\n";
   cout << " -h, --help            Show this message.\n";
+#if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
+  cout << " -k, --kqueue          Use the kqueue watcher.\n";
+#endif
   cout << " -l, --latency=DOUBLE  Set the latency.\n";
   cout << " -n, --numeric         Print numeric event mask.\n";
   cout << " -r, --recursive       Recurse subdirectories.\n";
@@ -63,6 +70,9 @@ static void usage()
   cout << "Usage:\n";
   cout << " -f  Print the event time stamp with the specified format.\n";
   cout << " -h  Show this message.\n";
+#if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
+  cout << " -k  Use the kqueue watcher.\n";
+#endif
   cout << " -l  Set the latency.\n";
   cout << " -n  Print numeric event masks.\n";
   cout << " -r  Recurse subdirectories.\n";
@@ -257,8 +267,16 @@ static void start_watcher(int argc, char ** argv, int optind)
     paths.push_back(path);
   }
 
-// TODO: invert if
-#ifndef HAVE_CORESERVICES_CORESERVICES_H
+#if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
+  if (kflag)
+  {
+    watcher = new kqueue_watcher(paths, process_events);
+  }
+  else
+  {
+    watcher = new fsevent_watcher(paths, process_events);
+  }
+#elif defined(HAVE_CORESERVICES_CORESERVICES_H)
   watcher = new fsevent_watcher(paths, process_events);
 #else
   watcher = new kqueue_watcher(paths, process_events);
@@ -272,7 +290,11 @@ static void start_watcher(int argc, char ** argv, int optind)
 static void parse_opts(int argc, char ** argv)
 {
   int ch;
+#if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
+  const char *short_options = "f:hkl:nrtuv";
+#else
   const char *short_options = "f:hl:nrtuv";
+#endif
 
 #ifdef HAVE_GETOPT_LONG
   int option_index = 0;
@@ -280,6 +302,9 @@ static void parse_opts(int argc, char ** argv)
   {
   { "format-time", required_argument, nullptr, 'f' },
   { "help", no_argument, nullptr, 'h' },
+#if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
+  { "kqueue", no_argument, nullptr, 'k' },
+#endif
   { "latency", required_argument, nullptr, 'l' },
   { "numeric", no_argument, nullptr, 'n' },
   { "recursive", no_argument, nullptr, 'r' },
@@ -311,6 +336,12 @@ static void parse_opts(int argc, char ** argv)
     case 'h':
       usage();
       exit(FSW_EXIT_USAGE);
+
+#if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
+    case 'k':
+      kflag = true;
+      break;
+#endif
 
     case 'l':
       lflag = true;
