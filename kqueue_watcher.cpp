@@ -101,8 +101,6 @@ bool kqueue_watcher::add_watch(
     remove_watch(path);
   }
 
-  cout << "Adding " << path << endl;
-
   if (tracked_files >= MAX_TRACKED_FILES)
   {
     cout << "Cannot open " << path << endl;
@@ -237,6 +235,18 @@ void kqueue_watcher::remove_watch(const string &path)
   --tracked_files;
 }
 
+void kqueue_watcher::remove_deleted()
+{
+  auto fd_pair = descriptors_to_remove.begin();
+
+  while (fd_pair != descriptors_to_remove.end())
+  {
+    remove_watch(fd_pair->first);
+
+    descriptors_to_remove.erase(fd_pair++);
+  }
+}
+
 void kqueue_watcher::rescan_pending()
 {
   auto fd_pair = descriptors_to_rescan.begin();
@@ -276,7 +286,7 @@ void kqueue_watcher::scan_root_paths()
   }
 }
 
-void kqueue_watcher::run()
+void kqueue_watcher::initialize_kqueue()
 {
   if (kq != -1)
     throw new fsw_exception("kqueue already running.");
@@ -288,9 +298,90 @@ void kqueue_watcher::run()
     perror("::kqueue()");
     throw fsw_exception("kqueue failed.");
   }
+}
+
+int kqueue_watcher::wait_for_events(
+    const vector<struct kevent> &changes,
+    vector<struct kevent> &event_list)
+{
+  struct timespec ts = create_timespec_from_latency(latency);
+
+  int event_num = ::kevent(
+      kq,
+      &changes[0],
+      changes.size(),
+      &event_list[0],
+      event_list.size(),
+      &ts);
+
+  if (event_num == -1)
+  {
+    perror("::kevent returned -1");
+    throw new fsw_exception("Invalid event number.");
+  }
+
+  return event_num;
+}
+
+void kqueue_watcher::process_events(
+    const vector<struct kevent> &changes,
+    const vector<struct kevent> &event_list,
+    int event_num)
+{
+  time_t curr_time;
+  time(&curr_time);
+  vector<event> events;
+
+  for (auto i = 0; i < event_num; ++i)
+  {
+    struct kevent e = event_list[i];
+
+    if (e.flags & EV_ERROR)
+    {
+      perror("Event with EV_ERROR");
+      continue;
+    }
+
+    // If a NOTE_DELETE, NOTE_RENAME or NOTE_REVOKE flag is found, the file
+    // descriptor should probably be closed and the file should be rescanned.
+    // If a NOTE_WRITE flag is found and the descriptor is a directory, then
+    // the directory needs to be rescanned because at least one file has
+    // either been created or deleted.
+    if (e.fflags & NOTE_DELETE)
+    {
+      descriptors_to_remove[e.ident] = true;
+    }
+    else if ((e.fflags & NOTE_RENAME) || (e.fflags & NOTE_REVOKE)
+        || ((e.fflags & NOTE_WRITE) && S_ISDIR(file_modes[e.ident])))
+    {
+      descriptors_to_rescan[e.ident] = true;
+    }
+
+    if (e.fflags)
+    {
+      vector<event_flag> evt_flags = decode_flags(e.fflags);
+
+      events.push_back(
+      { file_names_by_descriptor[e.ident], curr_time, evt_flags });
+    }
+  }
+
+  if (events.size() > 0)
+  {
+    callback(events);
+  }
+
+}
+
+void kqueue_watcher::run()
+{
+  initialize_kqueue();
 
   while (true)
   {
+    // remove the deleted descriptors
+    remove_deleted();
+
     // rescan the pending descriptors
     rescan_pending();
 
@@ -324,61 +415,8 @@ void kqueue_watcher::run()
       continue;
     }
 
-    struct timespec ts = create_timespec_from_latency(latency);
-
-    int event_num = ::kevent(
-        kq,
-        &changes[0],
-        changes.size(),
-        &event_list[0],
-        event_list.size(),
-        &ts);
-
-    if (event_num == -1)
-    {
-      perror("::kevent returned -1");
-      throw new fsw_exception("Invalid event number.");
-    }
-
-    time_t curr_time;
-    time(&curr_time);
-    vector<event> events;
-
-    for (auto i = 0; i < event_num; ++i)
-    {
-      struct kevent e = event_list[i];
-
-      if (e.flags & EV_ERROR)
-      {
-        perror("Event with EV_ERROR");
-        continue;
-      }
-
-      // If a NOTE_DELETE, NOTE_RENAME or NOTE_REVOKE flag is found, the file
-      // descriptor should probably be closed and the file should be rescanned.
-      // If a NOTE_WRITE flag is found and the descriptor is a directory, then
-      // the directory needs to be rescanned because at least one file has
-      // either been created or deleted.
-      if ((e.fflags & NOTE_DELETE) || (e.fflags & NOTE_RENAME)
-          || (e.fflags & NOTE_REVOKE)
-          || ((e.fflags & NOTE_WRITE) && S_ISDIR(file_modes[e.ident])))
-      {
-        descriptors_to_rescan[e.ident] = true;
-      }
-
-      if (e.fflags)
-      {
-        vector<event_flag> evt_flags = decode_flags(e.fflags);
-
-        events.push_back(
-        { file_names_by_descriptor[e.ident], curr_time, evt_flags });
-      }
-    }
-
-    if (events.size() > 0)
-    {
-      callback(events);
-    }
+    const int event_num = wait_for_events(changes, event_list);
+    process_events(changes, event_list, event_num);
   }
 }
 
