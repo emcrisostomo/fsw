@@ -17,6 +17,7 @@
 #ifdef HAVE_SYS_EVENT_H
 #include "kqueue_watcher.h"
 #endif
+#include "poll_watcher.h"
 
 using namespace std;
 
@@ -27,6 +28,7 @@ static bool kflag = false;
 #endif
 static bool nflag = false;
 static bool lflag = false;
+static bool pflag = false;
 static bool rflag = false;
 static bool tflag = false;
 static bool uflag = false;
@@ -55,6 +57,7 @@ static void usage()
 #endif
   cout << " -l, --latency=DOUBLE  Set the latency.\n";
   cout << " -n, --numeric         Print numeric event mask.\n";
+  cout << " -p, --poll            Use the poll watcher.\n";
   cout << " -r, --recursive       Recurse subdirectories.\n";
   cout << " -t, --timestamp       Print the event timestamp.\n";
   cout << " -u, --utc-time        Print the event time as UTC time.\n";
@@ -65,7 +68,7 @@ static void usage()
 #else
   cout << PACKAGE_STRING << "\n\n";
   cout << "Syntax:\n";
-  cout << PACKAGE_NAME << " [-fhlnrtuv] path ...\n";
+  cout << PACKAGE_NAME << " [-fhlnprtuv] path ...\n";
   cout << "\n";
   cout << "Usage:\n";
   cout << " -f  Print the event time stamp with the specified format.\n";
@@ -75,6 +78,7 @@ static void usage()
 #endif
   cout << " -l  Set the latency.\n";
   cout << " -n  Print numeric event masks.\n";
+  cout << " -p  Use the poll watcher.\n";
   cout << " -r  Recurse subdirectories.\n";
   cout << " -t  Print the event timestamp.\n";
   cout << " -u  Print the event time as UTC time.\n";
@@ -267,20 +271,28 @@ static void start_watcher(int argc, char ** argv, int optind)
     paths.push_back(path);
   }
 
-#if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
-  if (kflag)
+  if (pflag)
   {
-    watcher = new kqueue_watcher(paths, process_events);
+    watcher = new poll_watcher(paths, process_events);
   }
   else
   {
-    watcher = new fsevent_watcher(paths, process_events);
-  }
+#if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
+    if (kflag)
+    {
+      watcher = new kqueue_watcher(paths, process_events);
+    }
+    else
+    {
+      watcher = new fsevent_watcher(paths, process_events);
+    }
 #elif defined(HAVE_CORESERVICES_CORESERVICES_H)
-  watcher = new fsevent_watcher(paths, process_events);
+    watcher = new fsevent_watcher(paths, process_events);
 #else
-  watcher = new kqueue_watcher(paths, process_events);
+    watcher = new kqueue_watcher(paths, process_events);
 #endif
+  }
+
   watcher->set_latency(lvalue);
   watcher->set_recursive(rflag);
 
@@ -291,9 +303,9 @@ static void parse_opts(int argc, char ** argv)
 {
   int ch;
 #if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
-  const char *short_options = "f:hkl:nrtuv";
+  const char *short_options = "f:hkl:nprtuv";
 #else
-  const char *short_options = "f:hl:nrtuv";
+  const char *short_options = "f:hl:nprtuv";
 #endif
 
 #ifdef HAVE_GETOPT_LONG
@@ -303,15 +315,16 @@ static void parse_opts(int argc, char ** argv)
   { "format-time", required_argument, nullptr, 'f' },
   { "help", no_argument, nullptr, 'h' },
 #if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
-  { "kqueue", no_argument, nullptr, 'k' },
+      { "kqueue", no_argument, nullptr, 'k' },
 #endif
-  { "latency", required_argument, nullptr, 'l' },
-  { "numeric", no_argument, nullptr, 'n' },
-  { "recursive", no_argument, nullptr, 'r' },
-  { "timestamp", no_argument, nullptr, 't' },
-  { "utc-time", no_argument, nullptr, 'u' },
-  { "verbose", no_argument, nullptr, 'v' },
-  { nullptr, 0, nullptr, 0 } };
+      { "latency", required_argument, nullptr, 'l' },
+      { "numeric", no_argument, nullptr, 'n' },
+      { "poll", no_argument, nullptr, 'p' },
+      { "recursive", no_argument, nullptr, 'r' },
+      { "timestamp", no_argument, nullptr, 't' },
+      { "utc-time", no_argument, nullptr, 'u' },
+      { "verbose", no_argument, nullptr, 'v' },
+      { nullptr, 0, nullptr, 0 } };
 
   while ((ch = getopt_long(
       argc,
@@ -356,6 +369,10 @@ static void parse_opts(int argc, char ** argv)
 
     case 'n':
       nflag = true;
+      break;
+
+    case 'p':
+      pflag = true;
       break;
 
     case 'r':

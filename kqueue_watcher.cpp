@@ -4,6 +4,7 @@
 
 #include "fsw_exception.h"
 #include "fsw_log.h"
+#include "path_utils.h"
 #include <iostream>
 #include <sys/types.h>
 #include <sys/event.h>
@@ -12,7 +13,6 @@
 #include <cmath>
 #include <unistd.h>
 #include <fcntl.h>
-#include <dirent.h>
 
 typedef struct KqueueFlagType
 {
@@ -131,7 +131,7 @@ bool kqueue_watcher::add_watch(
 
   struct stat fd_stat;
 
-  if (::stat(path.c_str(), &fd_stat) != 0)
+  if (::stat(path.c_str(), &fd_stat))
   {
     string err = string("Cannot stat() ") + path;
     fsw_perror(err.c_str());
@@ -149,24 +149,6 @@ bool kqueue_watcher::add_watch(
   descriptor = fd;
 
   return true;
-}
-
-static void get_directory_children(const string &path, vector<string> &children)
-{
-  DIR *dir = ::opendir(path.c_str());
-
-  if (!dir)
-  {
-    fsw_perror("opendir");
-    return;
-  }
-
-  while (struct dirent *ent = readdir(dir))
-  {
-    children.push_back(ent->d_name);
-  }
-
-  ::closedir(dir);
 }
 
 bool kqueue_watcher::watch_path(const string &path)
@@ -191,11 +173,11 @@ bool kqueue_watcher::watch_path(const string &path)
   while (dirs_to_process.size() > 0)
   {
     const string current_dir = dirs_to_process.back();
-    vector<string> children;
+    dirs_to_process.pop_back();
 
+    vector<string> children;
     get_directory_children(current_dir, children);
 
-    dirs_to_process.pop_back();
 
     for (string child : children)
     {
@@ -376,11 +358,10 @@ void kqueue_watcher::process_events(
     }
   }
 
-  if (events.size() > 0)
+  if (events.size())
   {
     callback(events);
   }
-
 }
 
 void kqueue_watcher::run()
@@ -419,7 +400,7 @@ void kqueue_watcher::run()
       event_list.push_back(event);
     }
 
-    if (changes.size() == 0)
+    if (!changes.size())
     {
       ::sleep(latency > MIN_SPIN_LATENCY ? latency : MIN_SPIN_LATENCY);
       continue;

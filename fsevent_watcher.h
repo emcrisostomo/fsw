@@ -7,8 +7,6 @@
 
 #include "watcher.h"
 #include <CoreServices/CoreServices.h>
-#include <string>
-#include <vector>
 
 using namespace std;
 
