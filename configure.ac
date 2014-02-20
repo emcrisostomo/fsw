@@ -43,9 +43,14 @@ AC_TYPE_MODE_T
 AC_FUNC_STRTOD
 AC_CHECK_FUNCS([getopt_long])
 AC_CHECK_FUNCS(
+  [realpath],
+  ,
+  AC_MSG_ERROR([The realpath function cannot be found.])
+)
+AC_CHECK_FUNCS(
   [modf],
   ,
-  AC_MSG_ERROR([modf function cannot be found.]) 
+  AC_MSG_ERROR([The modf function cannot be found.]) 
 )
 
 if test "x${ac_cv_header_CoreServices_CoreServices_h}" != "xyes"

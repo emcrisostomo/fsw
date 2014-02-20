@@ -8,41 +8,42 @@ ChangeLog
 		* autogen.sh: add script to bootstrap the GNU Build System.
 		* ChangeLog: updated.
 		* configure.ac:
-		  - bump version to 1.1.0.
-		  - check for either FSEvents (CoreServices/CoreServices.h) or kqueue
+		  - Bump version to 1.1.0.
+		  - Check for either FSEvents (CoreServices/CoreServices.h) or kqueue
 		    (sys/event.h) to be available.
-		  - remove OS check and check for available headers instead.
-		  - require strict C++11 conformance mode for the compiler.
-		  - search for clang++ and g++ compilers.
-		  - add AC_PROG_CC after autoscan complains.
-		  - add sys/time.h to the list of AC_CHECK_HEADERS.
-		  - add AC_TYPE_UINT32_T.
-		  - add AC_CHECK_FUNCS([modf],,AC_MSG_ERROR([...])).
-		  - add AC_TYPE_MOD_T.
+		  - Remove OS check and check for available headers instead.
+		  - Require strict C++11 conformance mode for the compiler.
+		  - Search for clang++ and g++ compilers.
+		  - Add AC_PROG_CC after autoscan complains.
+		  - Add sys/time.h to the list of AC_CHECK_HEADERS.
+		  - Add AC_TYPE_UINT32_T.
+		  - Add AC_CHECK_FUNCS([modf],,AC_MSG_ERROR([...])).
+		  - Add AC_TYPE_MOD_T.
+		  - Add AC_CHECK_FUNCS([realpath]) and fail if missing.
 		* fsevent_watcher.cpp:
-		  - check for all the existing FSEventFlagName flags.
-		  - map platform-specific event flags to generic event flags. 
+		  - Check for all the existing FSEventFlagName flags.
+		  - Map platform-specific event flags to generic event flags. 
 		* fsw.7: update man page.
 		* fsw.cpp:
-		  - use watcher base class.
-		  - fix includes so that fsw builds on FreeBSD (v. 10.0 was checked).
-		  - use static linkage whenever possible.
+		  - Use watcher base class.
+		  - Fix includes so that fsw builds on FreeBSD (v. 10.0 was checked).
+		  - Use static linkage whenever possible.
 		  - Add -r/--recursive option.
 		* fsw_log.cpp: added wrapper function triggering perror() only if the
 		  application is in verbose mode.
 		* fsw_log.h: added wrapper function triggering perror() only if the
 		  application is in verbose mode.
 		* kqueue_watcher.cpp:
-		  - add kqueue-based watcher for systems with kqueue.
-		  - map platform-specific event flags to generic event flags.
-		  - check presence of the EV_ERROR event flag and print an error if
+		  - Add kqueue-based watcher for systems with kqueue.
+		  - Map platform-specific event flags to generic event flags.
+		  - Check presence of the EV_ERROR event flag and print an error if
 		    found.
-		  - implement -r/--recursive directory walking.
-		  - look for EV_ERROR in struct kevent::flags.
+		  - Implement -r/--recursive directory walking.
+		  - Look for EV_ERROR in struct kevent::flags.
 		* kqueue_watcher.h: add kqueue-based watcher for systems with kqueue.
 		* Makefile.am:
-		  - add new files.
-		  - use conditional to use the -framework linker flag on OS X.
+		  - Add new files.
+		  - Use conditional to use the -framework linker flag on OS X.
 		* NEWS: updated.
 		* README: updated.
 		* README.bsd: added.
@@ -59,8 +60,8 @@ ChangeLog
 		* configure.ac: bump version number to 1.0.7.
 		* fsevent_watcher.cpp: throw fsw_exception instead of int.
 		* fsw.cpp:
-		  - define fsw_exception.
-		  - throw fsw_exception instead of int.
+		  - Define fsw_exception.
+		  - Throw fsw_exception instead of int.
 		* fsw.h: declare fsw_exception.
 		
 2014-02-11  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
@@ -87,8 +88,8 @@ ChangeLog
         
         * configure.ac: bump version number to 1.0.4.
         * fsw.cpp:
-          - format date with user-specified format with -t/--time-format.
-          - convert time to UTC time with -u/--utc-time.
+          - Format date with user-specified format with -t/--time-format.
+          - Convert time to UTC time with -u/--utc-time.
 
 2014-02-10  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
 
@@ -96,25 +97,25 @@ ChangeLog
         
           * configure.ac: bump version number to 1.0.3.
           * fsw.cpp:
-            - improve the event flag printing function.
-            - add verbose output with -v/--verbose.
+            - Improve the event flag printing function.
+            - Add verbose output with -v/--verbose.
           * fsw.h: export definition of bool is_verbose().
           * log.cpp:
-            - add.
-            - implement fsw_log(const char *) writing to stdout.
+            - Add.
+            - Implement fsw_log(const char *) writing to stdout.
           * log.h:
-            - add.
-            - export definition of void fsw_log(const char *).
+            - Add.
+            - Export definition of void fsw_log(const char *).
 
 2014-02-10  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
 
         release: stable micro release 1.0.2.
         
           * configure.ac:
-            - bump version number to 1.0.2.
-            - check that host_os >= darwin 10.0 and fails otherwise.
-            - add stdlib.h to AC_CHECK_HEADERS.
-            - add AC_FUNC_STRTOD.
+            - Bump version number to 1.0.2.
+            - Check that host_os >= darwin 10.0 and fails otherwise.
+            - Add stdlib.h to AC_CHECK_HEADERS.
+            - Add AC_FUNC_STRTOD.
           * fsw.cpp: add support for latency configuration with -l/--latency.
           * fsw.cpp: reorganize code.
           * fsw.h: add.
