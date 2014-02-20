@@ -1,12 +1,12 @@
 README
-******
+======
 
 This is fsw, a program which receives notifications when the contents of the
 specified files or directories are modified.  fsw implements three kind of
 watcher:
 
-  * A watcher based on the File System Events API of Apple OS X.
-  * A watcher based on kqueue, an event notification interface introduced in
+  * A watcher based on the _File System Events API_ of Apple OS X.
+  * A watcher based on _kqueue_, an event notification interface introduced in
     FreeBSD 4.1 and supported on most *BSD systems (including OS X).
   * A watcher which periodically stats the file system, saves file modification
     times in memory and manually calculates file system changes.
@@ -31,7 +31,7 @@ The limitations of fsw depend largely on the watcher being used:
     and memory to perform its task.  The performance of this watcher degrades
     linearly with the number of files being watched.  
 
-  Usage recommendations are as follows:
+Usage recommendations are as follows:
 
   * On OS X, use only the FSEvents watcher.
   * If the number of files to observe is sufficiently small, use the kqueue
@@ -50,7 +50,7 @@ The limitations of fsw depend largely on the watcher being used:
     disk access.
 
 Installation
-============
+------------
 
 See the INSTALL file for detailed information about how to configure and install
 fsw.
@@ -67,7 +67,7 @@ Usage
 
 fsw accepts a list of paths for which change events should be received:
 
-  $ fsw [options] ... path-0 ... path-n
+    $ fsw [options] ... path-0 ... path-n
 
 The event stream is created even if any of the paths do not exist yet.  If they
 are created after fsw is launched, change events will be properly received.
@@ -77,7 +77,7 @@ after the amount of configured latency has elapsed.
   For more information, refer to the fsw man page.
 
 Bug Reports
-===========
+-----------
 
 Bug reports can be sent directly to the authors.
 
