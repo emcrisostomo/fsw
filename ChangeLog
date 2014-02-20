@@ -3,6 +3,20 @@ ChangeLog
 
 2014-02-20  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
 
+        release: stable minor release 1.2.0:
+        
+        * ChangeLog: updated.
+        * fsw.7: updated.
+        * Makefile.am:
+          - Add poll_watcher.cpp and poll_watcher.h to fsw_SOURCES.
+        * NEWS: updated.
+        * path_utils.cpp: added.
+        * path_utils.h: added.
+        * poll_watcher.cpp: added.
+        * poll_watcher.h: added.
+
+2014-02-20  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
+
 		release: stable minor release 1.1.0:
 		
 		* autogen.sh: add script to bootstrap the GNU Build System.
@@ -23,7 +37,7 @@ ChangeLog
 		* fsevent_watcher.cpp:
 		  - Check for all the existing FSEventFlagName flags.
 		  - Map platform-specific event flags to generic event flags. 
-		* fsw.7: update man page.
+		* fsw.7: updated.
 		* fsw.cpp:
 		  - Use watcher base class.
 		  - Fix includes so that fsw builds on FreeBSD (v. 10.0 was checked).
