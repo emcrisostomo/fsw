@@ -247,11 +247,14 @@ static void start_watcher(int argc, char ** argv, int optind)
 
   for (auto i = optind; i < argc; ++i)
   {
+    char *real_path = ::realpath(argv[i], nullptr);
+    string path = (real_path ? real_path : argv[i]);
+
     fsw_log("Adding path: ");
-    fsw_log(argv[i]);
+    fsw_log(path.c_str());
     fsw_log("\n");
 
-    paths.push_back(argv[i]);
+    paths.push_back(path);
   }
 
 // TODO: invert if

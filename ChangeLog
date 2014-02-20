@@ -1,7 +1,7 @@
 ChangeLog
 *********
 
-2014-02-17  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
+2014-02-20  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
 
 		release: stable minor release 1.1.0:
 		
@@ -29,6 +29,7 @@ ChangeLog
 		  - Fix includes so that fsw builds on FreeBSD (v. 10.0 was checked).
 		  - Use static linkage whenever possible.
 		  - Add -r/--recursive option.
+		  - Normalize paths with ::realpath.
 		* fsw_log.cpp: added wrapper function triggering perror() only if the
 		  application is in verbose mode.
 		* fsw_log.h: added wrapper function triggering perror() only if the
