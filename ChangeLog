@@ -1,6 +1,23 @@
 ChangeLog
 *********
 
+2014-02-22  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
+
+        release: stable micro release 1.2.1:
+        
+        * configure.ac: bump version to 1.2.1.
+        * m4/ax_cxx_namespaces.m4: added to check for C++ compiler namespace
+          support.
+        * m4/ax_css_hash_function.m4: added to check for std::hash in the
+          <functional> header.
+        * poll_watcher.cpp: use hash<string> to calculate the hash of a path and
+          use it as a key in the internal watcher maps.
+        * poll_watcher.h: add hash<string> member.
+        * README:
+          - Updated.
+          - Use markdown syntax.
+        * README.md: removed.
+        
 2014-02-20  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
 
         release: stable minor release 1.2.0:

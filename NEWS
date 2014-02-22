@@ -1,6 +1,11 @@
 NEWS
 ****
 
+New in 1.2.1:
+
+  * Internally hash the cached paths in a poll watcher so that memory
+    requirements dramatically decrease.
+
 New in 1.2.0:
 
   * New poll-based watcher added.
