@@ -5,7 +5,7 @@
 #include "watcher.h"
 #include <sys/stat.h>
 #include <ctime>
-#include <map>
+#include "fsw_map.h"
 
 class poll_watcher;
 
@@ -15,9 +15,9 @@ typedef void (poll_watcher::*poll_watcher_scan_callback)(
 
 typedef struct poll_watcher_data
 {
-  map<string, bool> tracked_files;
-  map<string, struct timespec> mtime;
-  map<string, struct timespec> ctime;
+  fsw_hash_map<string, bool> tracked_files;
+  fsw_hash_map<string, struct timespec> mtime;
+  fsw_hash_map<string, struct timespec> ctime;
 } poll_watcher_data;
 
 class poll_watcher: public watcher

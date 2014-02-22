@@ -6,9 +6,9 @@
 #ifdef HAVE_SYS_EVENT_H
 
 #include "watcher.h"
+#include "fsw_map.h"
 #include <string>
 #include <vector>
-#include <map>
 #include <sys/stat.h>
 
 using namespace std;
@@ -44,11 +44,11 @@ private:
 
   int kq = -1;
   // initial load
-  map<string, int> descriptors_by_file_name;
-  map<int, string> file_names_by_descriptor;
-  map<int, bool> descriptors_to_remove;
-  map<int, bool> descriptors_to_rescan;
-  map<int, mode_t> file_modes;
+  fsw_hash_map<string, int> descriptors_by_file_name;
+  fsw_hash_map<int, string> file_names_by_descriptor;
+  fsw_hash_map<int, bool> descriptors_to_remove;
+  fsw_hash_map<int, bool> descriptors_to_rescan;
+  fsw_hash_map<int, mode_t> file_modes;
   unsigned int tracked_files = 0;
   unsigned int max_tracked_files = MAX_TRACKED_FILES;
 

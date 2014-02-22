@@ -6,9 +6,13 @@ ChangeLog
         release: stable minor release 1.2.0:
         
         * ChangeLog: updated.
+        * configure.ac: add AC_CHECK_HEADERS([unordered_map]).
         * fsw.7: updated.
+        * fsw_map.h: define fsw_hash_map as an std::unordered_map if this type
+          exists otherwise as std::map. 
         * Makefile.am:
           - Add poll_watcher.cpp and poll_watcher.h to fsw_SOURCES.
+          - Add fsw_map.h to fsw_SOURCES.
         * NEWS: updated.
         * path_utils.cpp: added.
         * path_utils.h: added.
