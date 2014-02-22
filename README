@@ -1,17 +1,17 @@
 README
-******
+======
 
 This is fsw, a program which receives notifications when the contents of the
 specified files or directories are modified.  fsw implements three kind of
 watcher:
 
-  * A watcher based on the File System Events API of Apple OS X.
-  * A watcher based on kqueue, an event notification interface introduced in
+  * A watcher based on the _File System Events API_ of Apple OS X.
+  * A watcher based on _kqueue_, an event notification interface introduced in
     FreeBSD 4.1 and supported on most *BSD systems (including OS X).
   * A watcher which periodically stats the file system, saves file modification
     times in memory and manually calculates file system changes.
 
-  fsw should build and work correctly on any system shipping either of the
+fsw should build and work correctly on any system shipping either of the
 aforementioned APIs.
 
 Limitations
@@ -31,7 +31,7 @@ The limitations of fsw depend largely on the watcher being used:
     and memory to perform its task.  The performance of this watcher degrades
     linearly with the number of files being watched.  
 
-  Usage recommendations are as follows:
+Usage recommendations are as follows:
 
   * On OS X, use only the FSEvents watcher.
   * If the number of files to observe is sufficiently small, use the kqueue
@@ -42,15 +42,16 @@ The limitations of fsw depend largely on the watcher being used:
     on either a per process or a system-wide basis.
   * If feasible, watch directories instead of watching files.
   * If none of the above applies, use the poll watcher.  The authors' experience
-    indicates that fsw requires 1.3 GB or RAM memory to observe a hierarchy of
-    500.000 files.  A common bottleneck of the poll watcher is disk access,
-    since stat()-ing a huge number of files may take a huge amount of time.  In
-    this case, the latency should be set to a sufficiently large value in order
-    to reduce the performance degradation that may result from fsw's frequent
-    disk access.
+    indicates that fsw requires approximately 600 MB or RAM memory to observe a
+    hierarchy of 500.000 files if std::hash is defined in <functional> otherwise
+    it requires approximately 1300 MB.  A common bottleneck of the poll watcher
+    is disk access, since stat()-ing a huge number of files may take a huge
+    amount of time.  In this case, the latency should be set to a sufficiently
+    large value in order to reduce the performance degradation that may result
+    from fsw's frequent disk access.
 
 Installation
-============
+------------
 
 See the INSTALL file for detailed information about how to configure and install
 fsw.
@@ -67,7 +68,7 @@ Usage
 
 fsw accepts a list of paths for which change events should be received:
 
-  $ fsw [options] ... path-0 ... path-n
+    $ fsw [options] ... path-0 ... path-n
 
 The event stream is created even if any of the paths do not exist yet.  If they
 are created after fsw is launched, change events will be properly received.
@@ -77,7 +78,7 @@ after the amount of configured latency has elapsed.
   For more information, refer to the fsw man page.
 
 Bug Reports
-===========
+-----------
 
 Bug reports can be sent directly to the authors.
 
