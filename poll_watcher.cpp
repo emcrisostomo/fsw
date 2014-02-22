@@ -21,29 +21,41 @@ poll_watcher::~poll_watcher()
 
 void poll_watcher::initial_scan_callback(const string &path, struct stat &stat)
 {
-  previous_data->tracked_files[path] = true;
-  previous_data->mtime[path] = stat.st_mtimespec;
-  previous_data->ctime[path] = stat.st_ctimespec;
+#if defined(HAVE_FUNCTIONAL_HASH)
+  size_t path_hash = str_hash(path);
+#else
+  string path_hash = path;
+#endif
+  previous_data->tracked_files[path] = path_hash;
+  previous_data->mtime[path_hash] = stat.st_mtimespec;
+  previous_data->ctime[path_hash] = stat.st_ctimespec;
 }
 
 void poll_watcher::intermediate_scan_callback(
     const string &path,
     struct stat &stat)
 {
-  new_data->tracked_files[path] = true;
-  new_data->mtime[path] = stat.st_mtimespec;
-  new_data->ctime[path] = stat.st_ctimespec;
+
+#if defined(HAVE_FUNCTIONAL_HASH)
+  size_t path_hash = str_hash(path);
+#else
+  string path_hash = path;
+#endif
+
+  new_data->tracked_files[path] = path_hash;
+  new_data->mtime[path_hash] = stat.st_mtimespec;
+  new_data->ctime[path_hash] = stat.st_ctimespec;
 
   if (previous_data->tracked_files.count(path))
   {
     vector<event_flag> flags;
 
-    if (stat.st_mtimespec.tv_sec> previous_data->mtime[path].tv_sec)
+    if (stat.st_mtimespec.tv_sec > previous_data->mtime[path_hash].tv_sec)
     {
       flags.push_back(event_flag::Updated);
     }
 
-    if (stat.st_ctimespec.tv_sec > previous_data->ctime[path].tv_sec)
+    if (stat.st_ctimespec.tv_sec > previous_data->ctime[path_hash].tv_sec)
     {
       flags.push_back(event_flag::AttributeModified);
     }
@@ -55,8 +67,8 @@ void poll_watcher::intermediate_scan_callback(
     }
 
     previous_data->tracked_files.erase(path);
-    previous_data->mtime.erase(path);
-    previous_data->ctime.erase(path);
+    previous_data->mtime.erase(path_hash);
+    previous_data->ctime.erase(path_hash);
   }
   else
   {
@@ -161,7 +173,7 @@ void poll_watcher::find_removed_files()
   vector<event_flag> flags;
   flags.push_back(event_flag::Removed);
 
-  for (pair<string, bool> removed : previous_data->tracked_files)
+  for (auto removed : previous_data->tracked_files)
   {
     events.push_back(
     { removed.first, curr_time, flags });
