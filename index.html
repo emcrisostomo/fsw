@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Fsw : A program which uses either the File System Events API of the Apple OS X operating system or the kqueue interface of *BSD systems to receive notifications when the contents of the specified files or directories are modified." />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Fsw</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/emcrisostomo/fsw">View on GitHub</a>
+
+          <h1 id="project_title">Fsw</h1>
+          <h2 id="project_tagline">A program which uses either the File System Events API of the Apple OS X operating system or the kqueue interface of *BSD systems to receive notifications when the contents of the specified files or directories are modified.</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/emcrisostomo/fsw/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/emcrisostomo/fsw/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p>fsw is a program that receives notifications when the contents of the specified files or directories are modified.  fsw implements three kind of watchers:</p>
+
+<ul>
+<li>A watcher based on the <em>File System Events API</em> of Apple OS X.</li>
+<li>A watcher based on <em>kqueue</em>, an event notification interface introduced in
+FreeBSD 4.1 and supported on most *BSD systems (including OS X).</li>
+<li>A watcher which periodically stats the file system, saves file modification
+times in memory and manually calculates file system changes.</li>
+</ul><p>fsw should build and work correctly on any system shipping either of the
+aforementioned APIs.</p>
+
+<h2>
+<a name="limitations" class="anchor" href="#limitations"><span class="octicon octicon-link"></span></a>Limitations</h2>
+
+<p>The limitations of fsw depend largely on the watcher being used:</p>
+
+<ul>
+<li>The FSEvents watcher, available only on Apple OS X, has no known limitations
+and scales very well with the number of files being observed.</li>
+<li>The kqueue watcher, available on any *BSD system featuring kqueue, requires
+a file descriptor to be opened for every file being watched.  As a result,
+this watcher scales badly with the number of files being observed and may
+begin to misbehave as soon as the fsw process runs out of file descriptors.
+In this case, fsw dumps one error on standard error for every file that
+cannot be opened.</li>
+<li>The poll watcher, available on any platform, only relies on available CPU
+and memory to perform its task.  The performance of this watcher degrades
+linearly with the number of files being watched.<br>
+</li>
+</ul><p>Usage recommendations are as follows:</p>
+
+<ul>
+<li>On OS X, use only the FSEvents watcher.</li>
+<li>If the number of files to observe is sufficiently small, use the kqueue
+watcher.  Beware that on some systems the maximum number of file descriptors
+that can be opened by a process is set to a very low value (values as low
+as 256 are not uncommon), even if the operating system may allow a much
+larger value.  In this case, check your OS documentation to raise this limit
+on either a per process or a system-wide basis.</li>
+<li>If feasible, watch directories instead of watching files.</li>
+<li>If none of the above applies, use the poll watcher.  The authors' experience
+indicates that fsw requires approximately 600 MB or RAM memory to observe a
+hierarchy of 500.000 files if std::hash is defined in  otherwise
+it requires approximately 1300 MB.  A common bottleneck of the poll watcher
+is disk access, since stat()-ing a huge number of files may take a huge
+amount of time.  In this case, the latency should be set to a sufficiently
+large value in order to reduce the performance degradation that may result
+from fsw's frequent disk access.</li>
+</ul><h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>See the INSTALL file for detailed information about how to configure and install
+fsw.</p>
+
+<p>fsw is a C++ program and a C++ compiler compliant with the C++11 standard is
+required to compile it.  A complete C/C++ toolchain for OS X is provided with
+Apple XCode, which can freely installed from the Apple App Store.</p>
+
+<p>No other software packages or dependencies are required to configure and
+install fsw but the aforementioned APIs used by the file system watchers.</p>
+
+<h1>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h1>
+
+<p>fsw accepts a list of paths for which change events should be received:</p>
+
+<pre><code>$ fsw [options] ... path-0 ... path-n
+</code></pre>
+
+<p>The event stream is created even if any of the paths do not exist yet.  If they
+are created after fsw is launched, change events will be properly received.
+Depending on the wathcher being used, newly created paths will be monitored
+after the amount of configured latency has elapsed.</p>
+
+<p>For more information, refer to the fsw man page.</p>
+
+<h2>
+<a name="bug-reports" class="anchor" href="#bug-reports"><span class="octicon octicon-link"></span></a>Bug Reports</h2>
+
+<p>Bug reports can be sent directly to the authors.</p>
+
+<hr><p>Copyright (C) 2014 Enrico M. Crisostomo</p>
+
+<p>This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3, or (at your option)
+any later version.</p>
+
+<p>This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.</p>
+
+<p>You should have received a copy of the GNU General Public License
+along with this program.  If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Fsw maintained by <a href="https://github.com/emcrisostomo">emcrisostomo</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
