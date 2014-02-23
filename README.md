@@ -1,9 +1,8 @@
 README
 ======
 
-This is fsw, a program which receives notifications when the contents of the
-specified files or directories are modified.  fsw implements three kind of
-watcher:
+fsw is a program which receives notifications when the contents of the specified
+files or directories are modified.  fsw implements three kind of watchers:
 
   * A watcher based on the _File System Events API_ of Apple OS X.
   * A watcher based on _kqueue_, an event notification interface introduced in
