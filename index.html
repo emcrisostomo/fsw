@@ -43,43 +43,6 @@ times in memory and manually calculates file system changes.</li>
 aforementioned APIs.</p>
 
 <h2>
-<a name="limitations" class="anchor" href="#limitations"><span class="octicon octicon-link"></span></a>Limitations</h2>
-
-<p>The limitations of fsw depend largely on the watcher being used:</p>
-
-<ul>
-<li>The FSEvents watcher, available only on Apple OS X, has no known limitations
-and scales very well with the number of files being observed.</li>
-<li>The kqueue watcher, available on any *BSD system featuring kqueue, requires
-a file descriptor to be opened for every file being watched.  As a result,
-this watcher scales badly with the number of files being observed and may
-begin to misbehave as soon as the fsw process runs out of file descriptors.
-In this case, fsw dumps one error on standard error for every file that
-cannot be opened.</li>
-<li>The poll watcher, available on any platform, only relies on available CPU
-and memory to perform its task.  The performance of this watcher degrades
-linearly with the number of files being watched.<br>
-</li>
-</ul><p>Usage recommendations are as follows:</p>
-
-<ul>
-<li>On OS X, use only the FSEvents watcher.</li>
-<li>If the number of files to observe is sufficiently small, use the kqueue
-watcher.  Beware that on some systems the maximum number of file descriptors
-that can be opened by a process is set to a very low value (values as low
-as 256 are not uncommon), even if the operating system may allow a much
-larger value.  In this case, check your OS documentation to raise this limit
-on either a per process or a system-wide basis.</li>
-<li>If feasible, watch directories instead of watching files.</li>
-<li>If none of the above applies, use the poll watcher.  The authors' experience
-indicates that fsw requires approximately 600 MB or RAM memory to observe a
-hierarchy of 500.000 files if std::hash is defined in  otherwise
-it requires approximately 1300 MB.  A common bottleneck of the poll watcher
-is disk access, since stat()-ing a huge number of files may take a huge
-amount of time.  In this case, the latency should be set to a sufficiently
-large value in order to reduce the performance degradation that may result
-from fsw's frequent disk access.</li>
-</ul><h2>
 <a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
 
 <p>See the INSTALL file for detailed information about how to configure and install
@@ -92,8 +55,8 @@ Apple XCode, which can freely installed from the Apple App Store.</p>
 <p>No other software packages or dependencies are required to configure and
 install fsw but the aforementioned APIs used by the file system watchers.</p>
 
-<h1>
-<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h1>
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
 
 <p>fsw accepts a list of paths for which change events should be received:</p>
 
@@ -106,11 +69,6 @@ Depending on the wathcher being used, newly created paths will be monitored
 after the amount of configured latency has elapsed.</p>
 
 <p>For more information, refer to the fsw man page.</p>
-
-<h2>
-<a name="bug-reports" class="anchor" href="#bug-reports"><span class="octicon octicon-link"></span></a>Bug Reports</h2>
-
-<p>Bug reports can be sent directly to the authors.</p>
 
 <hr><p>Copyright (C) 2014 Enrico M. Crisostomo</p>
 
