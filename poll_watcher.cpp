@@ -21,7 +21,7 @@ poll_watcher::~poll_watcher()
 
 void poll_watcher::initial_scan_callback(const string &path, struct stat &stat)
 {
-#if defined(HAVE_FUNCTIONAL_HASH)
+#if defined(HAVE_CXX_HASH)
   size_t path_hash = str_hash(path);
 #else
   string path_hash = path;
@@ -36,7 +36,7 @@ void poll_watcher::intermediate_scan_callback(
     struct stat &stat)
 {
 
-#if defined(HAVE_FUNCTIONAL_HASH)
+#if defined(HAVE_CXX_HASH)
   size_t path_hash = str_hash(path);
 #else
   string path_hash = path;

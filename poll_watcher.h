@@ -15,7 +15,7 @@ typedef void (poll_watcher::*poll_watcher_scan_callback)(
 
 typedef struct poll_watcher_data
 {
-#if defined(HAVE_FUNCTIONAL_HASH)
+#if defined(HAVE_CXX_HASH)
   fsw_hash_map<string, size_t> tracked_files;
   fsw_hash_map<size_t, struct timespec> mtime;
   fsw_hash_map<size_t, struct timespec> ctime;
@@ -55,7 +55,7 @@ private:
 
   poll_watcher_data *previous_data;
   poll_watcher_data *new_data;
-#if defined(HAVE_FUNCTIONAL_HASH)
+#if defined(HAVE_CXX_HASH)
   hash<string> str_hash;
 #endif
 
