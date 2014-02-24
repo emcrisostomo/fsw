@@ -101,12 +101,6 @@ bool kqueue_watcher::add_watch(
     remove_watch(path);
   }
 
-  if (tracked_files >= MAX_TRACKED_FILES)
-  {
-    cout << "Cannot open " << path << endl;
-    return false;
-  }
-
   int o_flags = 0;
 #ifdef O_SYMLINK
   o_flags |= O_SYMLINK;
@@ -143,7 +137,6 @@ bool kqueue_watcher::add_watch(
   descriptors_by_file_name[path] = fd;
   file_names_by_descriptor[fd] = path;
   file_modes[fd] = fd_stat.st_mode;
-  ++tracked_files;
 
   mode = fd_stat.st_mode;
   descriptor = fd;
@@ -209,7 +202,6 @@ void kqueue_watcher::remove_watch(int fd)
   descriptors_by_file_name.erase(name);
   file_modes.erase(fd);
   ::close(fd);
-  --tracked_files;
 }
 
 void kqueue_watcher::remove_watch(const string &path)
@@ -219,7 +211,6 @@ void kqueue_watcher::remove_watch(const string &path)
   file_names_by_descriptor.erase(fd);
   file_modes.erase(fd);
   ::close(fd);
-  --tracked_files;
 }
 
 void kqueue_watcher::remove_deleted()
