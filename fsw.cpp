@@ -301,7 +301,7 @@ static void start_watcher(int argc, char ** argv, int optind)
 
   watcher->set_latency(lvalue);
   watcher->set_recursive(rflag);
-  watcher->set_exclude(exclude_regex);
+  watcher->set_exclude(exclude_regex, !iflag);
 
   watcher->run();
 }
