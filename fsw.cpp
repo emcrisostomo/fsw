@@ -23,6 +23,7 @@ using namespace std;
 
 static watcher *watcher = nullptr;
 static vector<string> exclude_regex;
+static bool Eflag = false;
 static bool fflag = false;
 static bool iflag = false;
 #if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
@@ -52,6 +53,7 @@ static void usage()
   cout << "\n";
   cout << "Options:\n";
   cout << " -e, --exclude=REGEX   Exclude paths matching REGEX.\n";
+  cout << " -E, --extended        Use exended regular expressions.\n";
   cout
       << " -f, --format-time     Print the event time using the specified format.\n";
   cout << " -h, --help            Show this message.\n";
@@ -72,10 +74,11 @@ static void usage()
 #else
   cout << PACKAGE_STRING << "\n\n";
   cout << "Syntax:\n";
-  cout << PACKAGE_NAME << " [-efhilnprtuv] path ...\n";
+  cout << PACKAGE_NAME << " [-eEfhilnprtuv] path ...\n";
   cout << "\n";
   cout << "Usage:\n";
   cout << " -e  Exclude paths matching REGEX.\n";
+  cout << " -E  Use exended regular expressions.\n";
   cout << " -f  Print the event time stamp with the specified format.\n";
   cout << " -h  Show this message.\n";
   cout << " -i  Use case insensitive regular expressions.\n";
@@ -301,7 +304,7 @@ static void start_watcher(int argc, char ** argv, int optind)
 
   watcher->set_latency(lvalue);
   watcher->set_recursive(rflag);
-  watcher->set_exclude(exclude_regex, !iflag);
+  watcher->set_exclude(exclude_regex, !iflag, Eflag);
 
   watcher->run();
 }
@@ -310,9 +313,9 @@ static void parse_opts(int argc, char ** argv)
 {
   int ch;
 #if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
-  const char *short_options = "e:f:hkl:nprtuv";
+  const char *short_options = "e:Ef:hkl:nprtuv";
 #else
-  const char *short_options = "e:f:hl:nprtuv";
+  const char *short_options = "e:Ef:hl:nprtuv";
 #endif
 
 #ifdef HAVE_GETOPT_LONG
@@ -320,6 +323,7 @@ static void parse_opts(int argc, char ** argv)
   static struct option long_options[] =
   {
   { "exclude", required_argument, nullptr, 'e' },
+  { "extended", no_argument, nullptr, 'E' },
   { "format-time", required_argument, nullptr, 'f' },
   { "help", no_argument, nullptr, 'h' },
   { "insensitive", no_argument, nullptr, 'i' },
@@ -352,6 +356,10 @@ static void parse_opts(int argc, char ** argv)
 
     case 'e':
       exclude_regex.push_back(optarg);
+      break;
+
+    case 'E':
+      Eflag = true;
       break;
 
     case 'f':

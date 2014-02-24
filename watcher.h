@@ -17,7 +17,10 @@ public:
   virtual ~watcher();
   void set_latency(double latency);
   void set_recursive(bool recursive);
-  void set_exclude(const vector<string> &exclusions, bool case_sensitive = true);
+  void set_exclude(
+      const vector<string> &exclusions,
+      bool case_sensitive = true,
+      bool extended = false);
 
   virtual void run() = 0;
 

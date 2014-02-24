@@ -26,16 +26,22 @@ void watcher::set_recursive(bool recursive)
   this->recursive = recursive;
 }
 
-void watcher::set_exclude(const vector<string> &exclusions, bool case_sensitive)
+void watcher::set_exclude(
+    const vector<string> &exclusions,
+    bool case_sensitive,
+    bool extended)
 {
   for (string exclusion : exclusions)
   {
     regex_t regex;
-    int flags;
+    int flags = 0;
 
-    if (!case_sensitive) flags |= REG_ICASE;
+    if (!case_sensitive)
+      flags |= REG_ICASE;
+    if (extended)
+      flags |= REG_EXTENDED;
 
-    if(::regcomp(&regex, exclusion.c_str(), flags))
+    if (::regcomp(&regex, exclusion.c_str(), flags))
     {
       string err = "An error occurred during the compilation of " + exclusion;
       throw new fsw_exception(err);
@@ -53,14 +59,14 @@ bool watcher::accept_path(const string &path)
 bool watcher::accept_path(const char *path)
 {
   for (auto re : exclude_regex)
+  {
+    if (::regexec(&re, path, 0, nullptr, 0) == 0)
     {
-      if(::regexec(&re, path, 0, nullptr, 0) == 0)
-      {
-        return false;
-      }
+      return false;
     }
+  }
 
-    return true;
+  return true;
 }
 
 watcher::~watcher()
