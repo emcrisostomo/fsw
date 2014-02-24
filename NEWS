@@ -1,6 +1,11 @@
 NEWS
 ****
 
+New in 1.2.2:
+
+  * Paths can be excluded using -e/--exclude and providing a set of regular
+    expressions.
+
 New in 1.2.1:
 
   * Optimise internal storage to reduce memory requirements.

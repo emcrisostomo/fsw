@@ -3,6 +3,21 @@ ChangeLog
 
 2014-02-24  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
 
+        release: stable micro release 1.2.2:
+
+        * configure.ac: bump version to 1.2.2.
+        * fsevent_watcher.cpp: check paths with exclude filters.
+        * fsw.cpp: add -e/--exclude option to define exclude filters with
+          regular expressions.
+        * kqueue_watcher.cpp: check paths with exclude filters.
+        * poll_watcher.cpp: check paths with exclude filters.
+        * watcher.cpp: add accept_path() method to check if a path should be
+          accepted according to the exclude filters.
+        * watcher.h: add accept_path() method to check if a path should be
+          accepted according to the exclude filters.
+        
+2014-02-24  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
+
         release: stable micro release 1.2.1:
         
         * configure.ac: bump version to 1.2.1.
