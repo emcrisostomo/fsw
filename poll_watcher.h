@@ -7,22 +7,6 @@
 #include <ctime>
 #include "fsw_map.h"
 
-class poll_watcher;
-
-typedef void (poll_watcher::*poll_watcher_scan_callback)(
-    const string &path,
-    struct stat &stat);
-
-typedef struct watched_file_info {
-  time_t mtime;
-  time_t ctime;
-} watched_file_info;
-
-typedef struct poll_watcher_data
-{
-  fsw_hash_map<string, watched_file_info> tracked_files;
-} poll_watcher_data;
-
 class poll_watcher: public watcher
 {
 public:
@@ -36,6 +20,20 @@ public:
 private:
   poll_watcher(const poll_watcher& orig);
   poll_watcher& operator=(const poll_watcher & that);
+
+  typedef void (poll_watcher::*poll_watcher_scan_callback)(
+      const string &path,
+      struct stat &stat);
+
+  typedef struct watched_file_info {
+    time_t mtime;
+    time_t ctime;
+  } watched_file_info;
+
+  typedef struct poll_watcher_data
+  {
+    fsw_hash_map<string, watched_file_info> tracked_files;
+  } poll_watcher_data;
 
   void scan(const string &path, poll_watcher_scan_callback fn);
   void collect_initial_data();
