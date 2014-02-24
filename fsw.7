@@ -17,7 +17,8 @@ hierarchies are modified.
 
 .Sh SYNOPSIS
 .Nm fsw
-.Op Fl hknprtuv
+.Op Fl Ehknprtuv
+.Op Fl e Ar regexp
 .Op Fl f Ar format-time
 .Op Fl l Ar latency
 
@@ -72,6 +73,14 @@ process.
 .Pp
 The following options are available:
 .Bl -tag -width indent
+
+.It Fl e, -exclude Ar regexp
+Exclude paths matching
+.Ar regexp .
+Multiple exclude filters can be specified using this option multiple times. 
+
+.It Fl E
+Use extended regular expressions
 
 .It Fl f, -format-time Ar format
 Print the event time using the specified
