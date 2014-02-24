@@ -156,6 +156,9 @@ bool kqueue_watcher::watch_path(const string &path)
   mode_t mode;
   int fd;
 
+  if (!accept_path(path))
+    return true;
+
   if (!add_watch(path, fd, mode))
   {
     return false;
@@ -178,13 +181,15 @@ bool kqueue_watcher::watch_path(const string &path)
     vector<string> children;
     get_directory_children(current_dir, children);
 
-
     for (string child : children)
     {
       if (child.compare(".") == 0 || child.compare("..") == 0)
         continue;
 
       const string fqpath = current_dir + "/" + child;
+
+      if (!accept_path(path))
+        continue;
 
       if (!add_watch(fqpath, fd, mode))
         continue;

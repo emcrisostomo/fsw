@@ -22,6 +22,7 @@
 using namespace std;
 
 static watcher *watcher = nullptr;
+static vector<string> exclude_regex;
 static bool fflag = false;
 #if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
 static bool kflag = false;
@@ -49,6 +50,7 @@ static void usage()
   cout << PACKAGE_NAME << " [OPTION] ... path ...\n";
   cout << "\n";
   cout << "Options:\n";
+  cout << " -e, --exclude=REGEX   Exclude paths matching REGEX.\n";
   cout
       << " -f, --format-time     Print the event time using the specified format.\n";
   cout << " -h, --help            Show this message.\n";
@@ -68,9 +70,10 @@ static void usage()
 #else
   cout << PACKAGE_STRING << "\n\n";
   cout << "Syntax:\n";
-  cout << PACKAGE_NAME << " [-fhlnprtuv] path ...\n";
+  cout << PACKAGE_NAME << " [-efhlnprtuv] path ...\n";
   cout << "\n";
   cout << "Usage:\n";
+  cout << " -e  Exclude paths matching REGEX.\n";
   cout << " -f  Print the event time stamp with the specified format.\n";
   cout << " -h  Show this message.\n";
 #if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
@@ -295,6 +298,7 @@ static void start_watcher(int argc, char ** argv, int optind)
 
   watcher->set_latency(lvalue);
   watcher->set_recursive(rflag);
+  watcher->set_exclude(exclude_regex);
 
   watcher->run();
 }
@@ -303,15 +307,16 @@ static void parse_opts(int argc, char ** argv)
 {
   int ch;
 #if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
-  const char *short_options = "f:hkl:nprtuv";
+  const char *short_options = "e:f:hkl:nprtuv";
 #else
-  const char *short_options = "f:hl:nprtuv";
+  const char *short_options = "e:f:hl:nprtuv";
 #endif
 
 #ifdef HAVE_GETOPT_LONG
   int option_index = 0;
   static struct option long_options[] =
   {
+  { "exclude", required_argument, nullptr, 'e' },
   { "format-time", required_argument, nullptr, 'f' },
   { "help", no_argument, nullptr, 'h' },
 #if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
@@ -340,6 +345,10 @@ static void parse_opts(int argc, char ** argv)
 
     switch (ch)
     {
+
+    case 'e':
+      exclude_regex.push_back(optarg);
+      break;
 
     case 'f':
       fflag = true;

@@ -119,6 +119,8 @@ void poll_watcher::scan(const string &path, poll_watcher_scan_callback fn)
 {
   mode_t mode;
 
+  if (!accept_path(path)) return;
+
   if (!add_path(path, mode, fn))
     return;
 
@@ -145,6 +147,8 @@ void poll_watcher::scan(const string &path, poll_watcher_scan_callback fn)
         continue;
 
       const string fqpath = current_dir + "/" + child;
+
+      if (!accept_path(path)) continue;
 
       if (!add_path(fqpath, mode, fn))
         continue;

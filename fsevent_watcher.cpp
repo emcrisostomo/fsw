@@ -75,9 +75,15 @@ void fsevent_watcher::run()
 
   for (string path : paths)
   {
-    dirs.push_back(
-        CFStringCreateWithCString(NULL, path.c_str(), kCFStringEncodingUTF8));
+    if (accept_path(path))
+    {
+      dirs.push_back(
+          CFStringCreateWithCString(NULL, path.c_str(), kCFStringEncodingUTF8));
+    }
   }
+
+  if (dirs.size() == 0)
+    return;
 
   CFArrayRef pathsToWatch = CFArrayCreate(
       NULL,
@@ -158,9 +164,14 @@ void fsevent_watcher::fsevent_callback(
 
   for (size_t i = 0; i < numEvents; ++i)
   {
+    const char * path = ((char **) eventPaths)[i];
+    if (!watcher->accept_path(path))
+      continue;
+
     vector<event_flag> flags = decode_flags(eventFlags[i]);
 
-    events.push_back({ ((char **) eventPaths)[i], curr_time, flags });
+    events.push_back(
+    { path, curr_time, flags });
   }
 
   if (events.size() > 0)
