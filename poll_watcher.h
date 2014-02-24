@@ -13,17 +13,14 @@ typedef void (poll_watcher::*poll_watcher_scan_callback)(
     const string &path,
     struct stat &stat);
 
+typedef struct watched_file_info {
+  time_t mtime;
+  time_t ctime;
+} watched_file_info;
+
 typedef struct poll_watcher_data
 {
-#if defined(HAVE_CXX_HASH)
-  fsw_hash_map<string, size_t> tracked_files;
-  fsw_hash_map<size_t, struct timespec> mtime;
-  fsw_hash_map<size_t, struct timespec> ctime;
-#else
-  fsw_hash_map<string, string> tracked_files;
-  fsw_hash_map<string, struct timespec> mtime;
-  fsw_hash_map<string, struct timespec> ctime;
-#endif
+  fsw_hash_map<string, watched_file_info> tracked_files;
 } poll_watcher_data;
 
 class poll_watcher: public watcher
@@ -55,9 +52,6 @@ private:
 
   poll_watcher_data *previous_data;
   poll_watcher_data *new_data;
-#if defined(HAVE_CXX_HASH)
-  hash<string> str_hash;
-#endif
 
   vector<event> events;
   time_t curr_time;

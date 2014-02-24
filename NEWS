@@ -3,8 +3,7 @@ NEWS
 
 New in 1.2.1:
 
-  * Internally hash the cached paths in a poll watcher so that memory
-    requirements dramatically decrease.
+  * Optimise internal storage to reduce memory requirements.
 
 New in 1.2.0:
 

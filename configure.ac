@@ -71,6 +71,4 @@ then
   )
 fi
 
-AX_CXX_HAVE_HASH
-
 AC_OUTPUT

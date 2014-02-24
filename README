@@ -42,13 +42,12 @@ Usage recommendations are as follows:
     on either a per process or a system-wide basis.
   * If feasible, watch directories instead of watching files.
   * If none of the above applies, use the poll watcher.  The authors' experience
-    indicates that fsw requires approximately 600 MB or RAM memory to observe a
-    hierarchy of 500.000 files if std::hash is defined in <functional> otherwise
-    it requires approximately 1300 MB.  A common bottleneck of the poll watcher
-    is disk access, since stat()-ing a huge number of files may take a huge
-    amount of time.  In this case, the latency should be set to a sufficiently
-    large value in order to reduce the performance degradation that may result
-    from frequent disk access.
+    indicates that fsw requires approximately 480 MB or RAM memory to observe a
+    hierarchy of 500.000 files.  A common bottleneck of the poll watcher is disk
+    access, since stat()-ing a great number of files may take a huge amount of
+    time.  In this case, the latency should be set to a sufficiently large value
+    in order to reduce the performance degradation that may result from frequent
+    disk access.
 
 Getting fsw
 -----------

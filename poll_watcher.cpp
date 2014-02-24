@@ -21,14 +21,9 @@ poll_watcher::~poll_watcher()
 
 void poll_watcher::initial_scan_callback(const string &path, struct stat &stat)
 {
-#if defined(HAVE_CXX_HASH)
-  size_t path_hash = str_hash(path);
-#else
-  string path_hash = path;
-#endif
-  previous_data->tracked_files[path] = path_hash;
-  previous_data->mtime[path_hash] = stat.st_mtimespec;
-  previous_data->ctime[path_hash] = stat.st_ctimespec;
+
+  watched_file_info wfi { stat.st_mtimespec.tv_sec, stat.st_ctimespec.tv_sec };
+  previous_data->tracked_files[path] = wfi;
 }
 
 void poll_watcher::intermediate_scan_callback(
@@ -36,26 +31,20 @@ void poll_watcher::intermediate_scan_callback(
     struct stat &stat)
 {
 
-#if defined(HAVE_CXX_HASH)
-  size_t path_hash = str_hash(path);
-#else
-  string path_hash = path;
-#endif
-
-  new_data->tracked_files[path] = path_hash;
-  new_data->mtime[path_hash] = stat.st_mtimespec;
-  new_data->ctime[path_hash] = stat.st_ctimespec;
+  watched_file_info wfi { stat.st_mtimespec.tv_sec, stat.st_ctimespec.tv_sec };
+  new_data->tracked_files[path] = wfi;
 
   if (previous_data->tracked_files.count(path))
   {
+    watched_file_info pwfi = previous_data->tracked_files[path];
     vector<event_flag> flags;
 
-    if (stat.st_mtimespec.tv_sec > previous_data->mtime[path_hash].tv_sec)
+    if (stat.st_mtimespec.tv_sec > pwfi.mtime)
     {
       flags.push_back(event_flag::Updated);
     }
 
-    if (stat.st_ctimespec.tv_sec > previous_data->ctime[path_hash].tv_sec)
+    if (stat.st_ctimespec.tv_sec > pwfi.ctime)
     {
       flags.push_back(event_flag::AttributeModified);
     }
@@ -67,8 +56,6 @@ void poll_watcher::intermediate_scan_callback(
     }
 
     previous_data->tracked_files.erase(path);
-    previous_data->mtime.erase(path_hash);
-    previous_data->ctime.erase(path_hash);
   }
   else
   {
