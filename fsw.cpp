@@ -24,6 +24,7 @@ using namespace std;
 static watcher *watcher = nullptr;
 static vector<string> exclude_regex;
 static bool fflag = false;
+static bool iflag = false;
 #if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
 static bool kflag = false;
 #endif
@@ -54,6 +55,7 @@ static void usage()
   cout
       << " -f, --format-time     Print the event time using the specified format.\n";
   cout << " -h, --help            Show this message.\n";
+  cout << " -i, --insensitive     Use case insensitive regular expressions.\n";
 #if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
   cout << " -k, --kqueue          Use the kqueue watcher.\n";
 #endif
@@ -70,12 +72,13 @@ static void usage()
 #else
   cout << PACKAGE_STRING << "\n\n";
   cout << "Syntax:\n";
-  cout << PACKAGE_NAME << " [-efhlnprtuv] path ...\n";
+  cout << PACKAGE_NAME << " [-efhilnprtuv] path ...\n";
   cout << "\n";
   cout << "Usage:\n";
   cout << " -e  Exclude paths matching REGEX.\n";
   cout << " -f  Print the event time stamp with the specified format.\n";
   cout << " -h  Show this message.\n";
+  cout << " -i  Use case insensitive regular expressions.\n";
 #if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
   cout << " -k  Use the kqueue watcher.\n";
 #endif
@@ -319,6 +322,7 @@ static void parse_opts(int argc, char ** argv)
   { "exclude", required_argument, nullptr, 'e' },
   { "format-time", required_argument, nullptr, 'f' },
   { "help", no_argument, nullptr, 'h' },
+  { "insensitive", no_argument, nullptr, 'i' },
 #if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
       { "kqueue", no_argument, nullptr, 'k' },
 #endif
@@ -358,6 +362,10 @@ static void parse_opts(int argc, char ** argv)
     case 'h':
       usage();
       exit(FSW_EXIT_USAGE);
+
+    case 'i':
+      iflag = true;
+      break;
 
 #if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
     case 'k':
