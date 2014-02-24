@@ -1,8 +1,9 @@
 README
 ======
 
-fsw is a program which receives notifications when the contents of the specified
-files or directories are modified.  fsw implements three kind of watchers:
+fsw is a file change monitor that receives notifications when the contents of
+the specified files or directories are modified.  fsw implements three kind of
+watchers:
 
   * A watcher based on the _File System Events API_ of Apple OS X.
   * A watcher based on _kqueue_, an event notification interface introduced in
@@ -47,7 +48,19 @@ Usage recommendations are as follows:
     is disk access, since stat()-ing a huge number of files may take a huge
     amount of time.  In this case, the latency should be set to a sufficiently
     large value in order to reduce the performance degradation that may result
-    from fsw's frequent disk access.
+    from frequent disk access.
+
+Getting fsw
+-----------
+
+The recommended way to get the sources of fsw in order to build it on your
+system is getting release tarball.  A release tarball contains everything a user
+needs to build fsw on his system, following the instructions detailed in the
+Installation section below and the INSTALL file.
+
+  Getting a copy of the source repository is not recommended, unless you are a
+developer, you have the GNU Build System installed on your machine and you know
+how to boostrap them on the sources.
 
 Installation
 ------------
@@ -56,14 +69,14 @@ See the INSTALL file for detailed information about how to configure and install
 fsw.
 
   fsw is a C++ program and a C++ compiler compliant with the C++11 standard is
-required to compile it.  A complete C/C++ toolchain for OS X is provided with
-Apple XCode, which can freely installed from the Apple App Store.
+required to compile it.  Check your OS documentation for information about how
+to install the C++ toolchain and the C++ runtime.
 
   No other software packages or dependencies are required to configure and
 install fsw but the aforementioned APIs used by the file system watchers.
 
 Usage
-=====
+-----
 
 fsw accepts a list of paths for which change events should be received:
 

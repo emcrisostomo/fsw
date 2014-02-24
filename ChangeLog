@@ -1,14 +1,17 @@
 ChangeLog
 *********
 
-2014-02-22  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
+2014-02-24  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
 
         release: stable micro release 1.2.1:
         
-        * configure.ac: bump version to 1.2.1.
+        * configure.ac:
+          - Bump version to 1.2.1.
+          - Add AX_CXX_HAVE_HASH.
+        * fsw.7: updated.
         * m4/ax_cxx_namespaces.m4: added to check for C++ compiler namespace
           support.
-        * m4/ax_css_hash_function.m4: added to check for std::hash in the
+        * m4/ax_cxx_have_hash.m4: added to check for std::hash in the
           <functional> header.
         * poll_watcher.cpp: use hash<string> to calculate the hash of a path and
           use it as a key in the internal watcher maps.
@@ -16,7 +19,7 @@ ChangeLog
         * README:
           - Updated.
           - Use markdown syntax.
-        * README.md: removed.
+        * README.md: updated.
         
 2014-02-20  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
 
