@@ -10,7 +10,7 @@ template <typename K>
 using fsw_hash_set = unordered_set<K>;
 
 #else
-#include <map>
+#include <set>
 
 template <typename K>
 using fsw_hash_set = set<K>;
