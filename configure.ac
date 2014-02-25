@@ -27,7 +27,7 @@ AX_CXXFLAGS_WARN_ALL
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h unistd.h getopt.h fcntl.h sys/event.h sys/time.h])
 AC_CHECK_HEADERS([CoreServices/CoreServices.h])
-AC_CHECK_HEADERS([unordered_map])
+AC_CHECK_HEADERS([unordered_map unordered_set])
 
 AM_CONDITIONAL([USE_CORESERVICES], [test "x${ac_cv_header_CoreServices_CoreServices_h}" = "xyes"])
 
