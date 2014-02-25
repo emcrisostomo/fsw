@@ -215,23 +215,23 @@ void kqueue_watcher::remove_watch(const string &path)
 
 void kqueue_watcher::remove_deleted()
 {
-  auto fd_pair = descriptors_to_remove.begin();
+  auto fd = descriptors_to_remove.begin();
 
-  while (fd_pair != descriptors_to_remove.end())
+  while (fd != descriptors_to_remove.end())
   {
-    remove_watch(fd_pair->first);
+    remove_watch(*fd);
 
-    descriptors_to_remove.erase(fd_pair++);
+    descriptors_to_remove.erase(fd++);
   }
 }
 
 void kqueue_watcher::rescan_pending()
 {
-  auto fd_pair = descriptors_to_rescan.begin();
+  auto fd = descriptors_to_rescan.begin();
 
-  while (fd_pair != descriptors_to_rescan.end())
+  while (fd != descriptors_to_rescan.end())
   {
-    string fd_path = file_names_by_descriptor[fd_pair->first];
+    string fd_path = file_names_by_descriptor[*fd];
 
     // Rescan the hierarchy rooted at fd_path.
     // If the path does not exist any longer, nothing needs to be done since
@@ -245,7 +245,7 @@ void kqueue_watcher::rescan_pending()
     // reason.
     watch_path(fd_path);
 
-    descriptors_to_rescan.erase(fd_pair++);
+    descriptors_to_rescan.erase(fd++);
   }
 }
 
@@ -335,12 +335,12 @@ void kqueue_watcher::process_events(
     if ((e.fflags & NOTE_DELETE)
         || ((e.fflags & NOTE_LINK) && S_ISDIR(file_modes[e.ident])))
     {
-      descriptors_to_remove[e.ident] = true;
+      descriptors_to_remove.insert(e.ident);
     }
     else if ((e.fflags & NOTE_RENAME) || (e.fflags & NOTE_REVOKE)
         || ((e.fflags & NOTE_WRITE) && S_ISDIR(file_modes[e.ident])))
     {
-      descriptors_to_rescan[e.ident] = true;
+      descriptors_to_rescan.insert(e.ident);
     }
 
     // invoke the callback passing every path for which an event has been

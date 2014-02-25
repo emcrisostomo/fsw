@@ -7,6 +7,7 @@
 
 #include "watcher.h"
 #include "fsw_map.h"
+#include "fsw_set.h"
 #include <string>
 #include <vector>
 #include <sys/stat.h>
@@ -46,8 +47,8 @@ private:
   // initial load
   fsw_hash_map<string, int> descriptors_by_file_name;
   fsw_hash_map<int, string> file_names_by_descriptor;
-  fsw_hash_map<int, bool> descriptors_to_remove;
-  fsw_hash_map<int, bool> descriptors_to_rescan;
+  fsw_hash_set<int> descriptors_to_remove;
+  fsw_hash_set<int> descriptors_to_rescan;
   fsw_hash_map<int, mode_t> file_modes;
 
   static const unsigned int MIN_SPIN_LATENCY = 1;
