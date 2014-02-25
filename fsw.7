@@ -17,7 +17,7 @@ hierarchies are modified.
 
 .Sh SYNOPSIS
 .Nm fsw
-.Op Fl Ehknprtuv
+.Op Fl Ehiknprtuv
 .Op Fl e Ar regexp
 .Op Fl f Ar format-time
 .Op Fl l Ar latency
@@ -80,7 +80,7 @@ Exclude paths matching
 Multiple exclude filters can be specified using this option multiple times. 
 
 .It Fl E
-Use extended regular expressions
+Use extended regular expressions.
 
 .It Fl f, -format-time Ar format
 Print the event time using the specified
@@ -90,6 +90,9 @@ Supported formats are specified by
 
 .It Fl h
 Show the help message.
+
+.It Fl i
+Use case insensitive regular expressions.
 
 .It Fl k
 Use the kqueue watcher.
