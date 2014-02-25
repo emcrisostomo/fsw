@@ -5,6 +5,8 @@ New in 1.2.2:
 
   * Paths can be excluded using -e/--exclude and providing a set of regular
     expressions.
+  * Regular expressions can be case insensitive using -i/--insensitive.
+  * Regular expressions can be extended using -E/--extended.
 
 New in 1.2.1:
 

@@ -1,15 +1,23 @@
 ChangeLog
 *********
 
-2014-02-24  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
+2014-02-25  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
 
         release: stable micro release 1.2.2:
 
-        * configure.ac: bump version to 1.2.2.
+        * configure.ac:
+          - Bump version to 1.2.2.
+          - Add AC_CHECK_HEADERS([unordered_set]).
         * fsevent_watcher.cpp: check paths with exclude filters.
         * fsw.cpp: add -e/--exclude option to define exclude filters with
           regular expressions.
-        * kqueue_watcher.cpp: check paths with exclude filters.
+        * fsw_set: typedef fsw_set to std::unordered_set when available,
+          otherwise to std::set.
+        * kqueue_watcher.cpp:
+          - Check paths with exclude filters.
+          - Use sets instead of maps when feasible.
+        * kqueue_watcher.h: use sets instead of maps when feasible.
+        * Makefile.am: added fsw_set.h to fsw_SOURCES.
         * poll_watcher.cpp: check paths with exclude filters.
         * watcher.cpp: add accept_path() method to check if a path should be
           accepted according to the exclude filters.
