@@ -125,7 +125,7 @@ bool kqueue_watcher::add_watch(
 
   struct stat fd_stat;
 
-  if (::stat(path.c_str(), &fd_stat))
+  if (::fstat(fd, &fd_stat))
   {
     string err = string("Cannot stat() ") + path;
     fsw_perror(err.c_str());

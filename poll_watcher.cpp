@@ -97,7 +97,7 @@ bool poll_watcher::add_path(
   struct stat fd_stat;
   bool has_stat = true;
 
-  if (::stat(path.c_str(), &fd_stat) != 0)
+  if (::fstat(fd, &fd_stat) != 0)
   {
     string err = string("Cannot stat() ") + path;
     fsw_perror(err.c_str());
