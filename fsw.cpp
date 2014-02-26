@@ -274,11 +274,11 @@ static void process_events(const vector<event> &events)
       print_event_timestamp(evt.get_time());
 
     cout << evt.get_path();
-    cout << " - ";
+    cout << " -";
 
     for (string name : flag_names)
     {
-      cout << name << " ";
+      cout << " " << name;
     }
 
     if (_0flag)
