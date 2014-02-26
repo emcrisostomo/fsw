@@ -52,12 +52,16 @@ static void usage()
   cout << PACKAGE_NAME << " [OPTION] ... path ...\n";
   cout << "\n";
   cout << "Options:\n";
+#ifdef HAVE_REGCOMP
   cout << " -e, --exclude=REGEX   Exclude paths matching REGEX.\n";
   cout << " -E, --extended        Use exended regular expressions.\n";
+#endif
   cout
       << " -f, --format-time     Print the event time using the specified format.\n";
   cout << " -h, --help            Show this message.\n";
+#ifdef HAVE_REGCOMP
   cout << " -i, --insensitive     Use case insensitive regular expressions.\n";
+#endif
 #if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
   cout << " -k, --kqueue          Use the kqueue watcher.\n";
 #endif
@@ -72,9 +76,23 @@ static void usage()
   cout << "See the man page for more information.";
   cout << endl;
 #else
+  string option_string = "[";
+#ifdef HAVE_REGCOMP
+  option_string += "eE";
+#endif
+  option_string += "fh";
+#ifdef HAVE_REGCOMP
+  option_string += "i";
+#endif
+#if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
+  option_string += "k";
+#endif
+  option_string += "lnprtuv";
+  option_string += "]";
+
   cout << PACKAGE_STRING << "\n\n";
   cout << "Syntax:\n";
-  cout << PACKAGE_NAME << " [-eEfhilnprtuv] path ...\n";
+  cout << PACKAGE_NAME << " " << option_string << " path ...\n";
   cout << "\n";
   cout << "Usage:\n";
   cout << " -e  Exclude paths matching REGEX.\n";
@@ -312,37 +330,43 @@ static void start_watcher(int argc, char ** argv, int optind)
 static void parse_opts(int argc, char ** argv)
 {
   int ch;
+  string short_opt_string = "f:hkl:nprtuv";
+#ifdef HAVE_REGCOMP
+  short_opt_string += "e:Ei";
+#endif
 #if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
-  const char *short_options = "e:Ef:hkl:nprtuv";
-#else
-  const char *short_options = "e:Ef:hl:nprtuv";
+  short_opt_string += "k";
 #endif
 
 #ifdef HAVE_GETOPT_LONG
   int option_index = 0;
   static struct option long_options[] =
   {
-  { "exclude", required_argument, nullptr, 'e' },
-  { "extended", no_argument, nullptr, 'E' },
-  { "format-time", required_argument, nullptr, 'f' },
-  { "help", no_argument, nullptr, 'h' },
-  { "insensitive", no_argument, nullptr, 'i' },
-#if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
-      { "kqueue", no_argument, nullptr, 'k' },
+#ifdef HAVE_REGCOMP
+      { "exclude", required_argument, nullptr, 'e'},
+{ "extended", no_argument, nullptr, 'E'},
 #endif
-      { "latency", required_argument, nullptr, 'l' },
-      { "numeric", no_argument, nullptr, 'n' },
-      { "poll", no_argument, nullptr, 'p' },
-      { "recursive", no_argument, nullptr, 'r' },
-      { "timestamp", no_argument, nullptr, 't' },
-      { "utc-time", no_argument, nullptr, 'u' },
-      { "verbose", no_argument, nullptr, 'v' },
-      { nullptr, 0, nullptr, 0 } };
+{ "format-time", required_argument, nullptr, 'f'},
+{ "help", no_argument, nullptr, 'h'},
+#ifdef HAVE_REGCOMP
+{ "insensitive", no_argument, nullptr, 'i'},
+#endif
+#if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
+{ "kqueue", no_argument, nullptr, 'k'},
+#endif
+{ "latency", required_argument, nullptr, 'l'},
+{ "numeric", no_argument, nullptr, 'n'},
+{ "poll", no_argument, nullptr, 'p'},
+{ "recursive", no_argument, nullptr, 'r'},
+{ "timestamp", no_argument, nullptr, 't'},
+{ "utc-time", no_argument, nullptr, 'u'},
+{ "verbose", no_argument, nullptr, 'v'},
+{ nullptr, 0, nullptr, 0}};
 
   while ((ch = getopt_long(
       argc,
       argv,
-      short_options,
+      short_opt_string.c_str(),
       long_options,
       &option_index)) != -1)
   {
@@ -353,7 +377,7 @@ static void parse_opts(int argc, char ** argv)
 
     switch (ch)
     {
-
+#ifdef HAVE_REGCOMP
     case 'e':
       exclude_regex.push_back(optarg);
       break;
@@ -361,6 +385,7 @@ static void parse_opts(int argc, char ** argv)
     case 'E':
       Eflag = true;
       break;
+#endif
 
     case 'f':
       fflag = true;
@@ -371,9 +396,11 @@ static void parse_opts(int argc, char ** argv)
       usage();
       exit(FSW_EXIT_USAGE);
 
+#ifdef HAVE_REGCOMP
     case 'i':
       iflag = true;
       break;
+#endif
 
 #if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
     case 'k':
@@ -392,31 +419,31 @@ static void parse_opts(int argc, char ** argv)
 
       break;
 
-    case 'n':
+      case 'n':
       nflag = true;
       break;
 
-    case 'p':
+      case 'p':
       pflag = true;
       break;
 
-    case 'r':
+      case 'r':
       rflag = true;
       break;
 
-    case 't':
+      case 't':
       tflag = true;
       break;
 
-    case 'u':
+      case 'u':
       uflag = true;
       break;
 
-    case 'v':
+      case 'v':
       vflag = true;
       break;
 
-    default:
+      default:
       usage();
       exit(FSW_EXIT_UNK_OPT);
     }
@@ -440,15 +467,13 @@ int main(int argc, char ** argv)
 
     // configure and start the watcher loop
     start_watcher(argc, argv, optind);
-  }
-  catch (exception & conf)
+  } catch (exception & conf)
   {
     cerr << "An error occurred and the program will be terminated.\n";
     cerr << conf.what() << endl;
 
     return FSW_EXIT_ERROR;
-  }
-  catch (...)
+  } catch (...)
   {
     cerr << "An unknown error occurred and the program will be terminated.\n";
 

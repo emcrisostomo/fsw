@@ -31,6 +31,7 @@ void watcher::set_exclude(
     bool case_sensitive,
     bool extended)
 {
+#ifdef HAVE_REGCOMP
   for (string exclusion : exclusions)
   {
     regex_t regex;
@@ -49,6 +50,7 @@ void watcher::set_exclude(
 
     exclude_regex.push_back(regex);
   }
+#endif
 }
 
 bool watcher::accept_path(const string &path)
@@ -58,6 +60,7 @@ bool watcher::accept_path(const string &path)
 
 bool watcher::accept_path(const char *path)
 {
+#ifdef HAVE_REGCOMP
   for (auto re : exclude_regex)
   {
     if (::regexec(&re, path, 0, nullptr, 0) == 0)
@@ -65,16 +68,19 @@ bool watcher::accept_path(const char *path)
       return false;
     }
   }
+#endif
 
   return true;
 }
 
 watcher::~watcher()
 {
+#ifdef HAVE_REGCOMP
   for (auto re : exclude_regex)
   {
     ::regfree(&re);
   }
 
   exclude_regex.clear();
+#endif
 }

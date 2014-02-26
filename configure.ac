@@ -56,6 +56,7 @@ AC_CHECK_FUNCS(
   ,
   AC_MSG_ERROR([The modf function cannot be found.]) 
 )
+AC_CHECK_FUNCS([regcomp])
 
 if test "x${ac_cv_header_CoreServices_CoreServices_h}" != "xyes"
 then

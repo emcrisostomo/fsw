@@ -3,7 +3,9 @@
 
 #include <vector>
 #include <string>
+#ifdef HAVE_REGCOMP
 #include <regex.h>
+#endif
 #include "event.h"
 
 using namespace std;
@@ -35,7 +37,9 @@ protected:
   bool recursive = false;
 
 private:
+#ifdef HAVE_REGCOMP
   vector<regex_t> exclude_regex;
+#endif
 };
 
 #endif  /* FSW__WATCHER_H */
