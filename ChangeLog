@@ -5,12 +5,16 @@ ChangeLog
 
         release: stable micro release 1.2.3:
         
+        * ChangeLog:
+          - Update.
         * configure.ac:
           - Bump version to 1.2.3.
           - Add AC_CONFIG_AUX_DIR to segregate configuration utilities in an
             auxiliary directory.
           - Add AC_CHECK_FUNCS([regcomp]) to check for the availability of the
             regcomp function in <regex.h>.
+          - Remove the check of having either CoreServices or sys/event.h for
+            fsw to compile.
         * fsw.7:
           - Update man page.
         * fsw.cpp:
@@ -20,6 +24,8 @@ ChangeLog
             separator.
         * kqueue_watcher.cpp
           - Use ::fstat instead of ::stat if a file descriptor is available.
+        * NEWS:
+          - Update.
         * poll_watcher.cpp
           - Use ::fstat instead of ::stat if a file descriptor is available.
         * watcher.cpp:

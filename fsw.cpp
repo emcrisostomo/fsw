@@ -27,9 +27,7 @@ static bool _0flag = false;
 static bool Eflag = false;
 static bool fflag = false;
 static bool iflag = false;
-#if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
 static bool kflag = false;
-#endif
 static bool nflag = false;
 static bool lflag = false;
 static bool pflag = false;
@@ -65,7 +63,7 @@ static void usage()
 #ifdef HAVE_REGCOMP
   cout << " -i, --insensitive     Use case insensitive regular expressions.\n";
 #endif
-#if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
+#if defined(HAVE_SYS_EVENT_H)
   cout << " -k, --kqueue          Use the kqueue watcher.\n";
 #endif
   cout << " -l, --latency=DOUBLE  Set the latency.\n";
@@ -87,7 +85,7 @@ static void usage()
 #ifdef HAVE_REGCOMP
   option_string += "i";
 #endif
-#if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
+#ifdef HAVE_SYS_EVENT_H
   option_string += "k";
 #endif
   option_string += "lnprtuv";
@@ -104,7 +102,7 @@ static void usage()
   cout << " -f  Print the event time stamp with the specified format.\n";
   cout << " -h  Show this message.\n";
   cout << " -i  Use case insensitive regular expressions.\n";
-#if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
+#ifdef HAVE_SYS_EVENT_H
   cout << " -k  Use the kqueue watcher.\n";
 #endif
   cout << " -l  Set the latency.\n";
@@ -314,21 +312,18 @@ static void start_watcher(int argc, char ** argv, int optind)
   {
     watcher = new poll_watcher(paths, process_events);
   }
+  else if (kflag)
+  {
+    watcher = new kqueue_watcher(paths, process_events);
+  }
   else
   {
-#if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
-    if (kflag)
-    {
-      watcher = new kqueue_watcher(paths, process_events);
-    }
-    else
-    {
-      watcher = new fsevent_watcher(paths, process_events);
-    }
-#elif defined(HAVE_CORESERVICES_CORESERVICES_H)
+#if defined(HAVE_CORESERVICES_CORESERVICES_H)
     watcher = new fsevent_watcher(paths, process_events);
-#else
+#elif defined(HAVE_SYS_EVENT_H)
     watcher = new kqueue_watcher(paths, process_events);
+#else
+    watcher = new poll_watcher(paths, process_events);
 #endif
   }
 
@@ -346,7 +341,7 @@ static void parse_opts(int argc, char ** argv)
 #ifdef HAVE_REGCOMP
   short_opt_string += "e:Ei";
 #endif
-#if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
+#ifdef HAVE_SYS_EVENT_H
   short_opt_string += "k";
 #endif
 
@@ -364,7 +359,7 @@ static void parse_opts(int argc, char ** argv)
 #ifdef HAVE_REGCOMP
 { "insensitive", no_argument, nullptr, 'i'},
 #endif
-#if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
+#ifdef HAVE_SYS_EVENT_H
 { "kqueue", no_argument, nullptr, 'k'},
 #endif
 { "latency", required_argument, nullptr, 'l'},
@@ -419,7 +414,7 @@ static void parse_opts(int argc, char ** argv)
       break;
 #endif
 
-#if defined(HAVE_CORESERVICES_CORESERVICES_H) && defined(HAVE_SYS_EVENT_H)
+#ifdef HAVE_SYS_EVENT_H
     case 'k':
       kflag = true;
       break;

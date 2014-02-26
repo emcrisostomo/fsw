@@ -32,11 +32,6 @@ AC_CHECK_HEADERS([unordered_map unordered_set])
 
 AM_CONDITIONAL([USE_CORESERVICES], [test "x${ac_cv_header_CoreServices_CoreServices_h}" = "xyes"])
 
-if test "x${ac_cv_header_sys_event_h}" != "xyes" && test "x${ac_cv_header_CoreServices_CoreServices_h}" != "xyes"
-then
-  AC_MSG_ERROR([Either sys/event.h or CoreServices/CoreServices.h must be available.])
-fi
-
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADER_STDBOOL
 AC_TYPE_SIZE_T

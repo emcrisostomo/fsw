@@ -6,7 +6,9 @@ New in 1.2.3:
   * fsw compiles even if regcomp and <regcomp.h> are not available.
   * The ASCII NUL character (\0) can be used as a line separator in order to
     properly parse the output with programs such as xargs and read.
-   
+  * Remove the requirement of having either either CoreServices or sys/event.h
+    for fsw to compile.
+
 New in 1.2.2:
 
   * Paths can be excluded using -e/--exclude and providing a set of regular
