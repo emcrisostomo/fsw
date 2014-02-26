@@ -1,6 +1,36 @@
 ChangeLog
 *********
 
+2014-02-26  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
+
+        release: stable micro release 1.2.3:
+        
+        * configure.ac:
+          - Bump version to 1.2.3.
+          - Add AC_CONFIG_AUX_DIR to segregate configuration utilities in an
+            auxiliary directory.
+          - Add AC_CHECK_FUNCS([regcomp]) to check for the availability of the
+            regcomp function in <regex.h>.
+        * fsw.7:
+          - Update man page.
+        * fsw.cpp:
+          - Optionally support exclude filters and regular expressions (-i, -e
+            and -E) only if regcomp is available (HAVE_REGCOMP is defined).
+          - Add -0/--print0 to use the ASCII NUL character (\0) as a line
+            separator.
+        * kqueue_watcher.cpp
+          - Use ::fstat instead of ::stat if a file descriptor is available.
+        * poll_watcher.cpp
+          - Use ::fstat instead of ::stat if a file descriptor is available.
+        * watcher.cpp:
+          - Optionally support exclude filters and regular expressions (-i, -e
+            and -E) only if regcomp is available (HAVE_REGCOMP is defined).
+        * watcher.h:
+          - Optionally support exclude filters and regular expressions (-i, -e
+            and -E) only if regcomp is available (HAVE_REGCOMP is defined).
+        
+
+
 2014-02-25  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
 
         release: stable micro release 1.2.2:

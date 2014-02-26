@@ -17,7 +17,7 @@ hierarchies are modified.
 
 .Sh SYNOPSIS
 .Nm fsw
-.Op Fl Ehiknprtuv
+.Op Fl 0Ehiknprtuv
 .Op Fl e Ar regexp
 .Op Fl f Ar format-time
 .Op Fl l Ar latency
@@ -74,12 +74,18 @@ process.
 The following options are available:
 .Bl -tag -width indent
 
+.It Fl 0, -print0
+Use the ASCII NUL character (\0) as line separator.
+Since file names can potentially contain any character but NUL, this option
+assures that the output of fsw can be safely parsed using NUL as delimiter,
+such as using xargs -0 and the shell builtin read -d ''. 
+
 .It Fl e, -exclude Ar regexp
 Exclude paths matching
 .Ar regexp .
 Multiple exclude filters can be specified using this option multiple times. 
 
-.It Fl E
+.It Fl E, -extended
 Use extended regular expressions.
 
 .It Fl f, -format-time Ar format
@@ -88,18 +94,18 @@ Print the event time using the specified
 Supported formats are specified by
 .Sy strftime (3) .
 
-.It Fl h
+.It Fl h, -help
 Show the help message.
 
-.It Fl i
+.It Fl i, -insensitive
 Use case insensitive regular expressions.
 
-.It Fl k
+.It Fl k, -kqueue
 Use the kqueue watcher.
 This option is only available when more than one watcher is available, and one
 of them is the kqueue watcher.
 
-.It Fl l Ar latency
+.It Fl l, -latency Ar latency
 Set the
 .Ar latency 
 in seconds.
@@ -108,14 +114,14 @@ Smaller values are currently not allowed in order not to compromise the
 performance of the system.
 The default latency is 1 second.
 
-.It Fl n
+.It Fl n, -numeric
 Print the numeric value of the event flag, instead of the array of symbolic
 names.
 The numeric value of the event flags are system-specific and may vary across
 different versions of OS X.
 As a consequence, the use of numeric values is discouraged. 
 
-.It Fl p
+.It Fl p, -poll
 Use the poll-based watcher.
 This watcher periodically stats the file system to detect changes on the
 observed paths.
@@ -124,11 +130,11 @@ watch.
 This watcher should be considered a last resource in case other watchers cannot
 be used.  
  
-.It Fl r
+.It Fl r, -recursive
 Watch subdirectories recursively.  This option may not be supported on all
 systems.
 
-.It Fl t
+.It Fl t, -timestamp
 Print the event timestamp.
 
 .It Fl u, -utf-time
@@ -139,7 +145,7 @@ local
 time, as defined by
 .Sy localtime (3) .
 
-.It Fl v
+.It Fl v, -verbose
 Print verbose output.
 
 .El
