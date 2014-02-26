@@ -2,13 +2,14 @@
 # Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.69])
 AC_INIT([fsw], [1.2.2], [enrico.m.crisostomo@gmail.com])
-AM_INIT_AUTOMAKE([-Wall -Werror gnu])
 AC_COPYRIGHT([2013 (C) Enrico M. Crisostomo])
 AC_REVISION([$Revision: 1.2.2-1 $])
 AC_CONFIG_SRCDIR([fsw.cpp])
+AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_MACRO_DIRS([m4])
+AM_INIT_AUTOMAKE([-Wall -Werror gnu])
 AC_CANONICAL_HOST
 
 # Configure language
