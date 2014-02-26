@@ -23,6 +23,7 @@ using namespace std;
 
 static watcher *watcher = nullptr;
 static vector<string> exclude_regex;
+static bool _0flag = false;
 static bool Eflag = false;
 static bool fflag = false;
 static bool iflag = false;
@@ -52,6 +53,8 @@ static void usage()
   cout << PACKAGE_NAME << " [OPTION] ... path ...\n";
   cout << "\n";
   cout << "Options:\n";
+  cout
+      << " -0, --print0          Use the ASCII NUL character (0) as line separator.\n";
 #ifdef HAVE_REGCOMP
   cout << " -e, --exclude=REGEX   Exclude paths matching REGEX.\n";
   cout << " -E, --extended        Use exended regular expressions.\n";
@@ -95,6 +98,7 @@ static void usage()
   cout << PACKAGE_NAME << " " << option_string << " path ...\n";
   cout << "\n";
   cout << "Usage:\n";
+  cout << " -0  Use the ASCII NUL character (0) as line separator.\n";
   cout << " -e  Exclude paths matching REGEX.\n";
   cout << " -E  Use exended regular expressions.\n";
   cout << " -f  Print the event time stamp with the specified format.\n";
@@ -277,7 +281,15 @@ static void process_events(const vector<event> &events)
       cout << name << " ";
     }
 
-    cout << endl;
+    if (_0flag)
+    {
+      cout << '\0';
+      flush(cout);
+    }
+    else
+    {
+      cout << endl;
+    }
   }
 }
 
@@ -330,7 +342,7 @@ static void start_watcher(int argc, char ** argv, int optind)
 static void parse_opts(int argc, char ** argv)
 {
   int ch;
-  string short_opt_string = "f:hkl:nprtuv";
+  string short_opt_string = "0f:hkl:nprtuv";
 #ifdef HAVE_REGCOMP
   short_opt_string += "e:Ei";
 #endif
@@ -342,8 +354,9 @@ static void parse_opts(int argc, char ** argv)
   int option_index = 0;
   static struct option long_options[] =
   {
+  { "print0", no_argument, nullptr, '0'},
 #ifdef HAVE_REGCOMP
-      { "exclude", required_argument, nullptr, 'e'},
+{ "exclude", required_argument, nullptr, 'e'},
 { "extended", no_argument, nullptr, 'E'},
 #endif
 { "format-time", required_argument, nullptr, 'f'},
@@ -377,6 +390,10 @@ static void parse_opts(int argc, char ** argv)
 
     switch (ch)
     {
+    case '0':
+      _0flag = true;
+      break;
+
 #ifdef HAVE_REGCOMP
     case 'e':
       exclude_regex.push_back(optarg);
