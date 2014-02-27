@@ -1,6 +1,7 @@
 #ifndef FSW__WATCHER_H
 #define FSW__WATCHER_H
 
+#include "config.h"
 #include <vector>
 #include <string>
 #ifdef HAVE_REGCOMP

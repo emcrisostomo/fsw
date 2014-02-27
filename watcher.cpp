@@ -1,3 +1,4 @@
+#include "config.h"
 #include "watcher.h"
 #include "fsw_exception.h"
 #include <cstdlib>
@@ -76,7 +77,7 @@ bool watcher::accept_path(const char *path)
 watcher::~watcher()
 {
 #ifdef HAVE_REGCOMP
-  for (auto re : exclude_regex)
+  for (auto &re : exclude_regex)
   {
     ::regfree(&re);
   }

@@ -216,6 +216,10 @@ void poll_watcher::run()
 
   while (true)
   {
+#ifdef DEBUG
+    fsw_log("Done scanning.");
+#endif
+
     ::sleep(latency < MIN_POLL_LATENCY ? MIN_POLL_LATENCY : latency);
 
     time(&curr_time);
