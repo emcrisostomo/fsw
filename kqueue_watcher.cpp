@@ -61,7 +61,7 @@ static vector<event_flag> decode_flags(uint32_t flag)
 {
   vector<event_flag> evt_flags;
 
-  for (KqueueFlagType type : event_flag_type)
+  for (const KqueueFlagType &type : event_flag_type)
   {
     if (flag & type.flag)
     {
@@ -174,7 +174,7 @@ bool kqueue_watcher::watch_path(const string &path)
     vector<string> children;
     get_directory_children(current_dir, children);
 
-    for (string child : children)
+    for (string &child : children)
     {
       if (child.compare(".") == 0 || child.compare("..") == 0)
         continue;
@@ -251,7 +251,7 @@ void kqueue_watcher::rescan_pending()
 
 void kqueue_watcher::scan_root_paths()
 {
-  for (string path : paths)
+  for (string &path : paths)
   {
     if (is_path_watched(path))
       continue;
@@ -378,7 +378,7 @@ void kqueue_watcher::run()
     vector<struct kevent> changes;
     vector<struct kevent> event_list;
 
-    for (pair<int, string> fd_path : file_names_by_descriptor)
+    for (const pair<int, string> &fd_path : file_names_by_descriptor)
     {
       struct kevent change;
 

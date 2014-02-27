@@ -141,7 +141,7 @@ void poll_watcher::scan(const string &path, poll_watcher_scan_callback fn)
     vector<string> children;
     get_directory_children(current_dir, children);
 
-    for (string child : children)
+    for (string &child : children)
     {
       if (child.compare(".") == 0 || child.compare("..") == 0)
         continue;
@@ -164,7 +164,7 @@ void poll_watcher::find_removed_files()
   vector<event_flag> flags;
   flags.push_back(event_flag::Removed);
 
-  for (auto removed : previous_data->tracked_files)
+  for (auto &removed : previous_data->tracked_files)
   {
     events.push_back(
     { removed.first, curr_time, flags });
@@ -182,7 +182,7 @@ void poll_watcher::collect_data()
 {
   poll_watcher_scan_callback fn = &poll_watcher::intermediate_scan_callback;
 
-  for (string path : paths)
+  for (string &path : paths)
   {
     scan(path, fn);
   }
@@ -195,7 +195,7 @@ void poll_watcher::collect_initial_data()
 {
   poll_watcher_scan_callback fn = &poll_watcher::initial_scan_callback;
 
-  for (string path : paths)
+  for (string &path : paths)
   {
     scan(path, fn);
   }

@@ -267,17 +267,31 @@ static void process_events(const vector<event> &events)
   for (event evt : events)
   {
     vector<event_flag> flags = evt.get_flags();
-    vector<string> flag_names = decode_event_flag_name(flags);
 
     if (tflag)
       print_event_timestamp(evt.get_time());
 
     cout << evt.get_path();
-    cout << " -";
+    cout << " ";
 
-    for (string name : flag_names)
+    if (nflag)
     {
-      cout << " " << name;
+      int mask = 0;
+      for (event_flag &flag : flags)
+      {
+        mask += static_cast<int>(flag);
+      }
+
+      cout << " " << mask;
+    }
+    else
+    {
+      vector<string> flag_names = decode_event_flag_name(flags);
+
+      for (string &name : flag_names)
+      {
+        cout << " " << name;
+      }
     }
 
     if (_0flag)
