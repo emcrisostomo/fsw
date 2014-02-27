@@ -7,13 +7,13 @@
 #include <unordered_map>
 
 template <typename K, typename V>
-using fsw_hash_map = unordered_map<K, V>;
+using fsw_hash_map = std::unordered_map<K, V>;
 
 #else
 #include <map>
 
 template <typename K, typename V>
-using fsw_hash_map = map<K, V>;
+using fsw_hash_map = std::map<K, V>;
 
 #endif
 

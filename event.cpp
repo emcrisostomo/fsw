@@ -1,5 +1,7 @@
 #include "event.h"
 
+using namespace std;
+
 event::event(string path, time_t evt_time, vector<event_flag> flags) :
     path(path), evt_time(evt_time), evt_flags(flags)
 {

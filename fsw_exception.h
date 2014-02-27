@@ -4,15 +4,13 @@
 #include <exception>
 #include <string>
 
-using namespace std;
-
-class fsw_exception: public exception {
+class fsw_exception: public std::exception {
 public:
-  fsw_exception(string cause);
+  fsw_exception(std::string cause);
   virtual const char * what() const throw ();
   virtual ~fsw_exception() throw ();
 private:
-  const string cause;
+  const std::string cause;
 };
 
 #endif  /* FSW_EXCEPTION_H */

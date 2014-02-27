@@ -14,6 +14,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+using namespace std;
+
 typedef struct KqueueFlagType
 {
   uint32_t flag;

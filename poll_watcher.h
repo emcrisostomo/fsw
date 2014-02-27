@@ -10,7 +10,7 @@
 class poll_watcher: public watcher
 {
 public:
-  poll_watcher(vector<string> paths, EVENT_CALLBACK callback);
+  poll_watcher(std::vector<std::string> paths, EVENT_CALLBACK callback);
   virtual ~poll_watcher();
 
   void run();
@@ -22,7 +22,7 @@ private:
   poll_watcher& operator=(const poll_watcher & that);
 
   typedef void (poll_watcher::*poll_watcher_scan_callback)(
-      const string &path,
+      const std::string &path,
       struct stat &stat);
 
   typedef struct watched_file_info {
@@ -32,18 +32,18 @@ private:
 
   typedef struct poll_watcher_data
   {
-    fsw_hash_map<string, watched_file_info> tracked_files;
+    fsw_hash_map<std::string, watched_file_info> tracked_files;
   } poll_watcher_data;
 
-  void scan(const string &path, poll_watcher_scan_callback fn);
+  void scan(const std::string &path, poll_watcher_scan_callback fn);
   void collect_initial_data();
   void collect_data();
   bool add_path(
-      const string &path,
+      const std::string &path,
       mode_t & mode,
       poll_watcher_scan_callback poll_callback);
-  void initial_scan_callback(const string &path, struct stat &stat);
-  void intermediate_scan_callback(const string &path, struct stat &stat);
+  void initial_scan_callback(const std::string &path, struct stat &stat);
+  void intermediate_scan_callback(const std::string &path, struct stat &stat);
   void find_removed_files();
   void notify_events();
   void swap_data_containers();
@@ -51,7 +51,7 @@ private:
   poll_watcher_data *previous_data;
   poll_watcher_data *new_data;
 
-  vector<event> events;
+  std::vector<event> events;
   time_t curr_time;
 };
 

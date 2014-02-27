@@ -5,8 +5,6 @@
 #include <ctime>
 #include <vector>
 
-using namespace std;
-
 enum class event_flag
 {
   PlatformSpecific = 1,
@@ -25,16 +23,16 @@ enum class event_flag
 class event
 {
 public:
-  event(string path, time_t evt_time, vector<event_flag> flags);
+  event(std::string path, time_t evt_time, std::vector<event_flag> flags);
   virtual ~event();
-  string get_path() const;
+  std::string get_path() const;
   time_t get_time() const;
-  vector<event_flag> get_flags() const;
+  std::vector<event_flag> get_flags() const;
 
 private:
-  string path;
+  std::string path;
   time_t evt_time;
-  vector<event_flag> evt_flags;
+  std::vector<event_flag> evt_flags;
 };
 
 #endif  /* FSW_EVENT_H */

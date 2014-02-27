@@ -7,13 +7,13 @@
 #include <unordered_set>
 
 template <typename K>
-using fsw_hash_set = unordered_set<K>;
+using fsw_hash_set = std::unordered_set<K>;
 
 #else
 #include <set>
 
 template <typename K>
-using fsw_hash_set = set<K>;
+using fsw_hash_set = std::set<K>;
 
 #endif
 

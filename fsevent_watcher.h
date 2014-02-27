@@ -8,12 +8,10 @@
 #include "watcher.h"
 #include <CoreServices/CoreServices.h>
 
-using namespace std;
-
 class fsevent_watcher : public watcher
 {
 public:
-  fsevent_watcher(vector<string> paths, EVENT_CALLBACK callback);
+  fsevent_watcher(std::vector<std::string> paths, EVENT_CALLBACK callback);
   virtual ~fsevent_watcher();
 
   void run();

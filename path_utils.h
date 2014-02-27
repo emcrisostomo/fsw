@@ -4,8 +4,6 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
-void get_directory_children(const string &path, vector<string> &children);
+void get_directory_children(const std::string &path, std::vector<std::string> &children);
 
 #endif  /* FSW_PATH_UTILS_H */

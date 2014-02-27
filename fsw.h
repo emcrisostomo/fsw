@@ -4,8 +4,6 @@
 #include <exception>
 #include <string>
 
-using namespace std;
-
 #define FSW_EXIT_OK      0
 #define FSW_EXIT_UNK_OPT 1
 #define FSW_EXIT_USAGE   2

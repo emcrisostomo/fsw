@@ -5,6 +5,8 @@
 #include <fcntl.h>
 #include <iostream>
 
+using namespace std;
+
 poll_watcher::poll_watcher(vector<string> paths, EVENT_CALLBACK callback) :
     watcher(paths, callback)
 {
