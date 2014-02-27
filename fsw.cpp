@@ -2,6 +2,7 @@
 #include "fsw.h"
 #include "fsw_log.h"
 #include <iostream>
+#include <sstream>
 #include <csignal>
 #include <cstdlib>
 #include <cmath>
@@ -337,12 +338,14 @@ static void start_watcher(int argc, char ** argv, int optind)
 static void parse_opts(int argc, char ** argv)
 {
   int ch;
-  string short_opt_string = "0f:hkl:nprtuv";
+  ostringstream short_options;
+
+  short_options << "0f:hkl:nprtuv";
 #ifdef HAVE_REGCOMP
-  short_opt_string += "e:Ei";
+  short_options << "e:Ei";
 #endif
 #ifdef HAVE_SYS_EVENT_H
-  short_opt_string += "k";
+  short_options << "k";
 #endif
 
 #ifdef HAVE_GETOPT_LONG
@@ -374,12 +377,12 @@ static void parse_opts(int argc, char ** argv)
   while ((ch = getopt_long(
       argc,
       argv,
-      short_opt_string.c_str(),
+      short_options.str().c_str(),
       long_options,
       &option_index)) != -1)
   {
 #else
-    while ((ch = getopt(argc, argv, short_options)) != -1)
+    while ((ch = getopt(argc, argv, short_options.str().c_str())) != -1)
     {
 #endif
 
