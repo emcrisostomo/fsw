@@ -42,12 +42,12 @@ Usage recommendations are as follows:
     on either a per process or a system-wide basis.
   * If feasible, watch directories instead of watching files.
   * If none of the above applies, use the poll watcher.  The authors' experience
-    indicates that fsw requires approximately 480 MB or RAM memory to observe a
-    hierarchy of 500.000 files.  A common bottleneck of the poll watcher is disk
-    access, since stat()-ing a great number of files may take a huge amount of
-    time.  In this case, the latency should be set to a sufficiently large value
-    in order to reduce the performance degradation that may result from frequent
-    disk access.
+    indicates that fsw requires approximately 150 MB or RAM memory to observe a
+    hierarchy of 500.000 files with a minimum path legth of 32 characters.  A
+    common bottleneck of the poll watcher is disk access, since stat()-ing a
+    great number of files may take a huge amount of time.  In this case, the
+    latency should be set to a sufficiently large value in order to reduce the
+    performance degradation that may result from frequent disk access.
 
 Getting fsw
 -----------
