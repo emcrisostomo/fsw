@@ -9,17 +9,17 @@ using namespace std;
 
 enum class event_flag
 {
-  PlatformSpecific,
-  Created,
-  Updated,
-  Removed,
-  Renamed,
-  OwnerModified,
-  AttributeModified,
-  IsFile,
-  IsDir,
-  IsSymLink,
-  Link
+  PlatformSpecific = 1,
+  Created = 2,
+  Updated = 4,
+  Removed = 8,
+  Renamed = 16,
+  OwnerModified = 32,
+  AttributeModified = 64,
+  IsFile = 128,
+  IsDir = 256,
+  IsSymLink = 512,
+  Link = 1024
 };
 
 class event
