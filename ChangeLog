@@ -15,6 +15,15 @@ ChangeLog
             regcomp function in <regex.h>.
           - Remove the check of having either CoreServices or sys/event.h for
             fsw to compile.
+        * event.cpp:
+          - Remove using namespace statements from header files.
+        * event.h:
+          - Update events so that their ordinals are a bit mask.
+          - Remove using namespace statements from header files.
+        * fseventwatcher.cpp:
+          - Remove using namespace statements from header files.
+        * fseventwatcher.h:
+          - Remove using namespace statements from header files.
         * fsw.7:
           - Update man page.
         * fsw.cpp:
@@ -22,20 +31,48 @@ ChangeLog
             and -E) only if regcomp is available (HAVE_REGCOMP is defined).
           - Add -0/--print0 to use the ASCII NUL character (\0) as a line
             separator.
+          - Use ostringstream to concatecate strings.
+          - Fix bug when getopt_long is not available.
+          - Reimplement -n/--numeric to dump platform independent event codes.
+        * fsw.h:
+          - Remove using namespace statements from header files.
+        * fsw_exception.h
+          - Remove using namespace statements from header files.
+        * fsw_map.h:
+          - Remove using namespace statements from header files.
+        * fsw_set.h:
+          - Remove using namespace statements from header files.
         * kqueue_watcher.cpp
           - Use ::fstat instead of ::stat if a file descriptor is available.
+          - Reimplement -n/--numeric to dump platform independent event codes.
+          - Remove using namespace statements from header files.
+        * kqueue_watcher.h:
+          - Remove using namespace statements from header files.
         * NEWS:
           - Update.
+        * path_utils.h:
+          - Remove using namespace statements from header files.
         * poll_watcher.cpp
           - Use ::fstat instead of ::stat if a file descriptor is available.
+          - Reimplement -n/--numeric to dump platform independent event codes.
+          - Fix missing import.
+          - Remove using namespace statements from header files.
+        * poll_watcher.h:
+          - Remove using namespace statements from header files.
+        * README:
+          - Update memory requirement description.
+        * README.md:
+          - Update memory requirement description.
         * watcher.cpp:
           - Optionally support exclude filters and regular expressions (-i, -e
             and -E) only if regcomp is available (HAVE_REGCOMP is defined).
+          - Fix missing import.
+          - Remove using namespace statements from header files.
         * watcher.h:
           - Optionally support exclude filters and regular expressions (-i, -e
             and -E) only if regcomp is available (HAVE_REGCOMP is defined).
-        
-
+          - Fix missing import.
+          - Remove using namespace statements from header files.
 
 2014-02-25  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
 
