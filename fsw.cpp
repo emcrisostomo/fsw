@@ -36,6 +36,7 @@ static bool rflag = false;
 static bool tflag = false;
 static bool uflag = false;
 static bool vflag = false;
+static bool xflag = false;
 static double lvalue = 1.0;
 static string tformat = "%c";
 
@@ -68,12 +69,13 @@ static void usage()
   cout << " -k, --kqueue          Use the kqueue watcher.\n";
 #endif
   cout << " -l, --latency=DOUBLE  Set the latency.\n";
-  cout << " -n, --numeric         Print numeric event mask.\n";
+  cout << " -n, --numeric         Print a numeric event mask.\n";
   cout << " -p, --poll            Use the poll watcher.\n";
   cout << " -r, --recursive       Recurse subdirectories.\n";
   cout << " -t, --timestamp       Print the event timestamp.\n";
   cout << " -u, --utc-time        Print the event time as UTC time.\n";
   cout << " -v, --verbose         Print verbose output.\n";
+  cout << " -x, --event-flags     Print the event flags.\n";
   cout << "\n";
   cout << "See the man page for more information.";
   cout << endl;
@@ -89,7 +91,7 @@ static void usage()
 #ifdef HAVE_SYS_EVENT_H
   option_string += "k";
 #endif
-  option_string += "lnprtuv";
+  option_string += "lnprtuvx";
   option_string += "]";
 
   cout << PACKAGE_STRING << "\n\n";
@@ -107,12 +109,13 @@ static void usage()
   cout << " -k  Use the kqueue watcher.\n";
 #endif
   cout << " -l  Set the latency.\n";
-  cout << " -n  Print numeric event masks.\n";
+  cout << " -n  Print a numeric event masks.\n";
   cout << " -p  Use the poll watcher.\n";
   cout << " -r  Recurse subdirectories.\n";
   cout << " -t  Print the event timestamp.\n";
   cout << " -u  Print the event time as UTC time.\n";
   cout << " -v  Print verbose output.\n";
+  cout << " -x  Print the event flags.\n";
   cout << "\n";
   cout << "See the man page for more information.";
   cout << endl;
@@ -259,12 +262,35 @@ static void print_event_timestamp(const time_t &evt_time)
           tformat.c_str(),
           tm_time) ? string(time_format_buffer) : string("<date format error>");
 
-  cout << date << " - ";
+  cout << date << " ";
+}
+
+static void print_event_flags(const vector<event_flag> &flags)
+{
+  if (nflag)
+  {
+    int mask = 0;
+    for (const event_flag &flag : flags)
+    {
+      mask += static_cast<int>(flag);
+    }
+
+    cout << " " << mask;
+  }
+  else
+  {
+    vector<string> flag_names = decode_event_flag_name(flags);
+
+    for (string &name : flag_names)
+    {
+      cout << " " << name;
+    }
+  }
 }
 
 static void process_events(const vector<event> &events)
 {
-  for (event evt : events)
+  for (const event &evt : events)
   {
     vector<event_flag> flags = evt.get_flags();
 
@@ -272,27 +298,9 @@ static void process_events(const vector<event> &events)
       print_event_timestamp(evt.get_time());
 
     cout << evt.get_path();
-    cout << " ";
 
-    if (nflag)
-    {
-      int mask = 0;
-      for (event_flag &flag : flags)
-      {
-        mask += static_cast<int>(flag);
-      }
-
-      cout << " " << mask;
-    }
-    else
-    {
-      vector<string> flag_names = decode_event_flag_name(flags);
-
-      for (string &name : flag_names)
-      {
-        cout << " " << name;
-      }
-    }
+    if (xflag)
+      print_event_flags(flags);
 
     if (_0flag)
     {
@@ -354,7 +362,7 @@ static void parse_opts(int argc, char ** argv)
   int ch;
   ostringstream short_options;
 
-  short_options << "0f:hkl:nprtuv";
+  short_options << "0f:hkl:nprtuvx";
 #ifdef HAVE_REGCOMP
   short_options << "e:Ei";
 #endif
@@ -386,6 +394,7 @@ static void parse_opts(int argc, char ** argv)
 { "timestamp", no_argument, nullptr, 't'},
 { "utc-time", no_argument, nullptr, 'u'},
 { "verbose", no_argument, nullptr, 'v'},
+{ "event-flags", no_argument, nullptr, 'x'},
 { nullptr, 0, nullptr, 0}};
 
   while ((ch = getopt_long(
@@ -450,6 +459,7 @@ static void parse_opts(int argc, char ** argv)
 
       case 'n':
       nflag = true;
+      xflag = true;
       break;
 
       case 'p':
@@ -470,6 +480,10 @@ static void parse_opts(int argc, char ** argv)
 
       case 'v':
       vflag = true;
+      break;
+
+      case 'x':
+      xflag = true;
       break;
 
       default:

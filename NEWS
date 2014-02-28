@@ -8,6 +8,8 @@ New in 1.2.3:
     properly parse the output with programs such as xargs and read.
   * Remove the requirement of having either either CoreServices or sys/event.h
     for fsw to compile.
+  * fsw only prints event flags when required so with the -x/--event-flags
+    option.  The -n/--numeric option implicitly turns on this option.
 
 New in 1.2.2:
 
