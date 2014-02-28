@@ -56,6 +56,11 @@ void watcher::set_exclude(
 #endif
 }
 
+void watcher::set_follow_symlinks(bool follow)
+{
+  follow_symlinks = follow;
+}
+
 bool watcher::accept_path(const string &path)
 {
   return accept_path(path.c_str());

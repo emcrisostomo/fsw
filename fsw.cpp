@@ -31,6 +31,7 @@ static bool iflag = false;
 static bool kflag = false;
 static bool nflag = false;
 static bool lflag = false;
+static bool Lflag = false;
 static bool pflag = false;
 static bool rflag = false;
 static bool tflag = false;
@@ -69,6 +70,7 @@ static void usage()
   cout << " -k, --kqueue          Use the kqueue watcher.\n";
 #endif
   cout << " -l, --latency=DOUBLE  Set the latency.\n";
+  cout << " -L, --follow-links    Follow symbolic links.\n";
   cout << " -n, --numeric         Print a numeric event mask.\n";
   cout << " -p, --poll            Use the poll watcher.\n";
   cout << " -r, --recursive       Recurse subdirectories.\n";
@@ -91,7 +93,7 @@ static void usage()
 #ifdef HAVE_SYS_EVENT_H
   option_string += "k";
 #endif
-  option_string += "lnprtuvx";
+  option_string += "lLnprtuvx";
   option_string += "]";
 
   cout << PACKAGE_STRING << "\n\n";
@@ -109,6 +111,7 @@ static void usage()
   cout << " -k  Use the kqueue watcher.\n";
 #endif
   cout << " -l  Set the latency.\n";
+  cout << " -L  Follow symbolic links.\n";
   cout << " -n  Print a numeric event masks.\n";
   cout << " -p  Use the poll watcher.\n";
   cout << " -r  Recurse subdirectories.\n";
@@ -374,28 +377,29 @@ static void parse_opts(int argc, char ** argv)
   int option_index = 0;
   static struct option long_options[] =
   {
-  { "print0", no_argument, nullptr, '0'},
+  { "print0", no_argument, nullptr, '0' },
 #ifdef HAVE_REGCOMP
-{ "exclude", required_argument, nullptr, 'e'},
-{ "extended", no_argument, nullptr, 'E'},
+      { "exclude", required_argument, nullptr, 'e' },
+      { "extended", no_argument, nullptr, 'E' },
 #endif
-{ "format-time", required_argument, nullptr, 'f'},
-{ "help", no_argument, nullptr, 'h'},
+      { "format-time", required_argument, nullptr, 'f' },
+      { "help", no_argument, nullptr, 'h' },
 #ifdef HAVE_REGCOMP
-{ "insensitive", no_argument, nullptr, 'i'},
+      { "insensitive", no_argument, nullptr, 'i' },
 #endif
 #ifdef HAVE_SYS_EVENT_H
-{ "kqueue", no_argument, nullptr, 'k'},
+      { "kqueue", no_argument, nullptr, 'k' },
 #endif
-{ "latency", required_argument, nullptr, 'l'},
-{ "numeric", no_argument, nullptr, 'n'},
-{ "poll", no_argument, nullptr, 'p'},
-{ "recursive", no_argument, nullptr, 'r'},
-{ "timestamp", no_argument, nullptr, 't'},
-{ "utc-time", no_argument, nullptr, 'u'},
-{ "verbose", no_argument, nullptr, 'v'},
-{ "event-flags", no_argument, nullptr, 'x'},
-{ nullptr, 0, nullptr, 0}};
+      { "latency", required_argument, nullptr, 'l' },
+      { "follow-links", no_argument, nullptr, 'L' },
+      { "numeric", no_argument, nullptr, 'n' },
+      { "poll", no_argument, nullptr, 'p' },
+      { "recursive", no_argument, nullptr, 'r' },
+      { "timestamp", no_argument, nullptr, 't' },
+      { "utc-time", no_argument, nullptr, 'u' },
+      { "verbose", no_argument, nullptr, 'v' },
+      { "event-flags", no_argument, nullptr, 'x' },
+      { nullptr, 0, nullptr, 0 } };
 
   while ((ch = getopt_long(
       argc,
@@ -457,36 +461,40 @@ static void parse_opts(int argc, char ** argv)
 
       break;
 
-      case 'n':
+    case 'L':
+      Lflag = true;
+      break;
+
+    case 'n':
       nflag = true;
       xflag = true;
       break;
 
-      case 'p':
+    case 'p':
       pflag = true;
       break;
 
-      case 'r':
+    case 'r':
       rflag = true;
       break;
 
-      case 't':
+    case 't':
       tflag = true;
       break;
 
-      case 'u':
+    case 'u':
       uflag = true;
       break;
 
-      case 'v':
+    case 'v':
       vflag = true;
       break;
 
-      case 'x':
+    case 'x':
       xflag = true;
       break;
 
-      default:
+    default:
       usage();
       exit(FSW_EXIT_UNK_OPT);
     }
@@ -510,13 +518,15 @@ int main(int argc, char ** argv)
 
     // configure and start the watcher loop
     start_watcher(argc, argv, optind);
-  } catch (exception & conf)
+  }
+  catch (exception & conf)
   {
     cerr << "An error occurred and the program will be terminated.\n";
     cerr << conf.what() << endl;
 
     return FSW_EXIT_ERROR;
-  } catch (...)
+  }
+  catch (...)
   {
     cerr << "An unknown error occurred and the program will be terminated.\n";
 

@@ -22,6 +22,7 @@ public:
       const std::vector<std::string> &exclusions,
       bool case_sensitive = true,
       bool extended = false);
+  void set_follow_symlinks(bool follow);
 
   virtual void run() = 0;
 
@@ -34,6 +35,7 @@ protected:
   EVENT_CALLBACK callback;
   double latency = 1.0;
   bool recursive = false;
+  bool follow_symlinks = false;
 
 private:
 #ifdef HAVE_REGCOMP

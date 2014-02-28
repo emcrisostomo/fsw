@@ -24,7 +24,8 @@ poll_watcher::~poll_watcher()
 void poll_watcher::initial_scan_callback(const string &path, struct stat &stat)
 {
 
-  watched_file_info wfi { stat.st_mtimespec.tv_sec, stat.st_ctimespec.tv_sec };
+  watched_file_info wfi
+  { stat.st_mtimespec.tv_sec, stat.st_ctimespec.tv_sec };
   previous_data->tracked_files[path] = wfi;
 }
 
@@ -33,7 +34,8 @@ void poll_watcher::intermediate_scan_callback(
     struct stat &stat)
 {
 
-  watched_file_info wfi { stat.st_mtimespec.tv_sec, stat.st_ctimespec.tv_sec };
+  watched_file_info wfi
+  { stat.st_mtimespec.tv_sec, stat.st_ctimespec.tv_sec };
   new_data->tracked_files[path] = wfi;
 
   if (previous_data->tracked_files.count(path))
@@ -121,7 +123,8 @@ void poll_watcher::scan(const string &path, poll_watcher_scan_callback fn)
 {
   mode_t mode;
 
-  if (!accept_path(path)) return;
+  if (!accept_path(path))
+    return;
 
   if (!add_path(path, mode, fn))
     return;
@@ -129,7 +132,11 @@ void poll_watcher::scan(const string &path, poll_watcher_scan_callback fn)
   if (!recursive)
     return;
 
-  if (!S_ISDIR(mode))
+  if (follow_symlinks && S_ISLNK(mode))
+  {
+    return;
+  }
+  else if (!S_ISDIR(mode))
     return;
 
   vector<string> dirs_to_process;
@@ -150,7 +157,8 @@ void poll_watcher::scan(const string &path, poll_watcher_scan_callback fn)
 
       const string fqpath = current_dir + "/" + child;
 
-      if (!accept_path(path)) continue;
+      if (!accept_path(path))
+        continue;
 
       if (!add_path(fqpath, mode, fn))
         continue;
@@ -219,7 +227,7 @@ void poll_watcher::run()
   while (true)
   {
 #ifdef DEBUG
-    fsw_log("Done scanning.");
+    fsw_log("Done scanning.\n");
 #endif
 
     ::sleep(latency < MIN_POLL_LATENCY ? MIN_POLL_LATENCY : latency);
