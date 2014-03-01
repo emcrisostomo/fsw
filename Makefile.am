@@ -4,7 +4,7 @@ fsw_SOURCES += fsw_exception.cpp fsw_exception.h event.cpp event.h
 fsw_SOURCES += monitor.cpp monitor.h fsw_map.h fsw_set.h
 fsw_SOURCES += fsevent_monitor.cpp fsevent_monitor.h
 fsw_SOURCES += kqueue_monitor.cpp kqueue_monitor.h
-fsw_SOURCES += poll_watcher.cpp poll_watcher.h
+fsw_SOURCES += poll_monitor.cpp poll_monitor.h
 
 if USE_CORESERVICES
   fsw_LDFLAGS = -framework CoreServices

@@ -18,7 +18,7 @@
 #ifdef HAVE_SYS_EVENT_H
 #include "kqueue_monitor.h"
 #endif
-#include "poll_watcher.h"
+#include "poll_monitor.h"
 
 using namespace std;
 
@@ -336,7 +336,7 @@ static void start_watcher(int argc, char ** argv, int optind)
 
   if (pflag)
   {
-    watcher = new poll_watcher(paths, process_events);
+    watcher = new poll_monitor(paths, process_events);
   }
   else if (kflag)
   {
@@ -349,7 +349,7 @@ static void start_watcher(int argc, char ** argv, int optind)
 #elif defined(HAVE_SYS_EVENT_H)
     watcher = new kqueue_monitor(paths, process_events);
 #else
-    watcher = new poll_watcher(paths, process_events);
+    watcher = new poll_monitor(paths, process_events);
 #endif
   }
 

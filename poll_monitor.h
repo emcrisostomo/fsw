@@ -1,5 +1,5 @@
-#ifndef FSW_POLL_WATCHER_H
-#define FSW_POLL_WATCHER_H
+#ifndef FSW_POLL_MONITOR_H
+#define FSW_POLL_MONITOR_H
 
 #include "config.h"
 #include "monitor.h"
@@ -7,21 +7,21 @@
 #include <ctime>
 #include "fsw_map.h"
 
-class poll_watcher: public monitor
+class poll_monitor: public monitor
 {
 public:
-  poll_watcher(std::vector<std::string> paths, EVENT_CALLBACK callback);
-  virtual ~poll_watcher();
+  poll_monitor(std::vector<std::string> paths, EVENT_CALLBACK callback);
+  virtual ~poll_monitor();
 
   void run();
 
   static const unsigned int MIN_POLL_LATENCY = 1;
 
 private:
-  poll_watcher(const poll_watcher& orig);
-  poll_watcher& operator=(const poll_watcher & that);
+  poll_monitor(const poll_monitor& orig);
+  poll_monitor& operator=(const poll_monitor & that);
 
-  typedef void (poll_watcher::*poll_watcher_scan_callback)(
+  typedef void (poll_monitor::*poll_monitor_scan_callback)(
       const std::string &path,
       struct stat &stat);
 
@@ -30,29 +30,29 @@ private:
     time_t ctime;
   } watched_file_info;
 
-  typedef struct poll_watcher_data
+  typedef struct poll_monitor_data
   {
     fsw_hash_map<std::string, watched_file_info> tracked_files;
-  } poll_watcher_data;
+  } poll_monitor_data;
 
-  void scan(const std::string &path, poll_watcher_scan_callback fn);
+  void scan(const std::string &path, poll_monitor_scan_callback fn);
   void collect_initial_data();
   void collect_data();
   bool add_path(
       const std::string &path,
       mode_t & mode,
-      poll_watcher_scan_callback poll_callback);
+      poll_monitor_scan_callback poll_callback);
   void initial_scan_callback(const std::string &path, struct stat &stat);
   void intermediate_scan_callback(const std::string &path, struct stat &stat);
   void find_removed_files();
   void notify_events();
   void swap_data_containers();
 
-  poll_watcher_data *previous_data;
-  poll_watcher_data *new_data;
+  poll_monitor_data *previous_data;
+  poll_monitor_data *new_data;
 
   std::vector<event> events;
   time_t curr_time;
 };
 
-#endif  /* FSW_POLL_WATCHER_H */
+#endif  /* FSW_POLL_MONITOR_H */

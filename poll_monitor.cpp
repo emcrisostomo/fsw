@@ -1,4 +1,4 @@
-#include "poll_watcher.h"
+#include "poll_monitor.h"
 #include "fsw_log.h"
 #include "path_utils.h"
 #include <unistd.h>
@@ -7,21 +7,21 @@
 
 using namespace std;
 
-poll_watcher::poll_watcher(vector<string> paths, EVENT_CALLBACK callback) :
+poll_monitor::poll_monitor(vector<string> paths, EVENT_CALLBACK callback) :
     monitor(paths, callback)
 {
-  previous_data = new poll_watcher_data();
-  new_data = new poll_watcher_data();
+  previous_data = new poll_monitor_data();
+  new_data = new poll_monitor_data();
   time(&curr_time);
 }
 
-poll_watcher::~poll_watcher()
+poll_monitor::~poll_monitor()
 {
   delete previous_data;
   delete new_data;
 }
 
-void poll_watcher::initial_scan_callback(const string &path, struct stat &stat)
+void poll_monitor::initial_scan_callback(const string &path, struct stat &stat)
 {
 
   watched_file_info wfi
@@ -29,7 +29,7 @@ void poll_watcher::initial_scan_callback(const string &path, struct stat &stat)
   previous_data->tracked_files[path] = wfi;
 }
 
-void poll_watcher::intermediate_scan_callback(
+void poll_monitor::intermediate_scan_callback(
     const string &path,
     struct stat &stat)
 {
@@ -71,10 +71,10 @@ void poll_watcher::intermediate_scan_callback(
   }
 }
 
-bool poll_watcher::add_path(
+bool poll_monitor::add_path(
     const string &path,
     mode_t &mode,
-    poll_watcher_scan_callback poll_callback)
+    poll_monitor_scan_callback poll_callback)
 {
   int o_flags = 0;
 #ifdef O_SYMLINK
@@ -119,7 +119,7 @@ bool poll_watcher::add_path(
   return has_stat;
 }
 
-void poll_watcher::scan(const string &path, poll_watcher_scan_callback fn)
+void poll_monitor::scan(const string &path, poll_monitor_scan_callback fn)
 {
   mode_t mode;
 
@@ -169,7 +169,7 @@ void poll_watcher::scan(const string &path, poll_watcher_scan_callback fn)
   }
 }
 
-void poll_watcher::find_removed_files()
+void poll_monitor::find_removed_files()
 {
   vector<event_flag> flags;
   flags.push_back(event_flag::Removed);
@@ -181,16 +181,16 @@ void poll_watcher::find_removed_files()
   }
 }
 
-void poll_watcher::swap_data_containers()
+void poll_monitor::swap_data_containers()
 {
   delete previous_data;
   previous_data = new_data;
-  new_data = new poll_watcher_data();
+  new_data = new poll_monitor_data();
 }
 
-void poll_watcher::collect_data()
+void poll_monitor::collect_data()
 {
-  poll_watcher_scan_callback fn = &poll_watcher::intermediate_scan_callback;
+  poll_monitor_scan_callback fn = &poll_monitor::intermediate_scan_callback;
 
   for (string &path : paths)
   {
@@ -201,9 +201,9 @@ void poll_watcher::collect_data()
   swap_data_containers();
 }
 
-void poll_watcher::collect_initial_data()
+void poll_monitor::collect_initial_data()
 {
-  poll_watcher_scan_callback fn = &poll_watcher::initial_scan_callback;
+  poll_monitor_scan_callback fn = &poll_monitor::initial_scan_callback;
 
   for (string &path : paths)
   {
@@ -211,7 +211,7 @@ void poll_watcher::collect_initial_data()
   }
 }
 
-void poll_watcher::notify_events()
+void poll_monitor::notify_events()
 {
   if (events.size())
   {
@@ -220,7 +220,7 @@ void poll_watcher::notify_events()
   }
 }
 
-void poll_watcher::run()
+void poll_monitor::run()
 {
   collect_initial_data();
 
