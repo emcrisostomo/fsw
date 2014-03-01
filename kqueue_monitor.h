@@ -12,17 +12,17 @@
 #include <vector>
 #include <sys/stat.h>
 
-class kqueue_watcher: public monitor
+class kqueue_monitor: public monitor
 {
 public:
-  kqueue_watcher(std::vector<std::string> paths, EVENT_CALLBACK callback);
-  virtual ~kqueue_watcher();
+  kqueue_monitor(std::vector<std::string> paths, EVENT_CALLBACK callback);
+  virtual ~kqueue_monitor();
 
   void run();
 
 private:
-  kqueue_watcher(const kqueue_watcher& orig);
-  kqueue_watcher& operator=(const kqueue_watcher & that);
+  kqueue_monitor(const kqueue_monitor& orig);
+  kqueue_monitor& operator=(const kqueue_monitor & that);
 
   void initialize_kqueue();
   bool watch_path(const std::string &path);

@@ -16,7 +16,7 @@
 #include "fsevent_monitor.h"
 #endif
 #ifdef HAVE_SYS_EVENT_H
-#include "kqueue_watcher.h"
+#include "kqueue_monitor.h"
 #endif
 #include "poll_watcher.h"
 
@@ -340,14 +340,14 @@ static void start_watcher(int argc, char ** argv, int optind)
   }
   else if (kflag)
   {
-    watcher = new kqueue_watcher(paths, process_events);
+    watcher = new kqueue_monitor(paths, process_events);
   }
   else
   {
 #if defined(HAVE_CORESERVICES_CORESERVICES_H)
     watcher = new fsevent_monitor(paths, process_events);
 #elif defined(HAVE_SYS_EVENT_H)
-    watcher = new kqueue_watcher(paths, process_events);
+    watcher = new kqueue_monitor(paths, process_events);
 #else
     watcher = new poll_watcher(paths, process_events);
 #endif

@@ -3,7 +3,7 @@ fsw_SOURCES  = fsw.cpp fsw.h fsw_log.cpp fsw_log.h path_utils.cpp path_utils.h
 fsw_SOURCES += fsw_exception.cpp fsw_exception.h event.cpp event.h
 fsw_SOURCES += monitor.cpp monitor.h fsw_map.h fsw_set.h
 fsw_SOURCES += fsevent_monitor.cpp fsevent_monitor.h
-fsw_SOURCES += kqueue_watcher.cpp kqueue_watcher.h
+fsw_SOURCES += kqueue_monitor.cpp kqueue_monitor.h
 fsw_SOURCES += poll_watcher.cpp poll_watcher.h
 
 if USE_CORESERVICES

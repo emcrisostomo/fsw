@@ -1,4 +1,4 @@
-#include "kqueue_watcher.h"
+#include "kqueue_monitor.h"
 
 #ifdef HAVE_SYS_EVENT_H
 
@@ -46,14 +46,14 @@ vector<KqueueFlagType> create_flag_type_vector()
   return flags;
 }
 
-kqueue_watcher::kqueue_watcher(
+kqueue_monitor::kqueue_monitor(
     vector<string> paths_to_monitor,
     EVENT_CALLBACK callback) :
     monitor(paths_to_monitor, callback)
 {
 }
 
-kqueue_watcher::~kqueue_watcher()
+kqueue_monitor::~kqueue_monitor()
 {
   if (kq != -1)
     ::close(kq);
@@ -87,12 +87,12 @@ static struct timespec create_timespec_from_latency(double latency)
   return ts;
 }
 
-bool kqueue_watcher::is_path_watched(const string & path)
+bool kqueue_monitor::is_path_watched(const string & path)
 {
   return descriptors_by_file_name.find(path) != descriptors_by_file_name.end();
 }
 
-bool kqueue_watcher::add_watch(
+bool kqueue_monitor::add_watch(
     const string & path,
     int & descriptor,
     mode_t & mode)
@@ -146,7 +146,7 @@ bool kqueue_watcher::add_watch(
   return true;
 }
 
-bool kqueue_watcher::watch_path(const string &path)
+bool kqueue_monitor::watch_path(const string &path)
 {
   mode_t mode;
   int fd;
@@ -197,7 +197,7 @@ bool kqueue_watcher::watch_path(const string &path)
   return true;
 }
 
-void kqueue_watcher::remove_watch(int fd)
+void kqueue_monitor::remove_watch(int fd)
 {
   string name = file_names_by_descriptor[fd];
   file_names_by_descriptor.erase(fd);
@@ -206,7 +206,7 @@ void kqueue_watcher::remove_watch(int fd)
   ::close(fd);
 }
 
-void kqueue_watcher::remove_watch(const string &path)
+void kqueue_monitor::remove_watch(const string &path)
 {
   int fd = descriptors_by_file_name[path];
   descriptors_by_file_name.erase(path);
@@ -215,7 +215,7 @@ void kqueue_watcher::remove_watch(const string &path)
   ::close(fd);
 }
 
-void kqueue_watcher::remove_deleted()
+void kqueue_monitor::remove_deleted()
 {
   auto fd = descriptors_to_remove.begin();
 
@@ -227,7 +227,7 @@ void kqueue_watcher::remove_deleted()
   }
 }
 
-void kqueue_watcher::rescan_pending()
+void kqueue_monitor::rescan_pending()
 {
   auto fd = descriptors_to_rescan.begin();
 
@@ -251,7 +251,7 @@ void kqueue_watcher::rescan_pending()
   }
 }
 
-void kqueue_watcher::scan_root_paths()
+void kqueue_monitor::scan_root_paths()
 {
   for (string &path : paths)
   {
@@ -266,7 +266,7 @@ void kqueue_watcher::scan_root_paths()
   }
 }
 
-void kqueue_watcher::initialize_kqueue()
+void kqueue_monitor::initialize_kqueue()
 {
   if (kq != -1)
     throw new fsw_exception("kqueue already running.");
@@ -280,7 +280,7 @@ void kqueue_watcher::initialize_kqueue()
   }
 }
 
-int kqueue_watcher::wait_for_events(
+int kqueue_monitor::wait_for_events(
     const vector<struct kevent> &changes,
     vector<struct kevent> &event_list)
 {
@@ -303,7 +303,7 @@ int kqueue_watcher::wait_for_events(
   return event_num;
 }
 
-void kqueue_watcher::process_events(
+void kqueue_monitor::process_events(
     const vector<struct kevent> &changes,
     const vector<struct kevent> &event_list,
     int event_num)
@@ -362,7 +362,7 @@ void kqueue_watcher::process_events(
   }
 }
 
-void kqueue_watcher::run()
+void kqueue_monitor::run()
 {
   initialize_kqueue();
 
