@@ -22,7 +22,7 @@
 
 using namespace std;
 
-static watcher *watcher = nullptr;
+static monitor *watcher = nullptr;
 static vector<string> exclude_regex;
 static bool _0flag = false;
 static bool Eflag = false;

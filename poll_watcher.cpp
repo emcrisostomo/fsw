@@ -8,7 +8,7 @@
 using namespace std;
 
 poll_watcher::poll_watcher(vector<string> paths, EVENT_CALLBACK callback) :
-    watcher(paths, callback)
+    monitor(paths, callback)
 {
   previous_data = new poll_watcher_data();
   new_data = new poll_watcher_data();

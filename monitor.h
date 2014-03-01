@@ -11,11 +11,11 @@
 
 typedef void (*EVENT_CALLBACK)(const std::vector<event> &);
 
-class watcher
+class monitor
 {
 public:
-  watcher(std::vector<std::string> paths, EVENT_CALLBACK callback);
-  virtual ~watcher();
+  monitor(std::vector<std::string> paths, EVENT_CALLBACK callback);
+  virtual ~monitor();
   void set_latency(double latency);
   void set_recursive(bool recursive);
   void set_exclude(

@@ -5,10 +5,10 @@
 
 #ifdef HAVE_CORESERVICES_CORESERVICES_H
 
-#include "watcher.h"
+#include "monitor.h"
 #include <CoreServices/CoreServices.h>
 
-class fsevent_watcher : public watcher
+class fsevent_watcher : public monitor
 {
 public:
   fsevent_watcher(std::vector<std::string> paths, EVENT_CALLBACK callback);

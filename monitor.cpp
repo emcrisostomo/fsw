@@ -1,11 +1,11 @@
 #include "config.h"
-#include "watcher.h"
+#include "monitor.h"
 #include "fsw_exception.h"
 #include <cstdlib>
 
 using namespace std;
 
-watcher::watcher(vector<string> paths_to_watch, EVENT_CALLBACK callback) :
+monitor::monitor(vector<string> paths_to_watch, EVENT_CALLBACK callback) :
     paths(paths_to_watch), callback(callback)
 {
   if (callback == nullptr)
@@ -14,7 +14,7 @@ watcher::watcher(vector<string> paths_to_watch, EVENT_CALLBACK callback) :
   }
 }
 
-void watcher::set_latency(double latency)
+void monitor::set_latency(double latency)
 {
   if (latency < 0)
   {
@@ -24,12 +24,12 @@ void watcher::set_latency(double latency)
   this->latency = latency;
 }
 
-void watcher::set_recursive(bool recursive)
+void monitor::set_recursive(bool recursive)
 {
   this->recursive = recursive;
 }
 
-void watcher::set_exclude(
+void monitor::set_exclude(
     const vector<string> &exclusions,
     bool case_sensitive,
     bool extended)
@@ -56,17 +56,17 @@ void watcher::set_exclude(
 #endif
 }
 
-void watcher::set_follow_symlinks(bool follow)
+void monitor::set_follow_symlinks(bool follow)
 {
   follow_symlinks = follow;
 }
 
-bool watcher::accept_path(const string &path)
+bool monitor::accept_path(const string &path)
 {
   return accept_path(path.c_str());
 }
 
-bool watcher::accept_path(const char *path)
+bool monitor::accept_path(const char *path)
 {
 #ifdef HAVE_REGCOMP
   for (auto re : exclude_regex)
@@ -81,7 +81,7 @@ bool watcher::accept_path(const char *path)
   return true;
 }
 
-watcher::~watcher()
+monitor::~monitor()
 {
 #ifdef HAVE_REGCOMP
   for (auto &re : exclude_regex)

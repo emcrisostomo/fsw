@@ -2,12 +2,12 @@
 #define FSW_POLL_WATCHER_H
 
 #include "config.h"
-#include "watcher.h"
+#include "monitor.h"
 #include <sys/stat.h>
 #include <ctime>
 #include "fsw_map.h"
 
-class poll_watcher: public watcher
+class poll_watcher: public monitor
 {
 public:
   poll_watcher(std::vector<std::string> paths, EVENT_CALLBACK callback);

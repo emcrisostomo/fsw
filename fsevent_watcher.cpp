@@ -41,7 +41,7 @@ static const vector<FSEventFlagType> event_flag_type =
 fsevent_watcher::fsevent_watcher(
     vector<string> paths_to_monitor,
     EVENT_CALLBACK callback) :
-    watcher(paths_to_monitor, callback)
+    monitor(paths_to_monitor, callback)
 {
 }
 

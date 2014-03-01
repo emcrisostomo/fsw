@@ -5,14 +5,14 @@
 
 #ifdef HAVE_SYS_EVENT_H
 
-#include "watcher.h"
+#include "monitor.h"
 #include "fsw_map.h"
 #include "fsw_set.h"
 #include <string>
 #include <vector>
 #include <sys/stat.h>
 
-class kqueue_watcher: public watcher
+class kqueue_watcher: public monitor
 {
 public:
   kqueue_watcher(std::vector<std::string> paths, EVENT_CALLBACK callback);

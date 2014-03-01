@@ -49,7 +49,7 @@ vector<KqueueFlagType> create_flag_type_vector()
 kqueue_watcher::kqueue_watcher(
     vector<string> paths_to_monitor,
     EVENT_CALLBACK callback) :
-    watcher(paths_to_monitor, callback)
+    monitor(paths_to_monitor, callback)
 {
 }
 
