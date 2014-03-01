@@ -1,5 +1,5 @@
-#ifndef FSW__WATCHER_H
-#define FSW__WATCHER_H
+#ifndef FSW__MONITOR_H
+#define FSW__MONITOR_H
 
 #include "config.h"
 #include <vector>
@@ -43,4 +43,4 @@ private:
 #endif
 };
 
-#endif  /* FSW__WATCHER_H */
+#endif  /* FSW__MONITOR_H */

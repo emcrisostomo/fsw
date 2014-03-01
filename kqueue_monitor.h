@@ -1,5 +1,5 @@
-#ifndef FSW_KQUEUE_WATCHER_H
-#define FSW_KQUEUE_WATCHER_H
+#ifndef FSW_KQUEUE_MONITOR_H
+#define FSW_KQUEUE_MONITOR_H
 
 #include "config.h"
 
@@ -53,4 +53,4 @@ private:
 };
 
 #endif  /* HAVE_SYS_EVENT_H */
-#endif  /* FSW_KQUEUE_WATCHER_H */
+#endif  /* FSW_KQUEUE_MONITOR_H */

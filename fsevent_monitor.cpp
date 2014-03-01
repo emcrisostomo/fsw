@@ -151,10 +151,10 @@ void fsevent_monitor::fsevent_callback(
     const FSEventStreamEventFlags eventFlags[],
     const FSEventStreamEventId eventIds[])
 {
-  fsevent_monitor *watcher =
+  fsevent_monitor *fse_monitor =
       reinterpret_cast<fsevent_monitor *>(clientCallBackInfo);
 
-  if (!watcher)
+  if (!fse_monitor)
   {
     throw fsw_exception("The callback info cannot be cast to fsevent_monitor.");
   }
@@ -167,7 +167,7 @@ void fsevent_monitor::fsevent_callback(
   for (size_t i = 0; i < numEvents; ++i)
   {
     const char * path = ((char **) eventPaths)[i];
-    if (!watcher->accept_path(path))
+    if (!fse_monitor->accept_path(path))
       continue;
 
     vector<event_flag> flags = decode_flags(eventFlags[i]);
@@ -178,7 +178,7 @@ void fsevent_monitor::fsevent_callback(
 
   if (events.size() > 0)
   {
-    watcher->callback(events);
+    fse_monitor->callback(events);
   }
 }
 

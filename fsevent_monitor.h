@@ -1,5 +1,5 @@
-#ifndef FSW_FSEVENT_WATCHER_H
-#define FSW_FSEVENT_WATCHER_H
+#ifndef FSW_FSEVENT_MONITOR_H
+#define FSW_FSEVENT_MONITOR_H
 
 #include "config.h"
 
@@ -34,4 +34,4 @@ private:
 };
 
 #endif  /* HAVE_CORESERVICES_CORESERVICES_H */
-#endif  /* FSW_FSEVENT_WATCHER_H */
+#endif  /* FSW_FSEVENT_MONITOR_H */

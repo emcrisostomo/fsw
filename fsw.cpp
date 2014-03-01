@@ -22,7 +22,7 @@
 
 using namespace std;
 
-static monitor *watcher = nullptr;
+static monitor *active_monitor = nullptr;
 static vector<string> exclude_regex;
 static bool _0flag = false;
 static bool Eflag = false;
@@ -67,12 +67,12 @@ static void usage()
   cout << " -i, --insensitive     Use case insensitive regular expressions.\n";
 #endif
 #if defined(HAVE_SYS_EVENT_H)
-  cout << " -k, --kqueue          Use the kqueue watcher.\n";
+  cout << " -k, --kqueue          Use the kqueue monitor.\n";
 #endif
   cout << " -l, --latency=DOUBLE  Set the latency.\n";
   cout << " -L, --follow-links    Follow symbolic links.\n";
   cout << " -n, --numeric         Print a numeric event mask.\n";
-  cout << " -p, --poll            Use the poll watcher.\n";
+  cout << " -p, --poll            Use the poll monitor.\n";
   cout << " -r, --recursive       Recurse subdirectories.\n";
   cout << " -t, --timestamp       Print the event timestamp.\n";
   cout << " -u, --utc-time        Print the event time as UTC time.\n";
@@ -108,12 +108,12 @@ static void usage()
   cout << " -h  Show this message.\n";
   cout << " -i  Use case insensitive regular expressions.\n";
 #ifdef HAVE_SYS_EVENT_H
-  cout << " -k  Use the kqueue watcher.\n";
+  cout << " -k  Use the kqueue monitor.\n";
 #endif
   cout << " -l  Set the latency.\n";
   cout << " -L  Follow symbolic links.\n";
   cout << " -n  Print a numeric event masks.\n";
-  cout << " -p  Use the poll watcher.\n";
+  cout << " -p  Use the poll monitor.\n";
   cout << " -r  Recurse subdirectories.\n";
   cout << " -t  Print the event timestamp.\n";
   cout << " -u  Print the event time as UTC time.\n";
@@ -128,11 +128,11 @@ static void usage()
 
 static void close_stream()
 {
-  if (watcher)
+  if (active_monitor)
   {
-    delete watcher;
+    delete active_monitor;
 
-    watcher = nullptr;
+    active_monitor = nullptr;
   }
 }
 
@@ -317,7 +317,7 @@ static void process_events(const vector<event> &events)
   }
 }
 
-static void start_watcher(int argc, char ** argv, int optind)
+static void start_monitor(int argc, char ** argv, int optind)
 {
   // parsing paths
   vector<string> paths;
@@ -336,28 +336,28 @@ static void start_watcher(int argc, char ** argv, int optind)
 
   if (pflag)
   {
-    watcher = new poll_monitor(paths, process_events);
+    active_monitor = new poll_monitor(paths, process_events);
   }
   else if (kflag)
   {
-    watcher = new kqueue_monitor(paths, process_events);
+    active_monitor = new kqueue_monitor(paths, process_events);
   }
   else
   {
 #if defined(HAVE_CORESERVICES_CORESERVICES_H)
-    watcher = new fsevent_monitor(paths, process_events);
+    active_monitor = new fsevent_monitor(paths, process_events);
 #elif defined(HAVE_SYS_EVENT_H)
-    watcher = new kqueue_monitor(paths, process_events);
+    active_monitor = new kqueue_monitor(paths, process_events);
 #else
-    watcher = new poll_monitor(paths, process_events);
+    active_monitor = new poll_monitor(paths, process_events);
 #endif
   }
 
-  watcher->set_latency(lvalue);
-  watcher->set_recursive(rflag);
-  watcher->set_exclude(exclude_regex, !iflag, Eflag);
+  active_monitor->set_latency(lvalue);
+  active_monitor->set_recursive(rflag);
+  active_monitor->set_exclude(exclude_regex, !iflag, Eflag);
 
-  watcher->run();
+  active_monitor->run();
 }
 
 static void parse_opts(int argc, char ** argv)
@@ -516,8 +516,8 @@ int main(int argc, char ** argv)
     // registering handlers to clean up resources
     register_signal_handlers();
 
-    // configure and start the watcher loop
-    start_watcher(argc, argv, optind);
+    // configure and start the monitor loop
+    start_monitor(argc, argv, optind);
   }
   catch (exception & conf)
   {
