@@ -8,18 +8,18 @@
 #include "monitor.h"
 #include <CoreServices/CoreServices.h>
 
-class fsevent_watcher : public monitor
+class fsevent_monitor : public monitor
 {
 public:
-  fsevent_watcher(std::vector<std::string> paths, EVENT_CALLBACK callback);
-  virtual ~fsevent_watcher();
+  fsevent_monitor(std::vector<std::string> paths, EVENT_CALLBACK callback);
+  virtual ~fsevent_monitor();
 
   void run();
   void set_numeric_event(bool numeric);
 
 private:
-  fsevent_watcher(const fsevent_watcher& orig);
-  fsevent_watcher& operator=(const fsevent_watcher & that);
+  fsevent_monitor(const fsevent_monitor& orig);
+  fsevent_monitor& operator=(const fsevent_monitor & that);
 
   static void fsevent_callback(
       ConstFSEventStreamRef streamRef,

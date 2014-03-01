@@ -13,7 +13,7 @@
 #include <getopt.h>
 #endif
 #ifdef HAVE_CORESERVICES_CORESERVICES_H
-#include "fsevent_watcher.h"
+#include "fsevent_monitor.h"
 #endif
 #ifdef HAVE_SYS_EVENT_H
 #include "kqueue_watcher.h"
@@ -345,7 +345,7 @@ static void start_watcher(int argc, char ** argv, int optind)
   else
   {
 #if defined(HAVE_CORESERVICES_CORESERVICES_H)
-    watcher = new fsevent_watcher(paths, process_events);
+    watcher = new fsevent_monitor(paths, process_events);
 #elif defined(HAVE_SYS_EVENT_H)
     watcher = new kqueue_watcher(paths, process_events);
 #else

@@ -1,4 +1,4 @@
-#include "fsevent_watcher.h"
+#include "fsevent_monitor.h"
 
 #ifdef HAVE_CORESERVICES_CORESERVICES_H
 
@@ -38,14 +38,14 @@ static const vector<FSEventFlagType> event_flag_type =
 { kFSEventStreamEventFlagItemIsDir, event_flag::IsDir },
 { kFSEventStreamEventFlagItemIsSymlink, event_flag::IsSymLink } };
 
-fsevent_watcher::fsevent_watcher(
+fsevent_monitor::fsevent_monitor(
     vector<string> paths_to_monitor,
     EVENT_CALLBACK callback) :
     monitor(paths_to_monitor, callback)
 {
 }
 
-fsevent_watcher::~fsevent_watcher()
+fsevent_monitor::~fsevent_monitor()
 {
   if (stream)
   {
@@ -62,12 +62,12 @@ fsevent_watcher::~fsevent_watcher()
   stream = nullptr;
 }
 
-void fsevent_watcher::set_numeric_event(bool numeric)
+void fsevent_monitor::set_numeric_event(bool numeric)
 {
   numeric_event = numeric;
 }
 
-void fsevent_watcher::run()
+void fsevent_monitor::run()
 {
   if (stream)
     return;
@@ -103,7 +103,7 @@ void fsevent_watcher::run()
   fsw_log("Creating FSEvent stream...\n");
   stream = FSEventStreamCreate(
       NULL,
-      &fsevent_watcher::fsevent_callback,
+      &fsevent_monitor::fsevent_callback,
       context,
       pathsToWatch,
       kFSEventStreamEventIdSinceNow,
@@ -143,7 +143,7 @@ static vector<event_flag> decode_flags(FSEventStreamEventFlags flag)
   return evt_flags;
 }
 
-void fsevent_watcher::fsevent_callback(
+void fsevent_monitor::fsevent_callback(
     ConstFSEventStreamRef streamRef,
     void *clientCallBackInfo,
     size_t numEvents,
@@ -151,12 +151,12 @@ void fsevent_watcher::fsevent_callback(
     const FSEventStreamEventFlags eventFlags[],
     const FSEventStreamEventId eventIds[])
 {
-  fsevent_watcher *watcher =
-      reinterpret_cast<fsevent_watcher *>(clientCallBackInfo);
+  fsevent_monitor *watcher =
+      reinterpret_cast<fsevent_monitor *>(clientCallBackInfo);
 
   if (!watcher)
   {
-    throw fsw_exception("The callback info cannot be cast to fsevent_watcher.");
+    throw fsw_exception("The callback info cannot be cast to fsevent_monitor.");
   }
 
   vector<event> events;
