@@ -1,9 +1,9 @@
 ChangeLog
 *********
 
-2014-02-26  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
+2014-03-02  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
 
-        release: stable micro release 1.2.3:
+        release: stable minor release 1.3.0:
         
         * ChangeLog:
           - Update.
@@ -15,8 +15,6 @@ ChangeLog
             regcomp function in <regex.h>.
           - Remove the check of having either CoreServices or sys/event.h for
             fsw to compile.
-          - Add -x/--event-flags to print event flags.
-          - Update -n/--numeric so that it turns -x on.
         * event.cpp:
           - Remove using namespace statements from header files.
         * event.h:
@@ -36,45 +34,71 @@ ChangeLog
           - Use ostringstream to concatecate strings.
           - Fix bug when getopt_long is not available.
           - Reimplement -n/--numeric to dump platform independent event codes.
+          - Add -x/--event-flags to print event flags.
+          - Update -n/--numeric so that it turns -x on.
+          - Add -L/--follow-links to follow symbolic links.
+          - Update after name refactoring.
         * fsw.h:
           - Remove using namespace statements from header files.
         * fsw_exception.h
           - Remove using namespace statements from header files.
         * fsw_map.h:
           - Remove using namespace statements from header files.
+        * fsw_monitor.cpp:
+          - Rename from fsw_watcher.cpp.
+          - Update after name refactoring.
+        * fsw_monitor.h:
+          - Rename from fsw_watcher.h.
+          - Update after name refactoring.
         * fsw_set.h:
           - Remove using namespace statements from header files.
-        * kqueue_watcher.cpp
+        * kqueue_monitor.cpp
+          - Remane from kqueue_watcher.cpp.
+          - Update after name refactoring.
           - Use ::fstat instead of ::stat if a file descriptor is available.
           - Reimplement -n/--numeric to dump platform independent event codes.
           - Remove using namespace statements from header files.
-        * kqueue_watcher.h:
+          - Implement -L/--follow-links to follow symbolic links.
+        * kqueue_monitor.h:
+          - Rename from kqueue_watcher.h
+          - Update after name refactoring.
           - Remove using namespace statements from header files.
+        * Makefile.am:
+          - Update rename files.
+        * monitor.cpp:
+          - Rename from watcher.cpp.
+          - Optionally support exclude filters and regular expressions (-i, -e
+            and -E) only if regcomp is available (HAVE_REGCOMP is defined).
+          - Fix missing import.
+          - Remove using namespace statements from header files.
+          - Implement -L/--follow-links to follow symbolic links.
+        * monitor.h:
+          - Rename from watcher.h.
+          - Optionally support exclude filters and regular expressions (-i, -e
+            and -E) only if regcomp is available (HAVE_REGCOMP is defined).
+          - Fix missing import.
+          - Remove using namespace statements from header files.
+          - Implement -L/--follow-links to follow symbolic links.
         * NEWS:
           - Update.
         * path_utils.h:
           - Remove using namespace statements from header files.
-        * poll_watcher.cpp
+        * poll_monitor.cpp:
+          - Rename from poll_watcher.cpp.
+          - Update after name refactoring.
           - Use ::fstat instead of ::stat if a file descriptor is available.
           - Reimplement -n/--numeric to dump platform independent event codes.
           - Fix missing import.
           - Remove using namespace statements from header files.
-        * poll_watcher.h:
+          - Implement -L/--follow-links to follow symbolic links.
+        * poll_monitor.h:
+          - Rename from poll_watcher.h.
+          - Update after name refactoring.
           - Remove using namespace statements from header files.
         * README:
           - Update memory requirement description.
         * README.md:
           - Update memory requirement description.
-        * watcher.cpp:
-          - Optionally support exclude filters and regular expressions (-i, -e
-            and -E) only if regcomp is available (HAVE_REGCOMP is defined).
-          - Fix missing import.
-          - Remove using namespace statements from header files.
-        * watcher.h:
-          - Optionally support exclude filters and regular expressions (-i, -e
-            and -E) only if regcomp is available (HAVE_REGCOMP is defined).
-          - Fix missing import.
-          - Remove using namespace statements from header files.
 
 2014-02-25  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
 

@@ -1,7 +1,7 @@
 NEWS
 ****
 
-New in 1.2.3:
+New in 1.3.0:
 
   * fsw compiles even if regcomp and <regcomp.h> are not available.
   * The ASCII NUL character (\0) can be used as a line separator in order to
@@ -10,6 +10,7 @@ New in 1.2.3:
     for fsw to compile.
   * fsw only prints event flags when required so with the -x/--event-flags
     option.  The -n/--numeric option implicitly turns on this option.
+  * fsw follows symbolic links with the -L/--follow-links option.
 
 New in 1.2.2:
 

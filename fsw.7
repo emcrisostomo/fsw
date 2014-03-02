@@ -17,7 +17,7 @@ hierarchies are modified.
 
 .Sh SYNOPSIS
 .Nm fsw
-.Op Fl 0Ehiknprtuvx
+.Op Fl 0EhikLnprtuvx
 .Op Fl e Ar regexp
 .Op Fl f Ar format-time
 .Op Fl l Ar latency
@@ -113,6 +113,9 @@ The latency is a double value greater than 0.1.
 Smaller values are currently not allowed in order not to compromise the
 performance of the system.
 The default latency is 1 second.
+
+.It Fl L, -follow-links
+Follow symbolic links.
 
 .It Fl n, -numeric
 Print the numeric value of the event flag, instead of the array of symbolic
