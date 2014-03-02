@@ -25,11 +25,11 @@ private:
   kqueue_monitor& operator=(const kqueue_monitor & that);
 
   void initialize_kqueue();
-  bool watch_path(const std::string &path);
-  bool add_watch(const std::string & path, int & descriptor, mode_t & mode);
+  bool scan(const std::string &path);
+  bool add_watch(const std::string &path, const struct stat &fd_stat);
   void remove_watch(const std::string &path);
   void remove_watch(int fd);
-  bool is_path_watched(const std::string & path);
+  bool is_path_watched(const std::string &path);
   void remove_deleted();
   void rescan_pending();
   void scan_root_paths();

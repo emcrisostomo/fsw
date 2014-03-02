@@ -92,15 +92,13 @@ bool kqueue_monitor::is_path_watched(const string & path)
   return descriptors_by_file_name.find(path) != descriptors_by_file_name.end();
 }
 
-bool kqueue_monitor::add_watch(
-    const string & path,
-    int & descriptor,
-    mode_t & mode)
+bool kqueue_monitor::add_watch(const string & path, const struct stat &fd_stat)
 {
-  // check if the path is already watched and if it is, remove it
+  // check if the path is already watched and if it is,
+  // skip it and return false.
   if (is_path_watched(path))
   {
-    remove_watch(path);
+    return false;
   }
 
   int o_flags = 0;
@@ -125,36 +123,32 @@ bool kqueue_monitor::add_watch(
     return false;
   }
 
-  struct stat fd_stat;
-
-  if (::fstat(fd, &fd_stat))
-  {
-    string err = string("Cannot stat() ") + path;
-    fsw_perror(err.c_str());
-
-    return false;
-  }
-
   // if the descriptor could be opened, track it
   descriptors_by_file_name[path] = fd;
   file_names_by_descriptor[fd] = path;
   file_modes[fd] = fd_stat.st_mode;
 
-  mode = fd_stat.st_mode;
-  descriptor = fd;
-
   return true;
 }
 
-bool kqueue_monitor::watch_path(const string &path)
+bool kqueue_monitor::scan(const string &path)
 {
-  mode_t mode;
-  int fd;
-
   if (!accept_path(path))
     return true;
 
-  if (!add_watch(path, fd, mode))
+  struct stat fd_stat;
+  if (!stat_path(path, fd_stat))
+    return false;
+
+  if (follow_symlinks && S_ISLNK(fd_stat.st_mode))
+  {
+    string link_path;
+    if (read_link_path(path, link_path))
+      return scan(link_path);
+
+    return false;
+  }
+  else if (!add_watch(path, fd_stat))
   {
     return false;
   }
@@ -162,7 +156,7 @@ bool kqueue_monitor::watch_path(const string &path)
   if (!recursive)
     return true;
 
-  if (!S_ISDIR(mode))
+  if (!S_ISDIR(fd_stat.st_mode))
     return true;
 
   vector<string> dirs_to_process;
@@ -183,13 +177,25 @@ bool kqueue_monitor::watch_path(const string &path)
 
       const string fqpath = current_dir + "/" + child;
 
-      if (!accept_path(path))
+      if (!accept_path(fqpath))
         continue;
 
-      if (!add_watch(fqpath, fd, mode))
+      if (!stat_path(fqpath, fd_stat))
         continue;
 
-      if (S_ISDIR(mode))
+      if (follow_symlinks && S_ISLNK(fd_stat.st_mode))
+      {
+        string link_path;
+        if (read_link_path(fqpath, link_path))
+        {
+          scan(link_path);
+        }
+        continue;
+      }
+      else if (!add_watch(fqpath, fd_stat))
+        continue;
+
+      if (S_ISDIR(fd_stat.st_mode))
         dirs_to_process.push_back(fqpath);
     }
   }
@@ -245,7 +251,8 @@ void kqueue_monitor::rescan_pending()
     // If the descriptor which has vanished is a directory, we don't bother
     // EV_DELETE-ing all its children the event from kqueue for the same
     // reason.
-    watch_path(fd_path);
+    remove_watch(fd_path);
+    scan(fd_path);
 
     descriptors_to_rescan.erase(fd++);
   }
@@ -258,7 +265,7 @@ void kqueue_monitor::scan_root_paths()
     if (is_path_watched(path))
       continue;
 
-    if (!watch_path(path))
+    if (!scan(path))
     {
       string err = "Notice: " + path + " cannot be found. Will retry later.\n";
       fsw_log(err.c_str());
