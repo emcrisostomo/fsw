@@ -22,6 +22,8 @@
 
 using namespace std;
 
+static const unsigned int TIME_FORMAT_BUFF_SIZE = 128;
+
 static monitor *active_monitor = nullptr;
 static vector<string> exclude_regex;
 static bool _0flag = false;
@@ -251,8 +253,6 @@ static vector<string> decode_event_flag_name(vector<event_flag> flags)
   return names;
 }
 
-static const unsigned int TIME_FORMAT_BUFF_SIZE = 128;
-
 static void print_event_timestamp(const time_t &evt_time)
 {
   char time_format_buffer[TIME_FORMAT_BUFF_SIZE];
@@ -308,7 +308,7 @@ static void process_events(const vector<event> &events)
     if (_0flag)
     {
       cout << '\0';
-      flush(cout);
+      cout.flush();
     }
     else
     {
@@ -356,6 +356,7 @@ static void start_monitor(int argc, char ** argv, int optind)
   active_monitor->set_latency(lvalue);
   active_monitor->set_recursive(rflag);
   active_monitor->set_exclude(exclude_regex, !iflag, Eflag);
+  active_monitor->set_follow_symlinks(Lflag);
 
   active_monitor->run();
 }
@@ -365,7 +366,7 @@ static void parse_opts(int argc, char ** argv)
   int ch;
   ostringstream short_options;
 
-  short_options << "0f:hkl:nprtuvx";
+  short_options << "0f:hkl:Lnprtuvx";
 #ifdef HAVE_REGCOMP
   short_options << "e:Ei";
 #endif

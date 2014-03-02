@@ -2,6 +2,7 @@
 #include "fsw_log.h"
 #include "path_utils.h"
 #include <unistd.h>
+#include <cstdlib>
 #include <fcntl.h>
 #include <iostream>
 
@@ -21,18 +22,26 @@ poll_monitor::~poll_monitor()
   delete new_data;
 }
 
-void poll_monitor::initial_scan_callback(const string &path, struct stat &stat)
+bool poll_monitor::initial_scan_callback(
+    const string &path,
+    const struct stat &stat)
 {
+  if (previous_data->tracked_files.count(path))
+    return false;
 
   watched_file_info wfi
   { stat.st_mtimespec.tv_sec, stat.st_ctimespec.tv_sec };
   previous_data->tracked_files[path] = wfi;
+
+  return true;
 }
 
-void poll_monitor::intermediate_scan_callback(
+bool poll_monitor::intermediate_scan_callback(
     const string &path,
-    struct stat &stat)
+    const struct stat &stat)
 {
+  if (new_data->tracked_files.count(path))
+    return false;
 
   watched_file_info wfi
   { stat.st_mtimespec.tv_sec, stat.st_ctimespec.tv_sec };
@@ -69,74 +78,42 @@ void poll_monitor::intermediate_scan_callback(
     events.push_back(
     { path, curr_time, flags });
   }
+
+  return true;
 }
 
 bool poll_monitor::add_path(
     const string &path,
-    mode_t &mode,
+    const struct stat &fd_stat,
     poll_monitor_scan_callback poll_callback)
 {
-  int o_flags = 0;
-#ifdef O_SYMLINK
-  o_flags |= O_SYMLINK;
-#elif defined(O_NOFOLLOW)
-  o_flags |= O_NOFOLLOW;
-#endif
-#ifdef O_EVTONLY
-  o_flags |= O_EVTONLY;
-#else
-  o_flags |= O_RDONLY;
-#endif
-
-  int fd = ::open(path.c_str(), o_flags);
-
-  if (fd == -1)
-  {
-    string err = string("Cannot open ") + path;
-    fsw_perror(err.c_str());
-
-    return false;
-  }
-
-  struct stat fd_stat;
-  bool has_stat = true;
-
-  if (::fstat(fd, &fd_stat) != 0)
-  {
-    string err = string("Cannot stat() ") + path;
-    fsw_perror(err.c_str());
-    has_stat = false;
-  }
-
-  ::close(fd);
-
-  if (has_stat)
-  {
-    mode = fd_stat.st_mode;
-    ((*this).*(poll_callback))(path, fd_stat);
-  }
-
-  return has_stat;
+  return ((*this).*(poll_callback))(path, fd_stat);
 }
 
 void poll_monitor::scan(const string &path, poll_monitor_scan_callback fn)
 {
-  mode_t mode;
-
   if (!accept_path(path))
     return;
 
-  if (!add_path(path, mode, fn))
+  struct stat fd_stat;
+  if (!stat_path(path, fd_stat))
+    return;
+
+  if (follow_symlinks && S_ISLNK(fd_stat.st_mode))
+  {
+    string link_path;
+    if (read_link_path(path, link_path))
+      scan(link_path, fn);
+
+    return;
+  }
+  else if (!add_path(path, fd_stat, fn))
     return;
 
   if (!recursive)
     return;
 
-  if (follow_symlinks && S_ISLNK(mode))
-  {
-    return;
-  }
-  else if (!S_ISDIR(mode))
+  if (!S_ISDIR(fd_stat.st_mode))
     return;
 
   vector<string> dirs_to_process;
@@ -160,11 +137,27 @@ void poll_monitor::scan(const string &path, poll_monitor_scan_callback fn)
       if (!accept_path(path))
         continue;
 
-      if (!add_path(fqpath, mode, fn))
+      if (!stat_path(fqpath, fd_stat))
         continue;
 
-      if (S_ISDIR(mode))
+      if (follow_symlinks && S_ISLNK(fd_stat.st_mode))
+      {
+        string link_path;
+        if (read_link_path(fqpath, link_path))
+        {
+          scan(link_path, fn);
+        }
+        continue;
+      }
+      else if (!add_path(fqpath, fd_stat, fn))
+      {
+        continue;
+      }
+
+      if (S_ISDIR(fd_stat.st_mode))
+      {
         dirs_to_process.push_back(fqpath);
+      }
     }
   }
 }

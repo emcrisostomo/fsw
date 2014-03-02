@@ -12,7 +12,6 @@ class poll_monitor: public monitor
 public:
   poll_monitor(std::vector<std::string> paths, EVENT_CALLBACK callback);
   virtual ~poll_monitor();
-
   void run();
 
   static const unsigned int MIN_POLL_LATENCY = 1;
@@ -21,11 +20,12 @@ private:
   poll_monitor(const poll_monitor& orig);
   poll_monitor& operator=(const poll_monitor & that);
 
-  typedef void (poll_monitor::*poll_monitor_scan_callback)(
+  typedef bool (poll_monitor::*poll_monitor_scan_callback)(
       const std::string &path,
-      struct stat &stat);
+      const struct stat &stat);
 
-  typedef struct watched_file_info {
+  typedef struct watched_file_info
+  {
     time_t mtime;
     time_t ctime;
   } watched_file_info;
@@ -40,10 +40,10 @@ private:
   void collect_data();
   bool add_path(
       const std::string &path,
-      mode_t & mode,
+      const struct stat &fd_stat,
       poll_monitor_scan_callback poll_callback);
-  void initial_scan_callback(const std::string &path, struct stat &stat);
-  void intermediate_scan_callback(const std::string &path, struct stat &stat);
+  bool initial_scan_callback(const std::string &path, const struct stat &stat);
+  bool intermediate_scan_callback(const std::string &path, const struct stat &stat);
   void find_removed_files();
   void notify_events();
   void swap_data_containers();
