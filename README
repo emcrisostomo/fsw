@@ -3,12 +3,12 @@ README
 
 fsw is a file change monitor that receives notifications when the contents of
 the specified files or directories are modified.  fsw implements three kind of
-watchers:
+monitors:
 
-  * A watcher based on the _File System Events API_ of Apple OS X.
-  * A watcher based on _kqueue_, an event notification interface introduced in
+  * A monitor based on the _File System Events API_ of Apple OS X.
+  * A monitor based on _kqueue_, an event notification interface introduced in
     FreeBSD 4.1 and supported on most *BSD systems (including OS X).
-  * A watcher which periodically stats the file system, saves file modification
+  * A monitor which periodically stats the file system, saves file modification
     times in memory and manually calculates file system changes.
 
 fsw should build and work correctly on any system shipping either of the
@@ -17,34 +17,34 @@ aforementioned APIs.
 Limitations
 -----------
 
-The limitations of fsw depend largely on the watcher being used:
+The limitations of fsw depend largely on the monitor being used:
 
-  * The FSEvents watcher, available only on Apple OS X, has no known limitations
+  * The FSEvents monitor, available only on Apple OS X, has no known limitations
     and scales very well with the number of files being observed.
-  * The kqueue watcher, available on any *BSD system featuring kqueue, requires
+  * The kqueue monitor, available on any *BSD system featuring kqueue, requires
     a file descriptor to be opened for every file being watched.  As a result,
-    this watcher scales badly with the number of files being observed and may
+    this monitor scales badly with the number of files being observed and may
     begin to misbehave as soon as the fsw process runs out of file descriptors.
     In this case, fsw dumps one error on standard error for every file that
     cannot be opened.
-  * The poll watcher, available on any platform, only relies on available CPU
-    and memory to perform its task.  The performance of this watcher degrades
+  * The poll monitor, available on any platform, only relies on available CPU
+    and memory to perform its task.  The performance of this monitor degrades
     linearly with the number of files being watched.  
 
 Usage recommendations are as follows:
 
-  * On OS X, use only the FSEvents watcher.
+  * On OS X, use only the FSEvents monitor.
   * If the number of files to observe is sufficiently small, use the kqueue
-    watcher.  Beware that on some systems the maximum number of file descriptors
+    monitor.  Beware that on some systems the maximum number of file descriptors
     that can be opened by a process is set to a very low value (values as low
     as 256 are not uncommon), even if the operating system may allow a much
     larger value.  In this case, check your OS documentation to raise this limit
     on either a per process or a system-wide basis.
   * If feasible, watch directories instead of watching files.
-  * If none of the above applies, use the poll watcher.  The authors' experience
+  * If none of the above applies, use the poll monitor.  The authors' experience
     indicates that fsw requires approximately 150 MB or RAM memory to observe a
     hierarchy of 500.000 files with a minimum path length of 32 characters.  A
-    common bottleneck of the poll watcher is disk access, since stat()-ing a
+    common bottleneck of the poll monitor is disk access, since stat()-ing a
     great number of files may take a huge amount of time.  In this case, the
     latency should be set to a sufficiently large value in order to reduce the
     performance degradation that may result from frequent disk access.
@@ -72,7 +72,7 @@ required to compile it.  Check your OS documentation for information about how
 to install the C++ toolchain and the C++ runtime.
 
   No other software packages or dependencies are required to configure and
-install fsw but the aforementioned APIs used by the file system watchers.
+install fsw but the aforementioned APIs used by the file system monitors.
 
 Usage
 -----

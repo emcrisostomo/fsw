@@ -5,7 +5,7 @@
 .\"   $Log$
 .\"
 .Dd February 24, 2014
-.Dt FSW "" "FSEvent watcher"
+.Dt FSW "" "fsw file system monitor"
 .Os "Darwin 10.0"
 .An Enrico Maria Crisostomo
 .Ad enrico.m.crisostomo@gmail.com
@@ -27,19 +27,18 @@ The
 .Nm
 command receives notifications when the contents of the specified files or
 directories are modified.
-fsw implements three kind of
-watcher:
+fsw implements three kind of monitors:
 .Bl -tag -width indent
 
 .It -
-A watcher based on the File System Events API of Apple OS X.
+A monitor based on the File System Events API of Apple OS X.
 
 .It -
-A watcher based on kqueue, an event notification interface introduces in
+A monitor based on kqueue, an event notification interface introduces in
 FreeBSD 4.1 and supported on most *BSD systems (including OS X).
 
 .It -
-A watcher which periodically stats the file system, saves file modification
+A monitor which periodically stats the file system, saves file modification
 times in memory and manually calculates changes.
 
 .El
@@ -101,9 +100,9 @@ Show the help message.
 Use case insensitive regular expressions.
 
 .It Fl k, -kqueue
-Use the kqueue watcher.
-This option is only available when more than one watcher is available, and one
-of them is the kqueue watcher.
+Use the kqueue monitor.
+This option is only available when more than one monitor is available, and one
+of them is the kqueue monitor.
 
 .It Fl l, -latency Ar latency
 Set the
@@ -125,12 +124,12 @@ different versions of OS X.
 As a consequence, the use of numeric values is discouraged. 
 
 .It Fl p, -poll
-Use the poll-based watcher.
-This watcher periodically stats the file system to detect changes on the
+Use the poll-based monitor.
+This monitor periodically stats the file system to detect changes on the
 observed paths.
-The time required by this watcher linearly increases with the number of files to
+The time required by this monitor linearly increases with the number of files to
 watch.
-This watcher should be considered a last resource in case other watchers cannot
+This monitor should be considered a last resource in case other monitors cannot
 be used.  
  
 .It Fl r, -recursive

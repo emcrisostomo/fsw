@@ -8,7 +8,7 @@ This file describes the steps required to build this bundle on a supported
 FreeBSD system.  See README for more information about the tested
 configurations.
 
-The kqueue-based watcher should be compatible with any *BSD release with
+The kqueue-based monitor should be compatible with any *BSD release with
 support for kqueue.  So far, however, the author has only tested this release
 on FreeBSD v. >= 10.0.  Feedback on different *BSD systems is much appreciated
 and will benefit other users as well.
