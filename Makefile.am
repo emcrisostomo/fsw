@@ -9,5 +9,8 @@ fsw_SOURCES += poll_monitor.cpp poll_monitor.h
 if USE_CORESERVICES
   fsw_LDFLAGS = -framework CoreServices
 endif
+
 man_MANS = fsw.7
 EXTRA_DIST = $(man_MANS)
+dist_doc_DATA  = README.bsd README.freebsd README.gnu-build-system README.md
+dist_doc_DATA += README.osx
