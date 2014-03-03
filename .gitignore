@@ -7,6 +7,9 @@ autom4te.cache/
 .project
 .settings/
 
+# NetBeans
+nbproject/
+
 # GNU Build System
 Makefile.in
 compile
