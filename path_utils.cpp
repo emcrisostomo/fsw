@@ -3,6 +3,8 @@
 #include "fsw_log.h"
 #include <dirent.h>
 #include <cstdlib>
+#include <errno.h>
+#include <iostream>
 
 using namespace std;
 
@@ -12,11 +14,17 @@ void get_directory_children(const string &path, vector<string> &children)
 
   if (!dir)
   {
-    fsw_perror("opendir");
+    if (errno == EMFILE || errno == ENFILE)
+    {
+      perror("opendir");
+      ::exit(FSW_EXIT_ENFILE);
+    } else {
+      fsw_perror("opendir");
+    }
     return;
   }
 
-  while (struct dirent *ent = readdir(dir))
+  while (struct dirent * ent = readdir(dir))
   {
     children.push_back(ent->d_name);
   }
