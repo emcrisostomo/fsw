@@ -9,16 +9,17 @@
 #include <ctime>
 #include <cerrno>
 #include <vector>
+#include "poll_monitor.h"
+
 #ifdef HAVE_GETOPT_LONG
-#include <getopt.h>
+#  include <getopt.h>
 #endif
 #ifdef HAVE_CORESERVICES_CORESERVICES_H
-#include "fsevent_monitor.h"
+#  include "fsevent_monitor.h"
 #endif
 #ifdef HAVE_SYS_EVENT_H
-#include "kqueue_monitor.h"
+#  include "kqueue_monitor.h"
 #endif
-#include "poll_monitor.h"
 
 using namespace std;
 
@@ -58,19 +59,19 @@ static void usage()
   cout << "Options:\n";
   cout
     << " -0, --print0          Use the ASCII NUL character (0) as line separator.\n";
-#ifdef HAVE_REGCOMP
+#  ifdef HAVE_REGCOMP
   cout << " -e, --exclude=REGEX   Exclude paths matching REGEX.\n";
   cout << " -E, --extended        Use exended regular expressions.\n";
-#endif
+#  endif
   cout
     << " -f, --format-time     Print the event time using the specified format.\n";
   cout << " -h, --help            Show this message.\n";
-#ifdef HAVE_REGCOMP
+#  ifdef HAVE_REGCOMP
   cout << " -i, --insensitive     Use case insensitive regular expressions.\n";
-#endif
-#if defined(HAVE_SYS_EVENT_H)
+#  endif
+#  if defined(HAVE_SYS_EVENT_H)
   cout << " -k, --kqueue          Use the kqueue monitor.\n";
-#endif
+#  endif
   cout << " -l, --latency=DOUBLE  Set the latency.\n";
   cout << " -L, --follow-links    Follow symbolic links.\n";
   cout << " -n, --numeric         Print a numeric event mask.\n";
@@ -85,16 +86,16 @@ static void usage()
   cout << endl;
 #else
   string option_string = "[";
-#ifdef HAVE_REGCOMP
+#  ifdef HAVE_REGCOMP
   option_string += "eE";
-#endif
+#  endif
   option_string += "fh";
-#ifdef HAVE_REGCOMP
+#  ifdef HAVE_REGCOMP
   option_string += "i";
-#endif
-#ifdef HAVE_SYS_EVENT_H
+#  endif
+#  ifdef HAVE_SYS_EVENT_H
   option_string += "k";
-#endif
+#  endif
   option_string += "lLnprtuvx";
   option_string += "]";
 
@@ -109,9 +110,9 @@ static void usage()
   cout << " -f  Print the event time stamp with the specified format.\n";
   cout << " -h  Show this message.\n";
   cout << " -i  Use case insensitive regular expressions.\n";
-#ifdef HAVE_SYS_EVENT_H
+#  ifdef HAVE_SYS_EVENT_H
   cout << " -k  Use the kqueue monitor.\n";
-#endif
+#  endif
   cout << " -l  Set the latency.\n";
   cout << " -L  Follow symbolic links.\n";
   cout << " -n  Print a numeric event masks.\n";
@@ -376,18 +377,18 @@ static void parse_opts(int argc, char ** argv)
   int option_index = 0;
   static struct option long_options[] = {
     { "print0", no_argument, nullptr, '0'},
-#ifdef HAVE_REGCOMP
+#  ifdef HAVE_REGCOMP
     { "exclude", required_argument, nullptr, 'e'},
     { "extended", no_argument, nullptr, 'E'},
-#endif
+#  endif
     { "format-time", required_argument, nullptr, 'f'},
     { "help", no_argument, nullptr, 'h'},
-#ifdef HAVE_REGCOMP
+#  ifdef HAVE_REGCOMP
     { "insensitive", no_argument, nullptr, 'i'},
-#endif
-#ifdef HAVE_SYS_EVENT_H
+#  endif
+#  ifdef HAVE_SYS_EVENT_H
     { "kqueue", no_argument, nullptr, 'k'},
-#endif
+#  endif
     { "latency", required_argument, nullptr, 'l'},
     { "follow-links", no_argument, nullptr, 'L'},
     { "numeric", no_argument, nullptr, 'n'},
@@ -504,12 +505,21 @@ int main(int argc, char ** argv)
 {
   parse_opts(argc, argv);
 
+  // validate options
   if (optind == argc)
   {
     cerr << "Invalid number of arguments." << endl;
-    exit(FSW_EXIT_UNK_OPT);
+    ::exit(FSW_EXIT_UNK_OPT);
   }
 
+  // only one kind of monitor can be used at a time
+  if (pflag && kflag)
+  {
+    cerr << "-k and -p are mutually exclusive." << endl;
+    ::exit(FSW_EXIT_OPT);
+  }
+  
+  // configure and start the monitor
   try
   {
     // registering handlers to clean up resources

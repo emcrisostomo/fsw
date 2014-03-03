@@ -11,6 +11,7 @@
 #define FSW_EXIT_STREAM  8
 #define FSW_EXIT_ERROR  16
 #define FSW_EXIT_ENFILE 32
+#define FSW_EXIT_OPT    64
 
 bool is_verbose();
 
