@@ -7,7 +7,7 @@
 #include <ctime>
 #include "fsw_map.h"
 
-class poll_monitor: public monitor
+class poll_monitor : public monitor
 {
 public:
   poll_monitor(std::vector<std::string> paths, EVENT_CALLBACK callback);
@@ -21,8 +21,8 @@ private:
   poll_monitor& operator=(const poll_monitor & that);
 
   typedef bool (poll_monitor::*poll_monitor_scan_callback)(
-      const std::string &path,
-      const struct stat &stat);
+    const std::string &path,
+    const struct stat &stat);
 
   typedef struct watched_file_info
   {
@@ -38,12 +38,12 @@ private:
   void scan(const std::string &path, poll_monitor_scan_callback fn);
   void collect_initial_data();
   void collect_data();
-  bool add_path(
-      const std::string &path,
-      const struct stat &fd_stat,
-      poll_monitor_scan_callback poll_callback);
+  bool add_path(const std::string &path,
+                const struct stat &fd_stat,
+                poll_monitor_scan_callback poll_callback);
   bool initial_scan_callback(const std::string &path, const struct stat &stat);
-  bool intermediate_scan_callback(const std::string &path, const struct stat &stat);
+  bool intermediate_scan_callback(const std::string &path,
+                                  const struct stat &stat);
   void find_removed_files();
   void notify_events();
   void swap_data_containers();

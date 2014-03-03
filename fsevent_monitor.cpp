@@ -15,33 +15,32 @@ typedef struct FSEventFlagType
   event_flag type;
 } FSEventFlagType;
 
-static const vector<FSEventFlagType> event_flag_type =
-{
-{ kFSEventStreamEventFlagNone, event_flag::PlatformSpecific },
-{ kFSEventStreamEventFlagMustScanSubDirs, event_flag::PlatformSpecific },
-{ kFSEventStreamEventFlagUserDropped, event_flag::PlatformSpecific },
-{ kFSEventStreamEventFlagKernelDropped, event_flag::PlatformSpecific },
-{ kFSEventStreamEventFlagEventIdsWrapped, event_flag::PlatformSpecific },
-{ kFSEventStreamEventFlagHistoryDone, event_flag::PlatformSpecific },
-{ kFSEventStreamEventFlagRootChanged, event_flag::PlatformSpecific },
-{ kFSEventStreamEventFlagMount, event_flag::PlatformSpecific },
-{ kFSEventStreamEventFlagUnmount, event_flag::PlatformSpecific },
-{ kFSEventStreamEventFlagItemCreated, event_flag::Created },
-{ kFSEventStreamEventFlagItemRemoved, event_flag::Removed },
-{ kFSEventStreamEventFlagItemInodeMetaMod, event_flag::PlatformSpecific },
-{ kFSEventStreamEventFlagItemRenamed, event_flag::Renamed },
-{ kFSEventStreamEventFlagItemModified, event_flag::Updated },
-{ kFSEventStreamEventFlagItemFinderInfoMod, event_flag::PlatformSpecific },
-{ kFSEventStreamEventFlagItemChangeOwner, event_flag::OwnerModified },
-{ kFSEventStreamEventFlagItemXattrMod, event_flag::AttributeModified },
-{ kFSEventStreamEventFlagItemIsFile, event_flag::IsFile },
-{ kFSEventStreamEventFlagItemIsDir, event_flag::IsDir },
-{ kFSEventStreamEventFlagItemIsSymlink, event_flag::IsSymLink } };
+static const vector<FSEventFlagType> event_flag_type = {
+  { kFSEventStreamEventFlagNone, event_flag::PlatformSpecific},
+  { kFSEventStreamEventFlagMustScanSubDirs, event_flag::PlatformSpecific},
+  { kFSEventStreamEventFlagUserDropped, event_flag::PlatformSpecific},
+  { kFSEventStreamEventFlagKernelDropped, event_flag::PlatformSpecific},
+  { kFSEventStreamEventFlagEventIdsWrapped, event_flag::PlatformSpecific},
+  { kFSEventStreamEventFlagHistoryDone, event_flag::PlatformSpecific},
+  { kFSEventStreamEventFlagRootChanged, event_flag::PlatformSpecific},
+  { kFSEventStreamEventFlagMount, event_flag::PlatformSpecific},
+  { kFSEventStreamEventFlagUnmount, event_flag::PlatformSpecific},
+  { kFSEventStreamEventFlagItemCreated, event_flag::Created},
+  { kFSEventStreamEventFlagItemRemoved, event_flag::Removed},
+  { kFSEventStreamEventFlagItemInodeMetaMod, event_flag::PlatformSpecific},
+  { kFSEventStreamEventFlagItemRenamed, event_flag::Renamed},
+  { kFSEventStreamEventFlagItemModified, event_flag::Updated},
+  { kFSEventStreamEventFlagItemFinderInfoMod, event_flag::PlatformSpecific},
+  { kFSEventStreamEventFlagItemChangeOwner, event_flag::OwnerModified},
+  { kFSEventStreamEventFlagItemXattrMod, event_flag::AttributeModified},
+  { kFSEventStreamEventFlagItemIsFile, event_flag::IsFile},
+  { kFSEventStreamEventFlagItemIsDir, event_flag::IsDir},
+  { kFSEventStreamEventFlagItemIsSymlink, event_flag::IsSymLink}
+};
 
-fsevent_monitor::fsevent_monitor(
-    vector<string> paths_to_monitor,
-    EVENT_CALLBACK callback) :
-    monitor(paths_to_monitor, callback)
+fsevent_monitor::fsevent_monitor(vector<string> paths_to_monitor,
+                                 EVENT_CALLBACK callback) :
+  monitor(paths_to_monitor, callback)
 {
 }
 
@@ -69,8 +68,7 @@ void fsevent_monitor::set_numeric_event(bool numeric)
 
 void fsevent_monitor::run()
 {
-  if (stream)
-    return;
+  if (stream) return;
 
   // parsing paths
   vector<CFStringRef> dirs;
@@ -79,19 +77,19 @@ void fsevent_monitor::run()
   {
     if (accept_path(path))
     {
-      dirs.push_back(
-          CFStringCreateWithCString(NULL, path.c_str(), kCFStringEncodingUTF8));
+      dirs.push_back(CFStringCreateWithCString(NULL,
+                                               path.c_str(),
+                                               kCFStringEncodingUTF8));
     }
   }
 
-  if (dirs.size() == 0)
-    return;
+  if (dirs.size() == 0) return;
 
-  CFArrayRef pathsToWatch = CFArrayCreate(
-      NULL,
-      reinterpret_cast<const void **>(&dirs[0]),
-      dirs.size(),
-      &kCFTypeArrayCallBacks);
+  CFArrayRef pathsToWatch =
+    CFArrayCreate(NULL,
+                  reinterpret_cast<const void **> (&dirs[0]),
+                  dirs.size(),
+                  &kCFTypeArrayCallBacks);
 
   FSEventStreamContext *context = new FSEventStreamContext();
   context->version = 0;
@@ -101,14 +99,13 @@ void fsevent_monitor::run()
   context->copyDescription = nullptr;
 
   fsw_log("Creating FSEvent stream...\n");
-  stream = FSEventStreamCreate(
-      NULL,
-      &fsevent_monitor::fsevent_callback,
-      context,
-      pathsToWatch,
-      kFSEventStreamEventIdSinceNow,
-      latency,
-      kFSEventStreamCreateFlagFileEvents);
+  stream = FSEventStreamCreate(NULL,
+                               &fsevent_monitor::fsevent_callback,
+                               context,
+                               pathsToWatch,
+                               kFSEventStreamEventIdSinceNow,
+                               latency,
+                               kFSEventStreamCreateFlagFileEvents);
 
   if (!stream)
   {
@@ -116,10 +113,9 @@ void fsevent_monitor::run()
   }
 
   fsw_log("Scheduling stream with run loop...\n");
-  FSEventStreamScheduleWithRunLoop(
-      stream,
-      CFRunLoopGetCurrent(),
-      kCFRunLoopDefaultMode);
+  FSEventStreamScheduleWithRunLoop(stream,
+                                   CFRunLoopGetCurrent(),
+                                   kCFRunLoopDefaultMode);
 
   fsw_log("Starting event stream...\n");
   FSEventStreamStart(stream);
@@ -143,16 +139,15 @@ static vector<event_flag> decode_flags(FSEventStreamEventFlags flag)
   return evt_flags;
 }
 
-void fsevent_monitor::fsevent_callback(
-    ConstFSEventStreamRef streamRef,
-    void *clientCallBackInfo,
-    size_t numEvents,
-    void *eventPaths,
-    const FSEventStreamEventFlags eventFlags[],
-    const FSEventStreamEventId eventIds[])
+void fsevent_monitor::fsevent_callback(ConstFSEventStreamRef streamRef,
+                                       void *clientCallBackInfo,
+                                       size_t numEvents,
+                                       void *eventPaths,
+                                       const FSEventStreamEventFlags eventFlags[],
+                                       const FSEventStreamEventId eventIds[])
 {
   fsevent_monitor *fse_monitor =
-      reinterpret_cast<fsevent_monitor *>(clientCallBackInfo);
+    reinterpret_cast<fsevent_monitor *> (clientCallBackInfo);
 
   if (!fse_monitor)
   {
@@ -167,13 +162,10 @@ void fsevent_monitor::fsevent_callback(
   for (size_t i = 0; i < numEvents; ++i)
   {
     const char * path = ((char **) eventPaths)[i];
-    if (!fse_monitor->accept_path(path))
-      continue;
+    
+    if (!fse_monitor->accept_path(path)) continue;
 
-    vector<event_flag> flags = decode_flags(eventFlags[i]);
-
-    events.push_back(
-    { path, curr_time, flags });
+    events.push_back({path, curr_time, decode_flags(eventFlags[i])});
   }
 
   if (events.size() > 0)

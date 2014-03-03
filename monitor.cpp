@@ -6,7 +6,7 @@
 using namespace std;
 
 monitor::monitor(vector<string> paths_to_watch, EVENT_CALLBACK callback) :
-    paths(paths_to_watch), callback(callback)
+  paths(paths_to_watch), callback(callback)
 {
   if (callback == nullptr)
   {
@@ -29,10 +29,9 @@ void monitor::set_recursive(bool recursive)
   this->recursive = recursive;
 }
 
-void monitor::set_exclude(
-    const vector<string> &exclusions,
-    bool case_sensitive,
-    bool extended)
+void monitor::set_exclude(const vector<string> &exclusions,
+                          bool case_sensitive,
+                          bool extended)
 {
 #ifdef HAVE_REGCOMP
   for (string exclusion : exclusions)
@@ -40,10 +39,8 @@ void monitor::set_exclude(
     regex_t regex;
     int flags = 0;
 
-    if (!case_sensitive)
-      flags |= REG_ICASE;
-    if (extended)
-      flags |= REG_EXTENDED;
+    if (!case_sensitive) flags |= REG_ICASE;
+    if (extended) flags |= REG_EXTENDED;
 
     if (::regcomp(&regex, exclusion.c_str(), flags))
     {

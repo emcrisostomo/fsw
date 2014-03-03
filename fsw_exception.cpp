@@ -3,7 +3,7 @@
 using namespace std;
 
 fsw_exception::fsw_exception(string cause) :
-    cause(cause)
+  cause(cause)
 {
 }
 

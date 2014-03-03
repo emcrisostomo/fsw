@@ -9,7 +9,7 @@
 using namespace std;
 
 poll_monitor::poll_monitor(vector<string> paths, EVENT_CALLBACK callback) :
-    monitor(paths, callback)
+  monitor(paths, callback)
 {
   previous_data = new poll_monitor_data();
   new_data = new poll_monitor_data();
@@ -22,29 +22,24 @@ poll_monitor::~poll_monitor()
   delete new_data;
 }
 
-bool poll_monitor::initial_scan_callback(
-    const string &path,
-    const struct stat &stat)
+bool poll_monitor::initial_scan_callback(const string &path,
+                                         const struct stat &stat)
 {
   if (previous_data->tracked_files.count(path))
     return false;
 
-  watched_file_info wfi
-  { stat.st_mtimespec.tv_sec, stat.st_ctimespec.tv_sec };
+  watched_file_info wfi{stat.st_mtimespec.tv_sec, stat.st_ctimespec.tv_sec};
   previous_data->tracked_files[path] = wfi;
 
   return true;
 }
 
-bool poll_monitor::intermediate_scan_callback(
-    const string &path,
-    const struct stat &stat)
+bool poll_monitor::intermediate_scan_callback(const string &path,
+                                              const struct stat &stat)
 {
-  if (new_data->tracked_files.count(path))
-    return false;
+  if (new_data->tracked_files.count(path)) return false;
 
-  watched_file_info wfi
-  { stat.st_mtimespec.tv_sec, stat.st_ctimespec.tv_sec };
+  watched_file_info wfi{stat.st_mtimespec.tv_sec, stat.st_ctimespec.tv_sec};
   new_data->tracked_files[path] = wfi;
 
   if (previous_data->tracked_files.count(path))
@@ -64,8 +59,7 @@ bool poll_monitor::intermediate_scan_callback(
 
     if (flags.size() > 0)
     {
-      events.push_back(
-      { path, curr_time, flags });
+      events.push_back({path, curr_time, flags});
     }
 
     previous_data->tracked_files.erase(path);
@@ -75,29 +69,26 @@ bool poll_monitor::intermediate_scan_callback(
     vector<event_flag> flags;
     flags.push_back(event_flag::Created);
 
-    events.push_back(
-    { path, curr_time, flags });
+    events.push_back({path, curr_time, flags});
   }
 
   return true;
 }
 
 bool poll_monitor::add_path(
-    const string &path,
-    const struct stat &fd_stat,
-    poll_monitor_scan_callback poll_callback)
+                            const string &path,
+                            const struct stat &fd_stat,
+                            poll_monitor_scan_callback poll_callback)
 {
   return ((*this).*(poll_callback))(path, fd_stat);
 }
 
 void poll_monitor::scan(const string &path, poll_monitor_scan_callback fn)
 {
-  if (!accept_path(path))
-    return;
+  if (!accept_path(path)) return;
 
   struct stat fd_stat;
-  if (!stat_path(path, fd_stat))
-    return;
+  if (!stat_path(path, fd_stat)) return;
 
   if (follow_symlinks && S_ISLNK(fd_stat.st_mode))
   {
@@ -110,11 +101,8 @@ void poll_monitor::scan(const string &path, poll_monitor_scan_callback fn)
   else if (!add_path(path, fd_stat, fn))
     return;
 
-  if (!recursive)
-    return;
-
-  if (!S_ISDIR(fd_stat.st_mode))
-    return;
+  if (!recursive) return;
+  if (!S_ISDIR(fd_stat.st_mode)) return;
 
   vector<string> dirs_to_process;
   dirs_to_process.push_back(path);
@@ -129,16 +117,12 @@ void poll_monitor::scan(const string &path, poll_monitor_scan_callback fn)
 
     for (string &child : children)
     {
-      if (child.compare(".") == 0 || child.compare("..") == 0)
-        continue;
+      if (child.compare(".") == 0 || child.compare("..") == 0) continue;
 
       const string fqpath = current_dir + "/" + child;
 
-      if (!accept_path(path))
-        continue;
-
-      if (!stat_path(fqpath, fd_stat))
-        continue;
+      if (!accept_path(path)) continue;
+      if (!stat_path(fqpath, fd_stat)) continue;
 
       if (follow_symlinks && S_ISLNK(fd_stat.st_mode))
       {
@@ -169,8 +153,7 @@ void poll_monitor::find_removed_files()
 
   for (auto &removed : previous_data->tracked_files)
   {
-    events.push_back(
-    { removed.first, curr_time, flags });
+    events.push_back({removed.first, curr_time, flags});
   }
 }
 

@@ -18,10 +18,9 @@ public:
   virtual ~monitor();
   void set_latency(double latency);
   void set_recursive(bool recursive);
-  void set_exclude(
-      const std::vector<std::string> &exclusions,
-      bool case_sensitive = true,
-      bool extended = false);
+  void set_exclude(const std::vector<std::string> &exclusions,
+                   bool case_sensitive = true,
+                   bool extended = false);
   void set_follow_symlinks(bool follow);
 
   virtual void run() = 0;

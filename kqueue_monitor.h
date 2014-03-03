@@ -12,7 +12,7 @@
 #include <vector>
 #include <sys/stat.h>
 
-class kqueue_monitor: public monitor
+class kqueue_monitor : public monitor
 {
 public:
   kqueue_monitor(std::vector<std::string> paths, EVENT_CALLBACK callback);
@@ -33,13 +33,11 @@ private:
   void remove_deleted();
   void rescan_pending();
   void scan_root_paths();
-  int wait_for_events(
-      const std::vector<struct kevent> &changes,
-      std::vector<struct kevent> &event_list);
-  void process_events(
-      const std::vector<struct kevent> &changes,
-      const std::vector<struct kevent> &event_list,
-      int event_num);
+  int wait_for_events(const std::vector<struct kevent> &changes,
+                      std::vector<struct kevent> &event_list);
+  void process_events(const std::vector<struct kevent> &changes,
+                      const std::vector<struct kevent> &event_list,
+                      int event_num);
 
   int kq = -1;
   // initial load

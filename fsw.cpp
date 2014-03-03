@@ -57,13 +57,13 @@ static void usage()
   cout << "\n";
   cout << "Options:\n";
   cout
-      << " -0, --print0          Use the ASCII NUL character (0) as line separator.\n";
+    << " -0, --print0          Use the ASCII NUL character (0) as line separator.\n";
 #ifdef HAVE_REGCOMP
   cout << " -e, --exclude=REGEX   Exclude paths matching REGEX.\n";
   cout << " -E, --extended        Use exended regular expressions.\n";
 #endif
   cout
-      << " -f, --format-time     Print the event time using the specified format.\n";
+    << " -f, --format-time     Print the event time using the specified format.\n";
   cout << " -h, --help            Show this message.\n";
 #ifdef HAVE_REGCOMP
   cout << " -i, --insensitive     Use case insensitive regular expressions.\n";
@@ -259,11 +259,11 @@ static void print_event_timestamp(const time_t &evt_time)
   struct tm * tm_time = uflag ? gmtime(&evt_time) : localtime(&evt_time);
 
   string date =
-      strftime(
-          time_format_buffer,
-          TIME_FORMAT_BUFF_SIZE,
-          tformat.c_str(),
-          tm_time) ? string(time_format_buffer) : string("<date format error>");
+    strftime(
+             time_format_buffer,
+             TIME_FORMAT_BUFF_SIZE,
+             tformat.c_str(),
+             tm_time) ? string(time_format_buffer) : string("<date format error>");
 
   cout << date << " ";
 }
@@ -275,7 +275,7 @@ static void print_event_flags(const vector<event_flag> &flags)
     int mask = 0;
     for (const event_flag &flag : flags)
     {
-      mask += static_cast<int>(flag);
+      mask += static_cast<int> (flag);
     }
 
     cout << " " << mask;
@@ -297,13 +297,11 @@ static void process_events(const vector<event> &events)
   {
     vector<event_flag> flags = evt.get_flags();
 
-    if (tflag)
-      print_event_timestamp(evt.get_time());
+    if (tflag) print_event_timestamp(evt.get_time());
 
     cout << evt.get_path();
 
-    if (xflag)
-      print_event_flags(flags);
+    if (xflag) print_event_flags(flags);
 
     if (_0flag)
     {
@@ -376,42 +374,42 @@ static void parse_opts(int argc, char ** argv)
 
 #ifdef HAVE_GETOPT_LONG
   int option_index = 0;
-  static struct option long_options[] =
-  {
-  { "print0", no_argument, nullptr, '0' },
+  static struct option long_options[] = {
+    { "print0", no_argument, nullptr, '0'},
 #ifdef HAVE_REGCOMP
-      { "exclude", required_argument, nullptr, 'e' },
-      { "extended", no_argument, nullptr, 'E' },
+    { "exclude", required_argument, nullptr, 'e'},
+    { "extended", no_argument, nullptr, 'E'},
 #endif
-      { "format-time", required_argument, nullptr, 'f' },
-      { "help", no_argument, nullptr, 'h' },
+    { "format-time", required_argument, nullptr, 'f'},
+    { "help", no_argument, nullptr, 'h'},
 #ifdef HAVE_REGCOMP
-      { "insensitive", no_argument, nullptr, 'i' },
+    { "insensitive", no_argument, nullptr, 'i'},
 #endif
 #ifdef HAVE_SYS_EVENT_H
-      { "kqueue", no_argument, nullptr, 'k' },
+    { "kqueue", no_argument, nullptr, 'k'},
 #endif
-      { "latency", required_argument, nullptr, 'l' },
-      { "follow-links", no_argument, nullptr, 'L' },
-      { "numeric", no_argument, nullptr, 'n' },
-      { "poll", no_argument, nullptr, 'p' },
-      { "recursive", no_argument, nullptr, 'r' },
-      { "timestamp", no_argument, nullptr, 't' },
-      { "utc-time", no_argument, nullptr, 'u' },
-      { "verbose", no_argument, nullptr, 'v' },
-      { "event-flags", no_argument, nullptr, 'x' },
-      { nullptr, 0, nullptr, 0 } };
+    { "latency", required_argument, nullptr, 'l'},
+    { "follow-links", no_argument, nullptr, 'L'},
+    { "numeric", no_argument, nullptr, 'n'},
+    { "poll", no_argument, nullptr, 'p'},
+    { "recursive", no_argument, nullptr, 'r'},
+    { "timestamp", no_argument, nullptr, 't'},
+    { "utc-time", no_argument, nullptr, 'u'},
+    { "verbose", no_argument, nullptr, 'v'},
+    { "event-flags", no_argument, nullptr, 'x'},
+    { nullptr, 0, nullptr, 0}
+  };
 
   while ((ch = getopt_long(
-      argc,
-      argv,
-      short_options.str().c_str(),
-      long_options,
-      &option_index)) != -1)
+                           argc,
+                           argv,
+                           short_options.str().c_str(),
+                           long_options,
+                           &option_index)) != -1)
   {
 #else
-    while ((ch = getopt(argc, argv, short_options.str().c_str())) != -1)
-    {
+  while ((ch = getopt(argc, argv, short_options.str().c_str())) != -1)
+  {
 #endif
 
     switch (ch)

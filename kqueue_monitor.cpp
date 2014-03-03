@@ -28,35 +28,26 @@ static const vector<KqueueFlagType> event_flag_type = create_flag_type_vector();
 vector<KqueueFlagType> create_flag_type_vector()
 {
   vector<KqueueFlagType> flags;
-  flags.push_back(
-  { NOTE_DELETE, event_flag::Removed });
-  flags.push_back(
-  { NOTE_WRITE, event_flag::Updated });
-  flags.push_back(
-  { NOTE_EXTEND, event_flag::PlatformSpecific });
-  flags.push_back(
-  { NOTE_ATTRIB, event_flag::AttributeModified });
-  flags.push_back(
-  { NOTE_LINK, event_flag::Link });
-  flags.push_back(
-  { NOTE_RENAME, event_flag::Renamed });
-  flags.push_back(
-  { NOTE_REVOKE, event_flag::PlatformSpecific });
+  flags.push_back({NOTE_DELETE, event_flag::Removed});
+  flags.push_back({NOTE_WRITE, event_flag::Updated});
+  flags.push_back({NOTE_EXTEND, event_flag::PlatformSpecific});
+  flags.push_back({NOTE_ATTRIB, event_flag::AttributeModified});
+  flags.push_back({NOTE_LINK, event_flag::Link});
+  flags.push_back({NOTE_RENAME, event_flag::Renamed});
+  flags.push_back({NOTE_REVOKE, event_flag::PlatformSpecific});
 
   return flags;
 }
 
-kqueue_monitor::kqueue_monitor(
-    vector<string> paths_to_monitor,
-    EVENT_CALLBACK callback) :
-    monitor(paths_to_monitor, callback)
+kqueue_monitor::kqueue_monitor(vector<string> paths_to_monitor,
+                               EVENT_CALLBACK callback) :
+  monitor(paths_to_monitor, callback)
 {
 }
 
 kqueue_monitor::~kqueue_monitor()
 {
-  if (kq != -1)
-    ::close(kq);
+  if (kq != -1) ::close(kq);
 }
 
 static vector<event_flag> decode_flags(uint32_t flag)
@@ -137,8 +128,7 @@ bool kqueue_monitor::scan(const string &path)
     return true;
 
   struct stat fd_stat;
-  if (!stat_path(path, fd_stat))
-    return false;
+  if (!stat_path(path, fd_stat)) return false;
 
   if (follow_symlinks && S_ISLNK(fd_stat.st_mode))
   {
@@ -153,11 +143,8 @@ bool kqueue_monitor::scan(const string &path)
     return false;
   }
 
-  if (!recursive)
-    return true;
-
-  if (!S_ISDIR(fd_stat.st_mode))
-    return true;
+  if (!recursive) return true;
+  if (!S_ISDIR(fd_stat.st_mode)) return true;
 
   vector<string> dirs_to_process;
   dirs_to_process.push_back(path);
@@ -172,16 +159,12 @@ bool kqueue_monitor::scan(const string &path)
 
     for (string &child : children)
     {
-      if (child.compare(".") == 0 || child.compare("..") == 0)
-        continue;
+      if (child.compare(".") == 0 || child.compare("..") == 0) continue;
 
       const string fqpath = current_dir + "/" + child;
 
-      if (!accept_path(fqpath))
-        continue;
-
-      if (!stat_path(fqpath, fd_stat))
-        continue;
+      if (!accept_path(fqpath)) continue;
+      if (!stat_path(fqpath, fd_stat)) continue;
 
       if (follow_symlinks && S_ISLNK(fd_stat.st_mode))
       {
@@ -192,11 +175,9 @@ bool kqueue_monitor::scan(const string &path)
         }
         continue;
       }
-      else if (!add_watch(fqpath, fd_stat))
-        continue;
+      else if (!add_watch(fqpath, fd_stat)) continue;
 
-      if (S_ISDIR(fd_stat.st_mode))
-        dirs_to_process.push_back(fqpath);
+      if (S_ISDIR(fd_stat.st_mode)) dirs_to_process.push_back(fqpath);
     }
   }
 
@@ -249,7 +230,7 @@ void kqueue_monitor::rescan_pending()
     //            automatically deleted on the last close of the descriptor.
     //
     // If the descriptor which has vanished is a directory, we don't bother
-    // EV_DELETE-ing all its children the event from kqueue for the same
+    // EV_DELETEing all its children the event from kqueue for the same
     // reason.
     remove_watch(fd_path);
     scan(fd_path);
@@ -262,8 +243,7 @@ void kqueue_monitor::scan_root_paths()
 {
   for (string &path : paths)
   {
-    if (is_path_watched(path))
-      continue;
+    if (is_path_watched(path)) continue;
 
     if (!scan(path))
     {
@@ -275,8 +255,7 @@ void kqueue_monitor::scan_root_paths()
 
 void kqueue_monitor::initialize_kqueue()
 {
-  if (kq != -1)
-    throw new fsw_exception("kqueue already running.");
+  if (kq != -1) throw new fsw_exception("kqueue already running.");
 
   kq = ::kqueue();
 
@@ -287,19 +266,17 @@ void kqueue_monitor::initialize_kqueue()
   }
 }
 
-int kqueue_monitor::wait_for_events(
-    const vector<struct kevent> &changes,
-    vector<struct kevent> &event_list)
+int kqueue_monitor::wait_for_events(const vector<struct kevent> &changes,
+                                    vector<struct kevent> &event_list)
 {
   struct timespec ts = create_timespec_from_latency(latency);
 
-  int event_num = ::kevent(
-      kq,
-      &changes[0],
-      changes.size(),
-      &event_list[0],
-      event_list.size(),
-      &ts);
+  int event_num = ::kevent(kq,
+                           &changes[0],
+                           changes.size(),
+                           &event_list[0],
+                           event_list.size(),
+                           &ts);
 
   if (event_num == -1)
   {
@@ -311,9 +288,9 @@ int kqueue_monitor::wait_for_events(
 }
 
 void kqueue_monitor::process_events(
-    const vector<struct kevent> &changes,
-    const vector<struct kevent> &event_list,
-    int event_num)
+                                    const vector<struct kevent> &changes,
+                                    const vector<struct kevent> &event_list,
+                                    int event_num)
 {
   time_t curr_time;
   time(&curr_time);
@@ -341,13 +318,12 @@ void kqueue_monitor::process_events(
     // If a NOTE_WRITE flag is found and the descriptor is a directory, then
     // the directory needs to be rescanned because at least one file has
     // either been created or deleted.
-    if ((e.fflags & NOTE_DELETE)
-        || ((e.fflags & NOTE_LINK) && S_ISDIR(file_modes[e.ident])))
+    if ((e.fflags & NOTE_DELETE))
     {
       descriptors_to_remove.insert(e.ident);
     }
     else if ((e.fflags & NOTE_RENAME) || (e.fflags & NOTE_REVOKE)
-        || ((e.fflags & NOTE_WRITE) && S_ISDIR(file_modes[e.ident])))
+             || ((e.fflags & NOTE_WRITE) && S_ISDIR(file_modes[e.ident])))
     {
       descriptors_to_rescan.insert(e.ident);
     }
@@ -356,10 +332,9 @@ void kqueue_monitor::process_events(
     // received with a non empty filter flag.
     if (e.fflags)
     {
-      vector<event_flag> evt_flags = decode_flags(e.fflags);
-
-      events.push_back(
-      { file_names_by_descriptor[e.ident], curr_time, evt_flags });
+      events.push_back({file_names_by_descriptor[e.ident],
+                       curr_time,
+                       decode_flags(e.fflags)});
     }
   }
 
@@ -391,14 +366,13 @@ void kqueue_monitor::run()
     {
       struct kevent change;
 
-      EV_SET(
-          &change,
-          fd_path.first,
-          EVFILT_VNODE,
-          EV_ADD | EV_ENABLE | EV_CLEAR,
-          NOTE_DELETE | NOTE_EXTEND | NOTE_RENAME | NOTE_WRITE | NOTE_ATTRIB | NOTE_LINK | NOTE_REVOKE,
-          0,
-          0);
+      EV_SET(&change,
+             fd_path.first,
+             EVFILT_VNODE,
+             EV_ADD | EV_ENABLE | EV_CLEAR,
+             NOTE_DELETE | NOTE_EXTEND | NOTE_RENAME | NOTE_WRITE | NOTE_ATTRIB | NOTE_LINK | NOTE_REVOKE,
+             0,
+             0);
 
       changes.push_back(change);
       struct kevent event;
