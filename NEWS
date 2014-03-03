@@ -1,6 +1,12 @@
 NEWS
 ****
 
+New in 1.3.1:
+
+  * No features were added.
+  * Some bugs were fixed.
+  * README.* files are not installed.
+
 New in 1.3.0:
 
   * fsw compiles even if regcomp and <regcomp.h> are not available.
