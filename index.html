@@ -31,13 +31,13 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <p>fsw is a program that receives notifications when the contents of the specified files or directories are modified.  fsw implements three kind of watchers:</p>
+        <p>fsw is a program that receives notifications when the contents of the specified files or directories are modified.  fsw implements three kind of monitors:</p>
 
 <ul>
-<li>A watcher based on the <em>File System Events API</em> of Apple OS X.</li>
-<li>A watcher based on <em>kqueue</em>, an event notification interface introduced in
+<li>A monitor based on the <em>File System Events API</em> of Apple OS X.</li>
+<li>A monitor based on <em>kqueue</em>, an event notification interface introduced in
 FreeBSD 4.1 and supported on most *BSD systems (including OS X).</li>
-<li>A watcher which periodically stats the file system, saves file modification
+<li>A monitor which periodically stats the file system, saves file modification
 times in memory and manually calculates file system changes.</li>
 </ul><p>fsw should build and work correctly on any system shipping either of the
 aforementioned APIs.</p>
@@ -65,7 +65,7 @@ required to build it.  A complete C/C++ toolchain for OS X is provided with
 Apple XCode, which can freely installed from the Apple App Store.</p>
 
 <p>No other software packages or dependencies are required to configure and
-install fsw but the aforementioned APIs used by the file system watchers.</p>
+install fsw but the aforementioned APIs used by the file system monitors.</p>
 
 <h2>
 <a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
