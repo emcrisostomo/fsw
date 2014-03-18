@@ -52,19 +52,16 @@ AC_CHECK_FUNCS(
 )
 AC_CHECK_FUNCS([regcomp])
 
-if test "x${ac_cv_header_CoreServices_CoreServices_h}" != "xyes"
-then
-  AC_CHECK_DECLS(
-    [kqueue, kevent],
-    ,
-    AC_MSG_ERROR([kqueue support cannot be found.]),
-    [
-      AC_INCLUDES_DEFAULT
-      [#include <sys/event.h>]
-      [#include <sys/types.h>]
-      [#include <sys/time.h>]
-    ]
-  )
-fi
+AC_CHECK_DECLS(
+  [kqueue, kevent],
+  ,
+  ,
+  [
+    AC_INCLUDES_DEFAULT
+    [#include <sys/event.h>]
+    [#include <sys/types.h>]
+    [#include <sys/time.h>]
+  ]
+)
 
 AC_OUTPUT
