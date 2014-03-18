@@ -14,7 +14,8 @@ ChangeLog
           - Add inotify monitor.
         * inotify_monitor.h:
           - Add inotify monitor.
-
+        * README:
+          - Update to reflect the addition of the inotify monitor.
 
 2014-18-03  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
 
@@ -77,7 +78,6 @@ ChangeLog
           - Replace watcher with monitor in the docs.
         * README.md:
           - Replace watcher with monitor in the docs.
-
 
 2014-03-02  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
 

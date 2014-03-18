@@ -8,6 +8,8 @@ monitors:
   * A monitor based on the _File System Events API_ of Apple OS X.
   * A monitor based on _kqueue_, an event notification interface introduced in
     FreeBSD 4.1 and supported on most *BSD systems (including OS X).
+  * A monitor based on _inotify_, a Linux kernel subsystem that reports file
+    system changes to applications.
   * A monitor which periodically stats the file system, saves file modification
     times in memory and manually calculates file system changes, which can work
     on any operating system where stat (2) can be used (such as Linux).
@@ -28,13 +30,16 @@ The limitations of fsw depend largely on the monitor being used:
     begin to misbehave as soon as the fsw process runs out of file descriptors.
     In this case, fsw dumps one error on standard error for every file that
     cannot be opened.
+  * The inotify monitor, available on Linux since kernel 2.6.13, has no known
+    limitations.
   * The poll monitor, available on any platform, only relies on available CPU
     and memory to perform its task.  The performance of this monitor degrades
     linearly with the number of files being watched.  
 
 Usage recommendations are as follows:
 
-  * On OS X, use only the FSEvents monitor.
+  * On OS X, use only the FSEvents monitor (which is the default behaviour).
+  * On Linux, use the inotify monitor (which is the default behaviour).
   * If the number of files to observe is sufficiently small, use the kqueue
     monitor.  Beware that on some systems the maximum number of file descriptors
     that can be opened by a process is set to a very low value (values as low
