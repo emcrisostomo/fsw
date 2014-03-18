@@ -1,7 +1,21 @@
 ChangeLog
 *********
 
-2014-03-02  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
+2014-18-03  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
+
+        release: stable micro release 1.3.1:
+
+        * ChangeLog:
+          - Update.
+        * configure.ac:
+          - Bump version to 1.4.0.
+        * inotify_monitor.cpp:
+          - Add inotify monitor.
+        * inotify_monitor.h:
+          - Add inotify monitor.
+
+
+2014-18-03  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
 
         release: stable micro release 1.3.1:
         
