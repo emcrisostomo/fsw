@@ -20,7 +20,7 @@
 #ifdef HAVE_SYS_EVENT_H
 #  include "kqueue_monitor.h"
 #endif
-#ifdef HAVE_LINUX_INOTIFY_H
+#ifdef HAVE_SYS_INOTIFY_H
 #  include "inotify_monitor.h"
 #endif
 
@@ -352,7 +352,7 @@ static void start_monitor(int argc, char ** argv, int optind)
     active_monitor = new fsevent_monitor(paths, process_events);
 #elif defined(HAVE_SYS_EVENT_H)
     active_monitor = new kqueue_monitor(paths, process_events);
-#elif defined(HAVE_LINUX_INOTIFY_H)
+#elif defined(HAVE_SYS_INOTIFY_H)
     active_monitor = new inotify_monitor(paths, process_events);
 #else
     active_monitor = new poll_monitor(paths, process_events);

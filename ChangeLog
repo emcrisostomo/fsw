@@ -9,6 +9,7 @@ ChangeLog
           - Update.
         * configure.ac:
           - Bump version to 1.4.0.
+          - Add AC_CHECK_HEADERS([sys/inotify.h]).
         * inotify_monitor.cpp:
           - Add inotify monitor.
         * inotify_monitor.h:
