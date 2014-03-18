@@ -339,7 +339,9 @@ static void start_monitor(int argc, char ** argv, int optind)
   }
   else if (kflag)
   {
+#ifdef HAVE_SYS_EVENT_H
     active_monitor = new kqueue_monitor(paths, process_events);
+#endif
   }
   else
   {
