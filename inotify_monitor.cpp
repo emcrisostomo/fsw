@@ -1,6 +1,6 @@
 #include "kqueue_monitor.h"
 
-#ifdef HAVE_SYS_EVENT_H
+#ifdef HAVE_LINUX_INOTIFY_H
 
 #include "fsw_exception.h"
 #include "fsw_log.h"
@@ -15,7 +15,6 @@ inotify_monitor::inotify_monitor(vector<string> paths_to_monitor,
 
 inotify_monitor::~inotify_monitor()
 {
-  if (kq != -1) ::close(kq);
 }
 
-#endif  /* HAVE_SYS_EVENT_H */
+#endif  /* HAVE_LINUX_INOTIFY_H */

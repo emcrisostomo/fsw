@@ -3,7 +3,7 @@
 
 #include "config.h"
 
-#ifdef HAVE_SYS_EVENT_H
+#ifdef HAVE_LINUX_INOTIFY_H
 
 #include "monitor.h"
 #include <string>
@@ -22,5 +22,5 @@ private:
   inotify_monitor& operator=(const inotify_monitor & that);
 };
 
-#endif  /* HAVE_SYS_EVENT_H */
+#endif  /* HAVE_LINUX_INOTIFY_H */
 #endif  /* FSW_INOTIFY_MONITOR_H */
