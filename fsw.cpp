@@ -20,6 +20,9 @@
 #ifdef HAVE_SYS_EVENT_H
 #  include "kqueue_monitor.h"
 #endif
+#ifdef HAVE_LINUX_INOTIFY_H
+#  include "inotify_monitor.h"
+#endif
 
 using namespace std;
 
@@ -32,9 +35,9 @@ static bool Eflag = false;
 static bool fflag = false;
 static bool iflag = false;
 static bool kflag = false;
-static bool nflag = false;
 static bool lflag = false;
 static bool Lflag = false;
+static bool nflag = false;
 static bool pflag = false;
 static bool rflag = false;
 static bool tflag = false;
@@ -349,6 +352,8 @@ static void start_monitor(int argc, char ** argv, int optind)
     active_monitor = new fsevent_monitor(paths, process_events);
 #elif defined(HAVE_SYS_EVENT_H)
     active_monitor = new kqueue_monitor(paths, process_events);
+#elif defined(HAVE_LINUX_INOTIFY_H)
+    active_monitor = new inotify_monitor(paths, process_events);
 #else
     active_monitor = new poll_monitor(paths, process_events);
 #endif
