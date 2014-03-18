@@ -9,7 +9,8 @@ monitors:
   * A monitor based on _kqueue_, an event notification interface introduced in
     FreeBSD 4.1 and supported on most *BSD systems (including OS X).
   * A monitor which periodically stats the file system, saves file modification
-    times in memory and manually calculates file system changes.
+    times in memory and manually calculates file system changes, which can work
+    on any operating system where stat (2) can be used (such as Linux).
 
 fsw should build and work correctly on any system shipping either of the
 aforementioned APIs.
