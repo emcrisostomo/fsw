@@ -1,11 +1,19 @@
 #ifndef FSW_POLL_MONITOR_H
-#define FSW_POLL_MONITOR_H
+#  define FSW_POLL_MONITOR_H
 
-#include "config.h"
-#include "monitor.h"
-#include <sys/stat.h>
-#include <ctime>
-#include "fsw_map.h"
+#  include "config.h"
+#  include "monitor.h"
+#  include <sys/stat.h>
+#  include <ctime>
+#  include "fsw_map.h"
+
+#  if defined HAVE_STRUCT_STAT_ST_MTIME
+#    define FSW_MTIME(stat) (stat.st_mtime)
+#    define FSW_CTIME(stat) (stat.st_ctime)
+#  elif defined HAVE_STRUCT_STAT_ST_MTIMESPEC
+#    define FSW_MTIME(stat) (stat.st_mtimespec.tv_sec)
+#    define FSW_CTIME(stat) (stat.st_ctimespec.tv_sec)
+#  endif
 
 class poll_monitor : public monitor
 {

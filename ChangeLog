@@ -12,6 +12,7 @@ ChangeLog
         * configure.ac:
           - Bump version to 1.3.1.
           - Remove error on failed kqueue check.
+          - Check for struct stat.st_mtime and struct stat.st_mtimespec.
 	* event.cpp:
 	  - Reformat.
 	* fsevent_monitor.cpp:
@@ -47,8 +48,11 @@ ChangeLog
           - Reformat.
         * poll_monitor.cpp:
           - Reformat.
+          - Update code to use FSW_MTIME and FSW_CTIME.
         * poll_monitor.h:
           - Reformat.
+          - Add FSW_MTIME and FSW_CTIME preprocessor macro to use the correct
+            struct stat time fields.
         * README:
           - Remove file and create a symbolic link to README.md.
           - Replace watcher with monitor in the docs.

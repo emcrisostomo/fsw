@@ -28,7 +28,7 @@ bool poll_monitor::initial_scan_callback(const string &path,
   if (previous_data->tracked_files.count(path))
     return false;
 
-  watched_file_info wfi{stat.st_mtimespec.tv_sec, stat.st_ctimespec.tv_sec};
+  watched_file_info wfi{FSW_MTIME(stat), FSW_CTIME(stat)};
   previous_data->tracked_files[path] = wfi;
 
   return true;
@@ -39,7 +39,7 @@ bool poll_monitor::intermediate_scan_callback(const string &path,
 {
   if (new_data->tracked_files.count(path)) return false;
 
-  watched_file_info wfi{stat.st_mtimespec.tv_sec, stat.st_ctimespec.tv_sec};
+  watched_file_info wfi{FSW_MTIME(stat), FSW_CTIME(stat)};
   new_data->tracked_files[path] = wfi;
 
   if (previous_data->tracked_files.count(path))
@@ -47,12 +47,12 @@ bool poll_monitor::intermediate_scan_callback(const string &path,
     watched_file_info pwfi = previous_data->tracked_files[path];
     vector<event_flag> flags;
 
-    if (stat.st_mtimespec.tv_sec > pwfi.mtime)
+    if (FSW_MTIME(stat) > pwfi.mtime)
     {
       flags.push_back(event_flag::Updated);
     }
 
-    if (stat.st_ctimespec.tv_sec > pwfi.ctime)
+    if (FSW_CTIME(stat) > pwfi.ctime)
     {
       flags.push_back(event_flag::AttributeModified);
     }
