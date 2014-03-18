@@ -150,7 +150,7 @@ void inotify_monitor::run()
       throw fsw_exception("::read() on inotify descriptor read 0 records.");
     }
 
-    if (!record_num)
+    if (record_num == -1)
     {
       ::perror("read()");
       throw fsw_exception("::read() on inotify descriptor returned -1.");
