@@ -10,7 +10,7 @@ monitor::monitor(vector<string> paths_to_watch, EVENT_CALLBACK callback) :
 {
   if (callback == nullptr)
   {
-    throw new fsw_exception("Callback cannot be null.");
+    throw fsw_exception("Callback cannot be null.");
   }
 }
 
@@ -45,7 +45,7 @@ void monitor::set_exclude(const vector<string> &exclusions,
     if (::regcomp(&regex, exclusion.c_str(), flags))
     {
       string err = "An error occurred during the compilation of " + exclusion;
-      throw new fsw_exception(err);
+      throw fsw_exception(err);
     }
 
     exclude_regex.push_back(regex);

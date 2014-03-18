@@ -255,7 +255,7 @@ void kqueue_monitor::scan_root_paths()
 
 void kqueue_monitor::initialize_kqueue()
 {
-  if (kq != -1) throw new fsw_exception("kqueue already running.");
+  if (kq != -1) throw fsw_exception("kqueue already running.");
 
   kq = ::kqueue();
 
@@ -281,7 +281,7 @@ int kqueue_monitor::wait_for_events(const vector<struct kevent> &changes,
   if (event_num == -1)
   {
     perror("::kevent returned -1");
-    throw new fsw_exception("Invalid event number.");
+    throw fsw_exception("Invalid event number.");
   }
 
   return event_num;
