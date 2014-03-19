@@ -2,7 +2,7 @@ README
 ======
 
 fsw is a file change monitor that receives notifications when the contents of
-the specified files or directories are modified.  fsw implements three kind of
+the specified files or directories are modified.  fsw implements four kinds of
 monitors:
 
   * A monitor based on the _File System Events API_ of Apple OS X.
@@ -12,7 +12,7 @@ monitors:
     system changes to applications.
   * A monitor which periodically stats the file system, saves file modification
     times in memory and manually calculates file system changes, which can work
-    on any operating system where stat (2) can be used (such as Linux).
+    on any operating system where `stat` (2) can be used.
 
 fsw should build and work correctly on any system shipping either of the
 aforementioned APIs.
@@ -30,8 +30,12 @@ The limitations of fsw depend largely on the monitor being used:
     begin to misbehave as soon as the fsw process runs out of file descriptors.
     In this case, fsw dumps one error on standard error for every file that
     cannot be opened.
-  * The inotify monitor, available on Linux since kernel 2.6.13, has no known
-    limitations.
+  * The inotify monitor, available on Linux since kernel 2.6.13, may suffer a
+    queue overflow if events are generated faster than they are read from the
+    queue.  In any case, the application is guaranteed to receive an overflow
+    notification which can be handled to gracefully recover.  fsw currently
+    throws an exception if a queue overflow occurs.  Future versions will handle
+    the overflow by emitting proper notifications.
   * The poll monitor, available on any platform, only relies on available CPU
     and memory to perform its task.  The performance of this monitor degrades
     linearly with the number of files being watched.  
@@ -70,8 +74,8 @@ how to boostrap it on the sources.
 Installation
 ------------
 
-See the INSTALL file for detailed information about how to configure and install
-fsw.
+See the `INSTALL` file for detailed information about how to configure and
+install fsw.
 
   fsw is a C++ program and a C++ compiler compliant with the C++11 standard is
 required to compile it.  Check your OS documentation for information about how
