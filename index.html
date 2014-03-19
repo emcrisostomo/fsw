@@ -4,7 +4,7 @@
   <head>
     <meta charset='utf-8' />
     <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Fsw : A file change monitor that can use either the File System Events API of Apple OS X or the kqueue interface of *BSD systems." />
+    <meta name="description" content="Fsw : A file change monitor with multiple backends: Apple OS X File System Events API, *BSD kqueue, Linux inotify and a stat-based backend." />
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
@@ -19,7 +19,7 @@
           <a id="forkme_banner" href="https://github.com/emcrisostomo/fsw">View on GitHub</a>
 
           <h1 id="project_title">Fsw</h1>
-          <h2 id="project_tagline">A file change monitor that can use either the File System Events API of Apple OS X or the kqueue interface of *BSD systems.</h2>
+          <h2 id="project_tagline">A file change monitor with multiple backends: Apple OS X File System Events API, *BSD kqueue, Linux inotify and a stat-based backend.</h2>
 
             <section id="downloads">
               <a class="zip_download_link" href="https://github.com/emcrisostomo/fsw/zipball/master">Download this project as a .zip file</a>
@@ -31,14 +31,19 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <p>fsw is a program that receives notifications when the contents of the specified files or directories are modified.  fsw implements three kind of monitors:</p>
+        <p>fsw is a file change monitor that receives notifications when the contents of
+the specified files or directories are modified.  fsw implements four kinds of
+monitors:</p>
 
 <ul>
 <li>A monitor based on the <em>File System Events API</em> of Apple OS X.</li>
 <li>A monitor based on <em>kqueue</em>, an event notification interface introduced in
 FreeBSD 4.1 and supported on most *BSD systems (including OS X).</li>
+<li>A monitor based on <em>inotify</em>, a Linux kernel subsystem that reports file
+system changes to applications.</li>
 <li>A monitor which periodically stats the file system, saves file modification
-times in memory and manually calculates file system changes.</li>
+times in memory and manually calculates file system changes, which can work
+on any operating system where <code>stat</code> (2) can be used.</li>
 </ul><p>fsw should build and work correctly on any system shipping either of the
 aforementioned APIs.</p>
 
@@ -57,8 +62,8 @@ how to boostrap it on the sources.</p>
 <h2>
 <a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
 
-<p>See the INSTALL file for detailed information about how to configure and install
-fsw.</p>
+<p>See the <code>INSTALL</code> file for detailed information about how to configure and
+install fsw.</p>
 
 <p>fsw is a C++ program and a C++ compiler compliant with the C++11 standard is
 required to build it.  A complete C/C++ toolchain for OS X is provided with
