@@ -94,7 +94,6 @@ void inotify_monitor::preprocess_node_event(struct inotify_event * event)
   if (event->mask & IN_CLOSE_WRITE) flags.push_back(event_flag::Updated);
   if (event->mask & IN_CREATE) flags.push_back(event_flag::Created);
   if (event->mask & IN_DELETE) flags.push_back(event_flag::Removed);
-  if (event->mask & IN_IGNORED) flags.push_back(event_flag::PlatformSpecific);
   if (event->mask & IN_MODIFY) flags.push_back(event_flag::Updated);
   if (event->mask & IN_MOVED_FROM) flags.push_back(event_flag::Updated);
   if (event->mask & IN_MOVED_TO) flags.push_back(event_flag::Updated);
@@ -105,7 +104,7 @@ void inotify_monitor::preprocess_node_event(struct inotify_event * event)
     ostringstream path_stream;
     path_stream << file_names_by_descriptor[event->wd];
 
-    if (char_traits<char>::length(event->name))
+    if (event->len > 1)
     {
       path_stream << "/";
       path_stream << event->name;
