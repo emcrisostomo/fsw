@@ -31,6 +31,7 @@ static const unsigned int TIME_FORMAT_BUFF_SIZE = 128;
 static monitor *active_monitor = nullptr;
 static vector<string> exclude_regex;
 static bool _0flag = false;
+static bool _1flag = false;
 static bool Eflag = false;
 static bool fflag = false;
 static bool iflag = false;
@@ -62,6 +63,8 @@ static void usage()
   cout << "Options:\n";
   cout
     << " -0, --print0          Use the ASCII NUL character (0) as line separator.\n";
+  cout
+    << " -1, --one-event       Exit fsw after the first set of events is received.\n";
 #  ifdef HAVE_REGCOMP
   cout << " -e, --exclude=REGEX   Exclude paths matching REGEX.\n";
   cout << " -E, --extended        Use exended regular expressions.\n";
@@ -89,6 +92,7 @@ static void usage()
   cout << endl;
 #else
   string option_string = "[";
+  option_string += "01"
 #  ifdef HAVE_REGCOMP
   option_string += "eE";
 #  endif
@@ -108,6 +112,7 @@ static void usage()
   cout << "\n";
   cout << "Usage:\n";
   cout << " -0  Use the ASCII NUL character (0) as line separator.\n";
+  cout << " -1  Exit fsw after the first set of events is received.\n"
   cout << " -e  Exclude paths matching REGEX.\n";
   cout << " -E  Use exended regular expressions.\n";
   cout << " -f  Print the event time stamp with the specified format.\n";
@@ -317,6 +322,11 @@ static void process_events(const vector<event> &events)
       cout << endl;
     }
   }
+  
+  if (_1flag)
+  {
+    ::exit(FSW_EXIT_OK);
+  }
 }
 
 static void start_monitor(int argc, char ** argv, int optind)
@@ -372,7 +382,7 @@ static void parse_opts(int argc, char ** argv)
   int ch;
   ostringstream short_options;
 
-  short_options << "0f:hkl:Lnprtuvx";
+  short_options << "01f:hkl:Lnprtuvx";
 #ifdef HAVE_REGCOMP
   short_options << "e:Ei";
 #endif
@@ -384,6 +394,7 @@ static void parse_opts(int argc, char ** argv)
   int option_index = 0;
   static struct option long_options[] = {
     { "print0", no_argument, nullptr, '0'},
+    { "one-event", no_argument, nullptr, '1'},
 #  ifdef HAVE_REGCOMP
     { "exclude", required_argument, nullptr, 'e'},
     { "extended", no_argument, nullptr, 'E'},
@@ -426,6 +437,10 @@ static void parse_opts(int argc, char ** argv)
       _0flag = true;
       break;
 
+    case '1':
+      _1flag = true;
+      break;
+      
 #ifdef HAVE_REGCOMP
     case 'e':
       exclude_regex.push_back(optarg);
