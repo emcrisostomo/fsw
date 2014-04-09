@@ -546,6 +546,7 @@ int main(int argc, char ** argv)
   {
     // registering handlers to clean up resources
     register_signal_handlers();
+    ::atexit(close_stream);
 
     // configure and start the monitor loop
     start_monitor(argc, argv, optind);
