@@ -5,6 +5,10 @@ ChangeLog
 
 	release: stable micro release 1.4.0:
 
+        * ChangeLog: Update.
+        * fsw.cpp: Add -o/--one-per-batch option to print a single message with
+          the number of change events in the current batch.
+
 	* README.md:
 	  - Add link to the release page.
 

@@ -55,6 +55,7 @@ static bool kflag = false;
 static bool lflag = false;
 static bool Lflag = false;
 static bool nflag = false;
+static bool oflag = false;
 static bool pflag = false;
 static bool rflag = false;
 static bool tflag = false;
@@ -69,46 +70,48 @@ bool is_verbose()
   return vflag;
 }
 
-static void usage()
+static void usage(ostream& stream)
 {
 #ifdef HAVE_GETOPT_LONG
-  cout << PACKAGE_STRING << "\n\n";
-  cout << "Usage:\n";
-  cout << PACKAGE_NAME << " [OPTION] ... path ...\n";
-  cout << "\n";
-  cout << "Options:\n";
-  cout
+  stream << PACKAGE_STRING << "\n\n";
+  stream << "Usage:\n";
+  stream << PACKAGE_NAME << " [OPTION] ... path ...\n";
+  stream << "\n";
+  stream << "Options:\n";
+  stream
     << " -0, --print0          Use the ASCII NUL character (0) as line separator.\n";
-  cout
-    << " -1, --one-event       Exit fsw after the first set of events is received.\n";
+  stream
+    << " -1, --one-event       Exit fswatch after the first set of events is received.\n";
 #  ifdef HAVE_REGCOMP
-  cout << " -e, --exclude=REGEX   Exclude paths matching REGEX.\n";
-  cout << " -E, --extended        Use exended regular expressions.\n";
+  stream << " -e, --exclude=REGEX   Exclude paths matching REGEX.\n";
+  stream << " -E, --extended        Use extended regular expressions.\n";
 #  endif
-  cout
+  stream
     << " -f, --format-time     Print the event time using the specified format.\n";
-  cout << " -h, --help            Show this message.\n";
+  stream << " -h, --help            Show this message.\n";
 #  ifdef HAVE_REGCOMP
-  cout << " -i, --insensitive     Use case insensitive regular expressions.\n";
+  stream << " -i, --insensitive     Use case insensitive regular expressions.\n";
 #  endif
 #  if defined(HAVE_SYS_EVENT_H)
-  cout << " -k, --kqueue          Use the kqueue monitor.\n";
+  stream << " -k, --kqueue          Use the kqueue monitor.\n";
 #  endif
-  cout << " -l, --latency=DOUBLE  Set the latency.\n";
-  cout << " -L, --follow-links    Follow symbolic links.\n";
-  cout << " -n, --numeric         Print a numeric event mask.\n";
-  cout << " -p, --poll            Use the poll monitor.\n";
-  cout << " -r, --recursive       Recurse subdirectories.\n";
-  cout << " -t, --timestamp       Print the event timestamp.\n";
-  cout << " -u, --utc-time        Print the event time as UTC time.\n";
-  cout << " -v, --verbose         Print verbose output.\n";
-  cout << " -x, --event-flags     Print the event flags.\n";
-  cout << "\n";
-  cout << "See the man page for more information.";
-  cout << endl;
+  stream << " -l, --latency=DOUBLE  Set the latency.\n";
+  stream << " -L, --follow-links    Follow symbolic links.\n";
+  stream << " -n, --numeric         Print a numeric event mask.\n";
+  stream << " -o, --one-per-batch   Print a single message with the number of change events.\n";
+  stream << "                       in the current batch.\n";
+  stream << " -p, --poll            Use the poll monitor.\n";
+  stream << " -r, --recursive       Recurse subdirectories.\n";
+  stream << " -t, --timestamp       Print the event timestamp.\n";
+  stream << " -u, --utc-time        Print the event time as UTC time.\n";
+  stream << " -v, --verbose         Print verbose output.\n";
+  stream << " -x, --event-flags     Print the event flags.\n";
+  stream << "\n";
+  stream << "See the man page for more information.";
+  stream << endl;
 #else
   string option_string = "[";
-  option_string += "01"
+  option_string += "01";
 #  ifdef HAVE_REGCOMP
   option_string += "eE";
 #  endif
@@ -119,36 +122,38 @@ static void usage()
 #  ifdef HAVE_SYS_EVENT_H
   option_string += "k";
 #  endif
-  option_string += "lLnprtuvx";
+  option_string += "lLnoprtuvx";
   option_string += "]";
 
-  cout << PACKAGE_STRING << "\n\n";
-  cout << "Syntax:\n";
-  cout << PACKAGE_NAME << " " << option_string << " path ...\n";
-  cout << "\n";
-  cout << "Usage:\n";
-  cout << " -0  Use the ASCII NUL character (0) as line separator.\n";
-  cout << " -1  Exit fsw after the first set of events is received.\n"
-  cout << " -e  Exclude paths matching REGEX.\n";
-  cout << " -E  Use exended regular expressions.\n";
-  cout << " -f  Print the event time stamp with the specified format.\n";
-  cout << " -h  Show this message.\n";
-  cout << " -i  Use case insensitive regular expressions.\n";
+  stream << PACKAGE_STRING << "\n\n";
+  stream << "Syntax:\n";
+  stream << PACKAGE_NAME << " " << option_string << " path ...\n";
+  stream << "\n";
+  stream << "Usage:\n";
+  stream << " -0  Use the ASCII NUL character (0) as line separator.\n";
+  stream << " -1  Exit fswatch after the first set of events is received.\n";
+  stream << " -e  Exclude paths matching REGEX.\n";
+  stream << " -E  Use extended regular expressions.\n";
+  stream << " -f  Print the event time stamp with the specified format.\n";
+  stream << " -h  Show this message.\n";
+  stream << " -i  Use case insensitive regular expressions.\n";
 #  ifdef HAVE_SYS_EVENT_H
-  cout << " -k  Use the kqueue monitor.\n";
+  stream << " -k  Use the kqueue monitor.\n";
 #  endif
-  cout << " -l  Set the latency.\n";
-  cout << " -L  Follow symbolic links.\n";
-  cout << " -n  Print a numeric event masks.\n";
-  cout << " -p  Use the poll monitor.\n";
-  cout << " -r  Recurse subdirectories.\n";
-  cout << " -t  Print the event timestamp.\n";
-  cout << " -u  Print the event time as UTC time.\n";
-  cout << " -v  Print verbose output.\n";
-  cout << " -x  Print the event flags.\n";
-  cout << "\n";
-  cout << "See the man page for more information.";
-  cout << endl;
+  stream << " -l  Set the latency.\n";
+  stream << " -L  Follow symbolic links.\n";
+  stream << " -n  Print a numeric event masks.\n";
+  stream << " -o  Print a single message with the number of change events in the current\n";
+  stream << "     batch.\n";
+  stream << " -p  Use the poll monitor.\n";
+  stream << " -r  Recurse subdirectories.\n";
+  stream << " -t  Print the event timestamp.\n";
+  stream << " -u  Print the event time as UTC time.\n";
+  stream << " -v  Print verbose output.\n";
+  stream << " -x  Print the event flags.\n";
+  stream << "\n";
+  stream << "See the man page for more information.";
+  stream << endl;
 #endif
   exit(FSW_EXIT_USAGE);
 }
@@ -316,34 +321,55 @@ static void print_event_flags(const vector<event_flag> &flags)
   }
 }
 
-static void process_events(const vector<event> &events)
+static void end_event_record()
+{
+  if (_0flag)
+  {
+    cout << '\0';
+    cout.flush();
+  }
+  else
+  {
+    cout << endl;
+  }
+}
+
+static void write_one_batch_event(const vector<event> &events)
+{
+  cout << events.size();
+  end_event_record();
+}
+
+static void write_events(const vector<event> &events)
 {
   for (const event &evt : events)
   {
-    vector<event_flag> flags = evt.get_flags();
-
     if (tflag) print_event_timestamp(evt.get_time());
 
     cout << evt.get_path();
 
-    if (xflag) print_event_flags(flags);
+    if (xflag)
+    {
+      print_event_flags(evt.get_flags());
+    }
 
-    if (_0flag)
-    {
-      cout << '\0';
-      cout.flush();
-    }
-    else
-    {
-      cout << endl;
-    }
+    end_event_record();
   }
-  
+
   if (_1flag)
   {
     ::exit(FSW_EXIT_OK);
   }
 }
+
+static void process_events(const vector<event> &events)
+{
+  if (oflag)
+    write_one_batch_event(events);
+  else
+    write_events(events);
+}
+
 
 static void start_monitor(int argc, char ** argv, int optind)
 {
@@ -398,7 +424,7 @@ static void parse_opts(int argc, char ** argv)
   int ch;
   ostringstream short_options;
 
-  short_options << "01f:hkl:Lnprtuvx";
+  short_options << "01f:hkl:Lnoprtuvx";
 #ifdef HAVE_REGCOMP
   short_options << "e:Ei";
 #endif
@@ -426,6 +452,7 @@ static void parse_opts(int argc, char ** argv)
     { "latency", required_argument, nullptr, 'l'},
     { "follow-links", no_argument, nullptr, 'L'},
     { "numeric", no_argument, nullptr, 'n'},
+    { "one-per-batch", no_argument, nullptr, 'o'},
     { "poll", no_argument, nullptr, 'p'},
     { "recursive", no_argument, nullptr, 'r'},
     { "timestamp", no_argument, nullptr, 't'},
@@ -473,7 +500,7 @@ static void parse_opts(int argc, char ** argv)
       break;
 
     case 'h':
-      usage();
+      usage(cout);
       exit(FSW_EXIT_USAGE);
 
 #ifdef HAVE_REGCOMP
@@ -508,6 +535,10 @@ static void parse_opts(int argc, char ** argv)
       xflag = true;
       break;
 
+    case 'o':
+      oflag = true;
+      break;
+
     case 'p':
       pflag = true;
       break;
@@ -533,7 +564,7 @@ static void parse_opts(int argc, char ** argv)
       break;
 
     default:
-      usage();
+      usage(cerr);
       exit(FSW_EXIT_UNK_OPT);
     }
   }
