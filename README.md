@@ -86,16 +86,16 @@ to install the C++ toolchain and the C++ runtime.
   No other software packages or dependencies are required to configure and
 install fsw but the aforementioned APIs used by the file system monitors.
 
-Compability Issues with fswatch v. 0.x
+Compatibility Issues with fswatch v. 0.x
 --------------------------------------
 
 The previous major version of `fswatch` (v. 0.x) allowed users to run a command
-whenever a set of changes was detected with the following syntax:
+whenever a set of changes was detected using the following syntax:
 
     $ fswatch path program
 
-Starting with `fswatch` v. 1.x this behaviour is no longer supported.  The
-rationale behind this decision includes:
+Starting with `fswatch` v. 1.x, when `fsw` was merged into it, this behaviour
+is no longer supported.  The rationale behind this decision includes:
 
   * The old version only allows watching one path.
   * The command to execute was passed as last argument, alongside the path to
@@ -105,30 +105,30 @@ rationale behind this decision includes:
     nor guaranteed to succeed, nor desirable by users of other shells.
   * No information about the change events is passed to the forked process.
 
-To solve the aforementioned issues and keep `fswatch` consistent with common
-UNIX practices, the behaviour has changed and `fswatch` now prints event
-records to the standard output that users can process further by piping the
-output of `fswatch` to other programs.
+To solve the aforementioned issues and keep `fsw` consistent with common UNIX
+practices, `fsw` prints event records to the standard output that users can
+process further by piping the output of `fsw` to other programs.
 
-To fully support the old use, the `-o/--one-per-batch` option was added in
-v. 1.3.3.  When specified, `fswatch` will only dump 1 event to standard output
-which can be used to trigger another `program`:
+To fully support the old `fswatch` behaviour and ease the migration of existing
+scripts the `-o/--one-per-batch` option was added in v. 1.4.0.  When specified,
+`fsw` will only dump 1 event to standard output which can be used to trigger
+another `program`:
 
-    $ fswatch -o path | xargs -n1 program
+    $ fsw -o path | xargs -n1 program
 
 In this case, `program` will receive the number of change events as first
 argument.  If no argument should be passed to `program`, then the following
 command could be used:
 
-    $ fswatch -o path | xargs -n1 -I{} program
+    $ fsw -o path | xargs -n1 -I{} program
 
-Although we encourage you to embrace the new fswatch behaviour and update your
+Although we encourage you to embrace the `fsw` behaviour and update your
 scripts, we provide a little wrapper called `fswatch-run` which is installed
-alongside `fswatch` which lets you use the legacy syntax:
+alongside `fsw` which lets you use the legacy syntax:
 
     $ fswatch-run path [paths] program
 
-Under the hood, `fswatch-run` simply calls `fswatch -o` piping its output to
+Under the hood, `fswatch-run` simply calls `fsw -o` piping its output to
 `xargs`.
 
 `fswatch-run` is a symbolic link to a shell-specific wrapper.  Currently, ZSH
