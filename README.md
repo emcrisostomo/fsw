@@ -20,10 +20,10 @@ aforementioned APIs.
 Limitations
 -----------
 
-The limitations of fsw depend largely on the monitor being used:
+The limitations of `fsw` depend largely on the monitor being used:
 
-  * The FSEvents monitor, available only on Apple OS X, has no known limitations
-    and scales very well with the number of files being observed.
+  * The FSEvents monitor, available only on Apple OS X, has no known
+    limitations and scales very well with the number of files being observed.
   * The kqueue monitor, available on any *BSD system featuring kqueue, requires
     a file descriptor to be opened for every file being watched.  As a result,
     this monitor scales badly with the number of files being observed and may
@@ -86,19 +86,85 @@ to install the C++ toolchain and the C++ runtime.
   No other software packages or dependencies are required to configure and
 install fsw but the aforementioned APIs used by the file system monitors.
 
+Compability Issues with fswatch v. 0.x
+--------------------------------------
+
+The previous major version of `fswatch` (v. 0.x) allowed users to run a command
+whenever a set of changes was detected with the following syntax:
+
+    $ fswatch path program
+
+Starting with `fswatch` v. 1.x this behaviour is no longer supported.  The
+rationale behind this decision includes:
+
+  * The old version only allows watching one path.
+  * The command to execute was passed as last argument, alongside the path to
+    watch, making it difficult to extend the program functionality to add
+    multiple path support
+  * The old version forks and executes `/bin/bash`, which is neither portable,
+    nor guaranteed to succeed, nor desirable by users of other shells.
+  * No information about the change events is passed to the forked process.
+
+To solve the aforementioned issues and keep `fswatch` consistent with common
+UNIX practices, the behaviour has changed and `fswatch` now prints event
+records to the standard output that users can process further by piping the
+output of `fswatch` to other programs.
+
+To fully support the old use, the `-o/--one-per-batch` option was added in
+v. 1.3.3.  When specified, `fswatch` will only dump 1 event to standard output
+which can be used to trigger another `program`:
+
+    $ fswatch -o path | xargs -n1 program
+
+In this case, `program` will receive the number of change events as first
+argument.  If no argument should be passed to `program`, then the following
+command could be used:
+
+    $ fswatch -o path | xargs -n1 -I{} program
+
+Although we encourage you to embrace the new fswatch behaviour and update your
+scripts, we provide a little wrapper called `fswatch-run` which is installed
+alongside `fswatch` which lets you use the legacy syntax:
+
+    $ fswatch-run path [paths] program
+
+Under the hood, `fswatch-run` simply calls `fswatch -o` piping its output to
+`xargs`.
+
+`fswatch-run` is a symbolic link to a shell-specific wrapper.  Currently, ZSH
+and Bash scripts are provided.  If no suitable shells are found in the target
+system, the `fswatch-run` symbolic link is _not_ created.
+
 Usage
 -----
 
-fsw accepts a list of paths for which change events should be received:
+`fsw` accepts a list of paths for which change events should be received:
 
     $ fsw [options] ... path-0 ... path-n
 
 The event stream is created even if any of the paths do not exist yet.  If they
-are created after fsw is launched, change events will be properly received.
-Depending on the wathcher being used, newly created paths will be monitored
+are created after `fsw` is launched, change events will be properly received.
+Depending on the watcher being used, newly created paths will be monitored
 after the amount of configured latency has elapsed.
 
-  For more information, refer to the fsw man page.
+The output of `fsw` can be piped to other program in order to process it
+further:
+
+    $ fsw -0 path | while read -d "" event \
+      do \
+        // do something with ${event}
+      done
+
+To run a command when a set of change events is printed to standard output but
+no event details are required, then the following command can be used:
+
+    $ fsw -o path | xargs -n1 -I{} program
+
+The behaviour is consistent with earlier versions of `fswatch` (v. 0.x).
+Please, read the _Compability Issues with fswatch v. 0.x_ section for further
+information.
+
+For more information, refer to the `fsw` man page.
 
 Bug Reports
 -----------

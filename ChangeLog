@@ -6,11 +6,17 @@ ChangeLog
 	release: stable micro release 1.4.0:
 
         * ChangeLog: Update.
+	* Makefile.am: Add fswatch-run to the script installation list.
+        * configure.ac:
         * fsw.cpp: Add -o/--one-per-batch option to print a single message with
           the number of change events in the current batch.
-
 	* README.md:
-	  - Add link to the release page.
+          - Add link to the release page (Issue 22).
+          - Add section about compatibility issues with v. 0.x.
+          - Add information about fswatch-run in README.
+        * scripts/fswatch-run: Add shell script to mimic the behaviour of 
+          earlier fswatch versions and launch the specified command when change
+          events are received.
 
 2014-03-18  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
 

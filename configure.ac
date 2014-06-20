@@ -1,13 +1,31 @@
 #                                               -*- Autoconf -*-
+#
+# Copyright (C) 2014, Enrico M. Crisostomo
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
 # Process this file with autoconf to produce a configure script.
+#
 AC_PREREQ([2.69])
-AC_INIT([fsw], [1.4.0], [enrico.m.crisostomo@gmail.com])
-AC_COPYRIGHT([2013 (C) Enrico M. Crisostomo])
+AC_INIT([fsw], [1.4.0], [enrico.m.crisostomo@gmail.com], [], [https://github.com/emcrisostomo/fsw])
+AC_COPYRIGHT([2014 (C) Enrico M. Crisostomo])
 AC_REVISION([$Revision: 1.4.0-1 $])
 AC_CONFIG_SRCDIR([fsw.cpp])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([scripts/fswatch-run-bash scripts/fswatch-run-zsh])
 AC_CONFIG_MACRO_DIRS([m4])
 AM_INIT_AUTOMAKE([-Wall -Werror gnu])
 
@@ -15,8 +33,32 @@ AM_INIT_AUTOMAKE([-Wall -Werror gnu])
 AC_LANG(C++)
 
 # Checks for programs.
-AC_PROG_CC([clang gcc])
 AC_PROG_CXX([clang++ g++])
+AC_PROG_LN_S
+AC_PATH_PROG([ZSH_PROG], [zsh], [no])
+AC_PATH_PROG([BASH_PROG], [bash], [no])
+
+if test "x${ZSH_PROG}" = "xno" && test "x${BASH_PROG}" = "xno" ; then
+    AC_MSG_WARN([Either ZSH or the Bash shell is required by fswatch-run.])
+fi
+
+AM_CONDITIONAL([HAVE_ZSH], [test "x${ZSH_PROG}" != "xno"])
+AM_CONDITIONAL([HAVE_BASH], [test "x${BASH_PROG}" != "xno"])
+
+if test "x${ZSH_PROG}" = "xno" ; then
+ZSH_PATH=/bin/zsh
+else
+ZSH_PATH=$ZSH_PROG
+fi
+
+if test "x${BASH_PROG}" = "xno" ; then
+BASH_PATH=/bin/bash
+else
+BASH_PATH=$BASH_PROG
+fi
+
+AC_SUBST([ZSH_PATH])
+AC_SUBST([BASH_PATH])
 
 # Configure C++ compiler
 AX_CXX_COMPILE_STDCXX_11(noext)
