@@ -1,9 +1,14 @@
 ChangeLog
 *********
 
-2014-18-03  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
+2014-06-03  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
 
-        release: stable micro release 1.4.0:
+	release: stable micro release 1.4.0:
+
+	* README.md:
+	  - Add link to the release page.
+
+2014-18-03  Enrico M. Crisostomo  <enrico.m.crisostomo@gmail.com>
 
         * ChangeLog:
           - Update.
