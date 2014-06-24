@@ -14,6 +14,8 @@ ChangeLog
 	  - Check if ZSH and Bash are available.
 	  - Prepare Automake variable to link fswatch-run with the correct
 	    wrapper.
+        * fsevent_monitor.cpp: Remove usages of C++11 initializer lists so that
+          fswatch builds with older compilers.
         * fsw.7: Update man page.
         * fsw.cpp:
           - Add -o/--one-per-batch option to print a single message with the
