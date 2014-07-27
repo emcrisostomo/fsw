@@ -140,9 +140,6 @@ bool kqueue_monitor::add_watch(const string & path, const struct stat &fd_stat)
 
 bool kqueue_monitor::scan(const string &path)
 {
-  if (!accept_path(path))
-    return true;
-
   struct stat fd_stat;
   if (!stat_path(path, fd_stat)) return false;
 
@@ -179,7 +176,6 @@ bool kqueue_monitor::scan(const string &path)
 
       const string fqpath = current_dir + "/" + child;
 
-      if (!accept_path(fqpath)) continue;
       if (!stat_path(fqpath, fd_stat)) continue;
 
       if (follow_symlinks && S_ISLNK(fd_stat.st_mode))
@@ -303,8 +299,7 @@ int kqueue_monitor::wait_for_events(const vector<struct kevent> &changes,
   return event_num;
 }
 
-void kqueue_monitor::process_events(
-                                    const vector<struct kevent> &changes,
+void kqueue_monitor::process_events(const vector<struct kevent> &changes,
                                     const vector<struct kevent> &event_list,
                                     int event_num)
 {
@@ -344,13 +339,16 @@ void kqueue_monitor::process_events(
       descriptors_to_rescan.insert(e.ident);
     }
 
-    // invoke the callback passing every path for which an event has been
+    // Invoke the callback passing every path for which an event has been
     // received with a non empty filter flag.
     if (e.fflags)
     {
-      events.push_back({file_names_by_descriptor[e.ident],
-                       curr_time,
-                       decode_flags(e.fflags)});
+      if (accept_path(file_names_by_descriptor[e.ident]))
+      {
+        events.push_back({file_names_by_descriptor[e.ident],
+                         curr_time,
+                         decode_flags(e.fflags)});
+      }
     }
   }
 
