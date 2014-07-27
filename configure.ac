@@ -18,9 +18,9 @@
 # Process this file with autoconf to produce a configure script.
 #
 AC_PREREQ([2.69])
-AC_INIT([fsw], [1.3.8], [enrico.m.crisostomo@gmail.com], [], [https://github.com/emcrisostomo/fsw])
+AC_INIT([fsw], [1.3.9], [enrico.m.crisostomo@gmail.com], [], [https://github.com/emcrisostomo/fsw])
 AC_COPYRIGHT([2014 (C) Enrico M. Crisostomo])
-AC_REVISION([$Revision: 1.3.8-1 $])
+AC_REVISION([$Revision: 1.3.9-1 $])
 AC_CONFIG_SRCDIR([fsw.cpp])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_HEADERS([config.h])
