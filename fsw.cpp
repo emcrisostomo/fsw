@@ -45,8 +45,7 @@ using namespace std;
 static const unsigned int TIME_FORMAT_BUFF_SIZE = 128;
 
 static monitor *active_monitor = nullptr;
-static vector<string> exclude_regex;
-static vector<string> include_regex;
+static vector<monitor_filter> filters;
 static bool _0flag = false;
 static bool _1flag = false;
 static bool Eflag = false;
@@ -420,8 +419,7 @@ static void start_monitor(int argc, char ** argv, int optind)
 
   active_monitor->set_latency(lvalue);
   active_monitor->set_recursive(rflag);
-  active_monitor->set_exclude(exclude_regex, !Iflag, Eflag);
-  active_monitor->set_include(include_regex, !Iflag, Eflag);
+  active_monitor->set_filters(filters, !Iflag, Eflag);
   active_monitor->set_follow_symlinks(Lflag);
 
   active_monitor->run();
@@ -495,7 +493,7 @@ static void parse_opts(int argc, char ** argv)
       
 #ifdef HAVE_REGCOMP
     case 'e':
-      exclude_regex.push_back(optarg);
+      filters.push_back({optarg, filter_type::filter_exclude});
       break;
 
     case 'E':
@@ -514,7 +512,7 @@ static void parse_opts(int argc, char ** argv)
 
 #ifdef HAVE_REGCOMP
     case 'i':
-      include_regex.push_back(optarg);
+      filters.push_back({optarg, filter_type::filter_include});
       break;
       
     case 'I':
