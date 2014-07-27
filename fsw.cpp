@@ -46,6 +46,7 @@ static const unsigned int TIME_FORMAT_BUFF_SIZE = 128;
 
 static monitor *active_monitor = nullptr;
 static vector<string> exclude_regex;
+static vector<string> include_regex;
 static bool _0flag = false;
 static bool _1flag = false;
 static bool Eflag = false;
@@ -420,6 +421,7 @@ static void start_monitor(int argc, char ** argv, int optind)
   active_monitor->set_latency(lvalue);
   active_monitor->set_recursive(rflag);
   active_monitor->set_exclude(exclude_regex, !Iflag, Eflag);
+  active_monitor->set_include(include_regex, !Iflag, Eflag);
   active_monitor->set_follow_symlinks(Lflag);
 
   active_monitor->run();
@@ -432,7 +434,7 @@ static void parse_opts(int argc, char ** argv)
 
   short_options << "01f:hkl:Lnoprtuvx";
 #ifdef HAVE_REGCOMP
-  short_options << "e:EI";
+  short_options << "e:Ei:I";
 #endif
 #ifdef HAVE_SYS_EVENT_H
   short_options << "k";
@@ -450,6 +452,7 @@ static void parse_opts(int argc, char ** argv)
     { "format-time", required_argument, nullptr, 'f'},
     { "help", no_argument, nullptr, 'h'},
 #  ifdef HAVE_REGCOMP
+    { "include", required_argument, nullptr, 'i'},
     { "insensitive", no_argument, nullptr, 'I'},
 #  endif
 #  ifdef HAVE_SYS_EVENT_H
@@ -510,6 +513,10 @@ static void parse_opts(int argc, char ** argv)
       exit(FSW_EXIT_USAGE);
 
 #ifdef HAVE_REGCOMP
+    case 'i':
+      include_regex.push_back(optarg);
+      break;
+      
     case 'I':
       Iflag = true;
       break;

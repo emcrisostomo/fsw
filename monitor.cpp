@@ -89,9 +89,22 @@ bool monitor::accept_path(const char *path)
       return false;
     }
   }
-#endif
 
+  if (!include_regex.size()) return true;
+
+  for (auto re : include_regex)
+  {
+    if (::regexec(&re, path, 0, nullptr, 0) == 0)
+    {
+      return true;
+    }
+  }
+
+  return false;
+
+#else
   return true;
+#endif
 }
 
 monitor::~monitor()
