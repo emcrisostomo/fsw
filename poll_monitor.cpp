@@ -123,7 +123,7 @@ void poll_monitor::scan(const string &path, poll_monitor_scan_callback fn)
   for (string &child : children)
   {
     if (child.compare(".") == 0 || child.compare("..") == 0) continue;
-    
+
     scan(path + "/" + child, fn);
   }
 }

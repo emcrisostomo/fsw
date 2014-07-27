@@ -139,7 +139,7 @@ static void usage(ostream& stream)
 #  endif
   stream << " -f  Print the event time stamp with the specified format.\n";
   stream << " -h  Show this message.\n";
-  #  ifdef HAVE_REGCOMP
+#  ifdef HAVE_REGCOMP
   stream << " -i  Use case insensitive regular expressions.\n";
   stream << " -i  Include paths matching REGEX.\n";
 #  endif
@@ -376,7 +376,6 @@ static void process_events(const vector<event> &events)
     write_events(events);
 }
 
-
 static void start_monitor(int argc, char ** argv, int optind)
 {
   // parsing paths
@@ -490,7 +489,7 @@ static void parse_opts(int argc, char ** argv)
     case '1':
       _1flag = true;
       break;
-      
+
 #ifdef HAVE_REGCOMP
     case 'e':
       filters.push_back({optarg, filter_type::filter_exclude});
@@ -514,7 +513,7 @@ static void parse_opts(int argc, char ** argv)
     case 'i':
       filters.push_back({optarg, filter_type::filter_include});
       break;
-      
+
     case 'I':
       Iflag = true;
       break;
@@ -598,7 +597,7 @@ int main(int argc, char ** argv)
     cerr << "-k and -p are mutually exclusive." << endl;
     ::exit(FSW_EXIT_OPT);
   }
-  
+
   // configure and start the monitor
   try
   {
