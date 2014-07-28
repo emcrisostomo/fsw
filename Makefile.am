@@ -28,7 +28,7 @@ fsw_SOURCES  = fsw.cpp fsw.h fsw_log.cpp fsw_log.h
 fsw_SOURCES += fsw_exception.cpp fsw_exception.h
 
 # Link fsw against dependent libraries
-# fsw_LDADD = libfsw/libfsw.la
+fsw_LDADD = libfsw/libfsw.la
 
 if USE_CORESERVICES
   fsw_LDFLAGS = -framework CoreServices
