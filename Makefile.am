@@ -24,7 +24,7 @@ libtool: $(LIBTOOL_DEPS)
 SUBDIRS = libfsw
 
 bin_PROGRAMS = fsw
-fsw_SOURCES  = fsw.cpp fsw.h fsw_log.cpp fsw_log.h path_utils.cpp path_utils.h
+fsw_SOURCES  = fsw.cpp fsw.h fsw_log.cpp fsw_log.h
 fsw_SOURCES += fsw_exception.cpp fsw_exception.h event.cpp event.h
 
 # Link fsw against dependent libraries
