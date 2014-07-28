@@ -22,5 +22,13 @@ libtool: $(LIBTOOL_DEPS)
 	$(SHELL) ./config.status libtool
 
 lib_LTLIBRARIES = libfsw.la
-libfsw_la_SOURCES = libfsw.cpp
+libfsw_la_SOURCES  = libfsw.cpp
+libfsw_la_SOURCES += libfsw_exception.cpp libfsw_exception.h
+libfsw_la_SOURCES += event.h
+libfsw_la_SOURCES += monitor.cpp monitor.h fsw_map.h fsw_set.h
+libfsw_la_SOURCES += fsevent_monitor.cpp fsevent_monitor.h
+libfsw_la_SOURCES += kqueue_monitor.cpp kqueue_monitor.h
+libfsw_la_SOURCES += poll_monitor.cpp poll_monitor.h
+libfsw_la_SOURCES += inotify_monitor.cpp inotify_monitor.h
+
 pkginclude_HEADERS = libfsw.h

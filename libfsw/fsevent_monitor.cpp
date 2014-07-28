@@ -18,7 +18,7 @@
 
 #ifdef HAVE_CORESERVICES_CORESERVICES_H
 
-#  include "fsw_exception.h"
+#  include "libfsw_exception.h"
 #  include "fsw_log.h"
 #  include <iostream>
 #  include "event.h"
@@ -129,7 +129,7 @@ void fsevent_monitor::run()
 
   if (!stream)
   {
-    throw fsw_exception("Event stream could not be created.");
+    throw libfsw_exception("Event stream could not be created.");
   }
 
   fsw_log("Scheduling stream with run loop...\n");
@@ -171,7 +171,7 @@ void fsevent_monitor::fsevent_callback(ConstFSEventStreamRef streamRef,
 
   if (!fse_monitor)
   {
-    throw fsw_exception("The callback info cannot be cast to fsevent_monitor.");
+    throw libfsw_exception("The callback info cannot be cast to fsevent_monitor.");
   }
 
   vector<event> events;

@@ -1,10 +1,9 @@
 #include <iostream>
-#include "inner.h"
+#include "libfsw.h"
 
 using namespace std;
 
-void ciao()
+void placeholder()
 {
-  cout << "Ciao!" << endl;
   return;
 }

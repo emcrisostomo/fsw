@@ -3,7 +3,7 @@ extern "C"
 {
 #endif
 
-void ciao();
+void placeholder();
 
 #ifdef __cplusplus
 }
