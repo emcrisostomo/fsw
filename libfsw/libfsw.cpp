@@ -3,7 +3,9 @@
 
 using namespace std;
 
-void placeholder()
+static bool vFlag = false;
+
+bool is_verbose()
 {
-  return;
+  return vFlag;
 }

@@ -3,7 +3,7 @@ extern "C"
 {
 #endif
 
-void placeholder();
+bool is_verbose();
 
 #ifdef __cplusplus
 }
