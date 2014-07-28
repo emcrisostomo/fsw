@@ -16,7 +16,7 @@
  */
 #include "config.h"
 #include "monitor.h"
-#include "fsw_exception.h"
+#include "libfsw_exception.h"
 #include <cstdlib>
 
 using namespace std;
@@ -32,7 +32,7 @@ monitor::monitor(vector<string> paths_to_watch, EVENT_CALLBACK callback) :
 {
   if (callback == nullptr)
   {
-    throw fsw_exception("Callback cannot be null.");
+    throw libfsw_exception("Callback cannot be null.");
   }
 }
 
@@ -40,7 +40,7 @@ void monitor::set_latency(double latency)
 {
   if (latency < 0)
   {
-    throw fsw_exception("Latency cannot be negative.");
+    throw libfsw_exception("Latency cannot be negative.");
   }
 
   this->latency = latency;
@@ -67,7 +67,7 @@ void monitor::set_filters(const std::vector<monitor_filter> &filters,
     if (::regcomp(&regex, filter.text.c_str(), flags))
     {
       string err = "An error occurred during the compilation of " + filter.text;
-      throw fsw_exception(err);
+      throw libfsw_exception(err);
     }
 
     this->filters.push_back({regex, filter.type});
