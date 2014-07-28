@@ -15,7 +15,5 @@ Makefile.in
 compile
 configure
 aclocal.m4
+/config
 config.*
-depcomp
-install-sh
-missing
