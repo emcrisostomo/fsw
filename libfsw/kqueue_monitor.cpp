@@ -125,7 +125,7 @@ bool kqueue_monitor::add_watch(const string & path, const struct stat &fd_stat)
   if (fd == -1)
   {
     string err = string("Cannot open ") + path;
-    fsw_perror(err.c_str());
+    libfsw_perror(err.c_str());
 
     return false;
   }

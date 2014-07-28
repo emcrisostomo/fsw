@@ -21,7 +21,7 @@
 #  include "monitor.h"
 #  include <sys/stat.h>
 #  include <ctime>
-#  include "fsw_map.h"
+#  include "libfsw_map.h"
 
 #  if defined HAVE_STRUCT_STAT_ST_MTIME
 #    define FSW_MTIME(stat) (stat.st_mtime)
