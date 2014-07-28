@@ -25,19 +25,19 @@
 #include <ctime>
 #include <cerrno>
 #include <vector>
-#include "poll_monitor.h"
+#include "libfsw/poll_monitor.h"
 
 #ifdef HAVE_GETOPT_LONG
 #  include <getopt.h>
 #endif
 #ifdef HAVE_CORESERVICES_CORESERVICES_H
-#  include "fsevent_monitor.h"
+#  include "libfsw/fsevent_monitor.h"
 #endif
 #ifdef HAVE_SYS_EVENT_H
-#  include "kqueue_monitor.h"
+#  include "libfsw/kqueue_monitor.h"
 #endif
 #ifdef HAVE_SYS_INOTIFY_H
-#  include "inotify_monitor.h"
+#  include "libfsw/inotify_monitor.h"
 #endif
 
 using namespace std;
