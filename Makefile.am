@@ -30,8 +30,10 @@ fsw_SOURCES += fsw_exception.cpp fsw_exception.h
 # Link fsw against dependent libraries
 fsw_LDADD = libfsw/libfsw.la
 
+fsw_LDFLAGS = -static
+
 if USE_CORESERVICES
-  fsw_LDFLAGS = -framework CoreServices
+  fsw_LDFLAGS += -framework CoreServices
 endif
 
 man_MANS = fsw.7
