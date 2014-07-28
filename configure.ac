@@ -24,10 +24,22 @@ AC_REVISION([$Revision: 1.3.9-1 $])
 AC_CONFIG_SRCDIR([fsw.cpp])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile libfsw/Makefile])
 AC_CONFIG_FILES([scripts/fswatch-run-bash scripts/fswatch-run-zsh])
 AC_CONFIG_MACRO_DIRS([m4])
+AC_CONFIG_MACRO_DIR([m4])
+
+# Other packages
+AC_CONFIG_SUBDIRS([libfsw])
+
+# Initialize Automake
 AM_INIT_AUTOMAKE([-Wall -Werror gnu])
+AM_PROG_AR
+
+# Initialize libtool 
+LT_PREREQ([2.4.2])
+LT_INIT
+AC_SUBST([LIBTOOL_DEPS])
 
 # Configure language
 AC_LANG(C++)
