@@ -23,6 +23,7 @@ libtool: $(LIBTOOL_DEPS)
 
 lib_LTLIBRARIES = libfsw.la
 libfsw_la_SOURCES  = libfsw.cpp
+libfsw_la_SOURCES += libfsw_map.h libfsw_set.h
 libfsw_la_SOURCES += libfsw_exception.cpp libfsw_exception.h
 libfsw_la_SOURCES += event.h
 libfsw_la_SOURCES += monitor.cpp monitor.h fsw_map.h fsw_set.h

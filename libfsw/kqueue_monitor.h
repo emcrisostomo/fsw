@@ -22,8 +22,8 @@
 #  ifdef HAVE_SYS_EVENT_H
 
 #    include "monitor.h"
-#    include "fsw_map.h"
-#    include "fsw_set.h"
+#    include "libfsw_map.h"
+#    include "libfsw_set.h"
 #    include <string>
 #    include <vector>
 #    include <sys/stat.h>

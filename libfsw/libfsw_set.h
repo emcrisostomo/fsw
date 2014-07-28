@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef FSW_SET_H
-#  define FSW_SET_H
+#ifndef LIBFSW_SET_H
+#  define LIBFSW_SET_H
 
 #  include "config.h"
 
@@ -33,4 +33,4 @@ using fsw_hash_set = std::set<K>;
 
 #  endif
 
-#endif  /* FSW_SET_H */
+#endif  /* LIBFSW_SET_H */

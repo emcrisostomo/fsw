@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef FSW_MAP_H
-#  define FSW_MAP_H
+#ifndef LIBFSW_MAP_H
+#  define LIBFSW_MAP_H
 
 #  include "config.h"
 
@@ -33,4 +33,4 @@ using fsw_hash_map = std::map<K, V>;
 
 #  endif
 
-#endif  /* FSW_MAP_H */
+#endif  /* LIBFSW_MAP_H */
