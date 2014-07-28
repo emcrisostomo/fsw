@@ -19,7 +19,7 @@
 #ifdef HAVE_CORESERVICES_CORESERVICES_H
 
 #  include "libfsw_exception.h"
-#  include "fsw_log.h"
+#  include "libfsw_log.h"
 #  include <iostream>
 #  include "event.h"
 
@@ -71,13 +71,13 @@ fsevent_monitor::~fsevent_monitor()
 {
   if (stream)
   {
-    fsw_log("Stopping event stream...\n");
+    libfsw_log("Stopping event stream...\n");
     FSEventStreamStop(stream);
 
-    fsw_log("Invalidating event stream...\n");
+    libfsw_log("Invalidating event stream...\n");
     FSEventStreamInvalidate(stream);
 
-    fsw_log("Releasing event stream...\n");
+    libfsw_log("Releasing event stream...\n");
     FSEventStreamRelease(stream);
   }
 
@@ -118,7 +118,7 @@ void fsevent_monitor::run()
   context->release = nullptr;
   context->copyDescription = nullptr;
 
-  fsw_log("Creating FSEvent stream...\n");
+  libfsw_log("Creating FSEvent stream...\n");
   stream = FSEventStreamCreate(NULL,
                                &fsevent_monitor::fsevent_callback,
                                context,
@@ -132,15 +132,15 @@ void fsevent_monitor::run()
     throw libfsw_exception("Event stream could not be created.");
   }
 
-  fsw_log("Scheduling stream with run loop...\n");
+  libfsw_log("Scheduling stream with run loop...\n");
   FSEventStreamScheduleWithRunLoop(stream,
                                    CFRunLoopGetCurrent(),
                                    kCFRunLoopDefaultMode);
 
-  fsw_log("Starting event stream...\n");
+  libfsw_log("Starting event stream...\n");
   FSEventStreamStart(stream);
 
-  fsw_log("Starting run loop...\n");
+  libfsw_log("Starting run loop...\n");
   CFRunLoopRun();
 }
 
