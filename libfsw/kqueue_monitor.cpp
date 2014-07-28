@@ -18,8 +18,8 @@
 
 #ifdef HAVE_SYS_EVENT_H
 
-#  include "fsw_exception.h"
-#  include "fsw_log.h"
+#  include "libfsw_exception.h"
+#  include "libfsw_log.h"
 #  include "path_utils.h"
 #  include <iostream>
 #  include <sys/types.h>
@@ -234,21 +234,21 @@ void kqueue_monitor::scan_root_paths()
     if (!scan(path))
     {
       string err = "Notice: " + path + " cannot be found. Will retry later.\n";
-      fsw_log(err.c_str());
+      libfsw_log(err.c_str());
     }
   }
 }
 
 void kqueue_monitor::initialize_kqueue()
 {
-  if (kq != -1) throw fsw_exception("kqueue already running.");
+  if (kq != -1) throw libfsw_exception("kqueue already running.");
 
   kq = ::kqueue();
 
   if (kq == -1)
   {
     perror("::kqueue()");
-    throw fsw_exception("kqueue failed.");
+    throw libfsw_exception("kqueue failed.");
   }
 }
 
@@ -267,7 +267,7 @@ int kqueue_monitor::wait_for_events(const vector<struct kevent> &changes,
   if (event_num == -1)
   {
     perror("::kevent returned -1");
-    throw fsw_exception("Invalid event number.");
+    throw libfsw_exception("Invalid event number.");
   }
 
   return event_num;
