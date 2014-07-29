@@ -27,17 +27,17 @@
 
 typedef void (*EVENT_CALLBACK)(const std::vector<event> &);
 
-enum class filter_type
+enum filter_type
 {
   filter_include,
   filter_exclude
 };
 
-struct monitor_filter
+typedef struct monitor_filter
 {
   std::string text;
   filter_type type;
-};
+} monitor_filter;
 
 struct compiled_monitor_filter;
 
