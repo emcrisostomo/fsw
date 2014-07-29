@@ -26,7 +26,7 @@
 #    include <ctime>
 #    include <string>
 #    include <vector>
-#    include "fsw_map.h"
+#    include "libfsw_map.h"
 
 class inotify_monitor : public monitor
 {

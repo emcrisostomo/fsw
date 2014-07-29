@@ -23,8 +23,8 @@
 #  include <stdio.h>
 #  include <iostream>
 #  include <sstream>
-#  include "fsw_exception.h"
-#  include "fsw_log.h"
+#  include "libfsw_exception.h"
+#  include "libfsw_log.h"
 
 using namespace std;
 
@@ -38,7 +38,7 @@ inotify_monitor::inotify_monitor(vector<string> paths_to_monitor,
   if (inotify == -1)
   {
     ::perror("inotify_init");
-    throw fsw_exception("Cannot initialize inotify.");
+    throw libfsw_exception("Cannot initialize inotify.");
   }
 }
 
@@ -69,7 +69,7 @@ void inotify_monitor::scan(const string &path)
   if (inotify_desc == -1)
   {
     ::perror("inotify_add_watch");
-    throw fsw_exception("Cannot add watch.");
+    throw libfsw_exception("Cannot add watch.");
   }
 
   file_names_by_descriptor[inotify_desc] = path;
@@ -77,7 +77,7 @@ void inotify_monitor::scan(const string &path)
   std::ostringstream s;
   s << "Watching " << path << ".\n";
 
-  fsw_log(s.str().c_str());
+  libfsw_log(s.str().c_str());
 }
 
 void inotify_monitor::collect_initial_data()
@@ -137,7 +137,7 @@ void inotify_monitor::preprocess_event(struct inotify_event * event)
 {
   if (event->mask & IN_Q_OVERFLOW)
   {
-    throw fsw_exception("Event queue overflowed.");
+    throw libfsw_exception("Event queue overflowed.");
   }
 
   preprocess_dir_event(event);
@@ -165,13 +165,13 @@ void inotify_monitor::run()
 
     if (!record_num)
     {
-      throw fsw_exception("::read() on inotify descriptor read 0 records.");
+      throw libfsw_exception("::read() on inotify descriptor read 0 records.");
     }
 
     if (record_num == -1)
     {
       ::perror("read()");
-      throw fsw_exception("::read() on inotify descriptor returned -1.");
+      throw libfsw_exception("::read() on inotify descriptor returned -1.");
     }
 
     time(&curr_time);
