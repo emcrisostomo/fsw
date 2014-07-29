@@ -12,6 +12,7 @@ ChangeLog
 	* INSTALL: Add.
 	* Makefile.am: Move libfsw pieces from fsw.
 	* event.h: Move from fsw.
+	* event.cpp: Move from fsw.
 	* fsevent_monitor.cpp: Move from fsw.
 	* fsevent_monitor.h: Move from fsw.
 	* inotify_monitor.cpp: Move from fsw.
