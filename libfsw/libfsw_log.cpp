@@ -22,7 +22,7 @@ using namespace std;
 
 void libfsw_log(const char * msg)
 {
-  if (is_verbose())
+  if (fsw_is_verbose())
   {
     cout << msg;
   }
@@ -30,7 +30,8 @@ void libfsw_log(const char * msg)
 
 void libfsw_perror(const char * msg)
 {
-  if (is_verbose())
+  // TODO
+  if (fsw_is_verbose())
   {
     perror(msg);
   }
