@@ -55,7 +55,10 @@ bool read_link_path(const string &path, string &link_path)
   char *real_path = ::realpath(path.c_str(), nullptr);
   link_path = (real_path ? real_path : path);
 
-  return (real_path != nullptr);
+  bool ret = (real_path != nullptr);
+  ::free(real_path);
+  
+  return ret;
 }
 
 bool stat_path(const string &path, struct stat &fd_stat)
