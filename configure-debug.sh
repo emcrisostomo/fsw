@@ -1,3 +1,3 @@
 #!/bin/sh
 
-../../configure --disable-shared CPPFLAGS="-DDEBUG" CXXFLAGS="-g -O0"
+../../configure CPPFLAGS="-DDEBUG" CXXFLAGS="-g -O0"
