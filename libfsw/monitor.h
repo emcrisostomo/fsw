@@ -27,15 +27,16 @@
 #  include "event.h"
 
 typedef void CPP_EVENT_CALLBACK(const std::vector<event> &, void *);
-typedef void (*EVENT_CALLBACK)(const std::vector<event> &, void *);
 
 struct compiled_monitor_filter;
 
 class monitor
 {
 public:
-  monitor(std::vector<std::string> paths, EVENT_CALLBACK callback);
-  monitor(std::vector<std::string> paths, EVENT_CALLBACK callback, void * context);
+  monitor(std::vector<std::string> paths, CPP_EVENT_CALLBACK * callback);
+  monitor(std::vector<std::string> paths,
+          CPP_EVENT_CALLBACK * callback,
+          void * context);
   virtual ~monitor();
   void set_latency(double latency);
   void set_recursive(bool recursive);
@@ -57,7 +58,7 @@ protected:
 
 protected:
   std::vector<std::string> paths;
-  EVENT_CALLBACK callback;
+  CPP_EVENT_CALLBACK * callback;
   void * context = nullptr;
   double latency = 1.0;
   bool recursive = false;

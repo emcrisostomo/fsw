@@ -62,13 +62,13 @@ vector<FSEventFlagType> create_flag_type_vector()
 }
 
 fsevent_monitor::fsevent_monitor(vector<string> paths_to_monitor,
-                                 EVENT_CALLBACK callback) :
+                                 CPP_EVENT_CALLBACK * callback) :
   monitor(paths_to_monitor, callback)
 {
 }
 
 fsevent_monitor::fsevent_monitor(vector<string> paths_to_monitor,
-                                 EVENT_CALLBACK callback,
+                                 CPP_EVENT_CALLBACK * callback,
                                  void * context) :
   monitor(paths_to_monitor, callback, context)
 {

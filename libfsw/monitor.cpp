@@ -27,7 +27,7 @@ struct compiled_monitor_filter
   filter_type type;
 };
 
-monitor::monitor(vector<string> paths, EVENT_CALLBACK callback) :
+monitor::monitor(vector<string> paths, CPP_EVENT_CALLBACK * callback) :
   paths(paths), callback(callback)
 {
   if (callback == nullptr)
@@ -36,7 +36,9 @@ monitor::monitor(vector<string> paths, EVENT_CALLBACK callback) :
   }
 }
 
-monitor::monitor(std::vector<std::string> paths, EVENT_CALLBACK callback, void * context) :
+monitor::monitor(std::vector<std::string> paths,
+                 CPP_EVENT_CALLBACK * callback,
+                 void * context) :
   paths(paths), callback(callback), context(context)
 {
   if (callback == nullptr)
