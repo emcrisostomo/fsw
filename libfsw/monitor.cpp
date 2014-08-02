@@ -27,8 +27,17 @@ struct compiled_monitor_filter
   filter_type type;
 };
 
-monitor::monitor(vector<string> paths_to_watch, EVENT_CALLBACK callback) :
-  paths(paths_to_watch), callback(callback)
+monitor::monitor(vector<string> paths, EVENT_CALLBACK callback) :
+  paths(paths), callback(callback)
+{
+  if (callback == nullptr)
+  {
+    throw libfsw_exception("Callback cannot be null.");
+  }
+}
+
+monitor::monitor(std::vector<std::string> paths, EVENT_CALLBACK callback, void * context) :
+  paths(paths), callback(callback), context(context)
 {
   if (callback == nullptr)
   {
@@ -51,6 +60,25 @@ void monitor::set_recursive(bool recursive)
   this->recursive = recursive;
 }
 
+void monitor::add_filter(const monitor_filter &filter,
+                         bool case_sensitive,
+                         bool extended)
+{
+  regex_t regex;
+  int flags = 0;
+
+  if (!case_sensitive) flags |= REG_ICASE;
+  if (extended) flags |= REG_EXTENDED;
+
+  if (::regcomp(&regex, filter.text.c_str(), flags))
+  {
+    string err = "An error occurred during the compilation of " + filter.text;
+    throw libfsw_exception(err);
+  }
+
+  this->filters.push_back({regex, filter.type});
+}
+
 void monitor::set_filters(const std::vector<monitor_filter> &filters,
                           bool case_sensitive,
                           bool extended)
@@ -58,19 +86,7 @@ void monitor::set_filters(const std::vector<monitor_filter> &filters,
 #ifdef HAVE_REGCOMP
   for (const monitor_filter &filter : filters)
   {
-    regex_t regex;
-    int flags = 0;
-
-    if (!case_sensitive) flags |= REG_ICASE;
-    if (extended) flags |= REG_EXTENDED;
-
-    if (::regcomp(&regex, filter.text.c_str(), flags))
-    {
-      string err = "An error occurred during the compilation of " + filter.text;
-      throw libfsw_exception(err);
-    }
-
-    this->filters.push_back({regex, filter.type});
+    add_filter(filter, case_sensitive, extended);
   }
 #endif
 }
@@ -98,6 +114,16 @@ bool monitor::accept_path(const char *path)
 #endif
 
   return true;
+}
+
+void * monitor::get_context()
+{
+  return context;
+}
+
+void monitor::set_context(void * context)
+{
+  this->context = context;
 }
 
 monitor::~monitor()

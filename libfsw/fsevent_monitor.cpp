@@ -67,6 +67,13 @@ fsevent_monitor::fsevent_monitor(vector<string> paths_to_monitor,
 {
 }
 
+fsevent_monitor::fsevent_monitor(vector<string> paths_to_monitor,
+                                 EVENT_CALLBACK callback,
+                                 void * context) :
+  monitor(paths_to_monitor, callback, context)
+{
+}
+
 fsevent_monitor::~fsevent_monitor()
 {
   if (stream)
@@ -167,7 +174,7 @@ void fsevent_monitor::fsevent_callback(ConstFSEventStreamRef streamRef,
                                        const FSEventStreamEventId eventIds[])
 {
   fsevent_monitor *fse_monitor =
-    reinterpret_cast<fsevent_monitor *> (clientCallBackInfo);
+    static_cast<fsevent_monitor *> (clientCallBackInfo);
 
   if (!fse_monitor)
   {
@@ -190,7 +197,7 @@ void fsevent_monitor::fsevent_callback(ConstFSEventStreamRef streamRef,
 
   if (events.size() > 0)
   {
-    fse_monitor->callback(events);
+    fse_monitor->callback(events, fse_monitor->context);
   }
 }
 

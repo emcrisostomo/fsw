@@ -368,7 +368,7 @@ static void write_events(const vector<event> &events)
   }
 }
 
-static void process_events(const vector<event> &events)
+static void process_events(const vector<event> &events, void * context)
 {
   if (oflag)
     write_one_batch_event(events);

@@ -328,7 +328,7 @@ void kqueue_monitor::process_events(const vector<struct kevent> &changes,
 
   if (events.size())
   {
-    callback(events);
+    callback(events, context);
   }
 }
 

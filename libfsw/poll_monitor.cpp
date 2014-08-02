@@ -176,7 +176,7 @@ void poll_monitor::notify_events()
 {
   if (events.size())
   {
-    callback(events);
+    callback(events, context);
     events.clear();
   }
 }

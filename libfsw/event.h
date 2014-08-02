@@ -20,21 +20,7 @@
 #  include <string>
 #  include <ctime>
 #  include <vector>
-
-enum class event_flag
-{
-  PlatformSpecific = 1,
-  Created = 2,
-  Updated = 4,
-  Removed = 8,
-  Renamed = 16,
-  OwnerModified = 32,
-  AttributeModified = 64,
-  IsFile = 128,
-  IsDir = 256,
-  IsSymLink = 512,
-  Link = 1024
-};
+#  include "cevent.h"
 
 class event
 {

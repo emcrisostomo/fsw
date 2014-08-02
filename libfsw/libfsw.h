@@ -1,10 +1,17 @@
 #ifndef LIBFSW_H
 #  define LIBFSW_H
 
+#  include "cevent.h"
+
 #  ifdef __cplusplus
 extern "C"
 {
 #  endif
+
+  // Error codes
+#  define FSW_ERR_SESSION_UNKNOWN         1
+#  define FSW_ERR_MONITOR_ALREADY_EXISTS  2
+#  define FSW_ERR_MEMORY                  4
 
   typedef unsigned int FSW_HANDLE;
 
