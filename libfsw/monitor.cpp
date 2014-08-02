@@ -21,11 +21,15 @@
 
 using namespace std;
 
+#ifdef HAVE_REGCOMP
+
 struct compiled_monitor_filter
 {
   regex_t regex;
   filter_type type;
 };
+
+#endif
 
 monitor::monitor(vector<string> paths, CPP_EVENT_CALLBACK * callback) :
   paths(paths), callback(callback)

@@ -28,7 +28,9 @@
 
 typedef void CPP_EVENT_CALLBACK(const std::vector<event> &, void *);
 
+#  ifdef HAVE_REGCOMP
 struct compiled_monitor_filter;
+#  endif
 
 class monitor
 {
