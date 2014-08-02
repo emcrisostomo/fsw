@@ -26,7 +26,7 @@
 #  endif
 #  include "event.h"
 
-typedef void CPP_EVENT_CALLBACK(const std::vector<event> &, void *);
+typedef void FSW_EVENT_CALLBACK(const std::vector<event> &, void *);
 
 #  ifdef HAVE_REGCOMP
 struct compiled_monitor_filter;
@@ -35,9 +35,9 @@ struct compiled_monitor_filter;
 class monitor
 {
 public:
-  monitor(std::vector<std::string> paths, CPP_EVENT_CALLBACK * callback);
+  monitor(std::vector<std::string> paths, FSW_EVENT_CALLBACK * callback);
   monitor(std::vector<std::string> paths,
-          CPP_EVENT_CALLBACK * callback,
+          FSW_EVENT_CALLBACK * callback,
           void * context);
   virtual ~monitor();
   void set_latency(double latency);
@@ -60,7 +60,7 @@ protected:
 
 protected:
   std::vector<std::string> paths;
-  CPP_EVENT_CALLBACK * callback;
+  FSW_EVENT_CALLBACK * callback;
   void * context = nullptr;
   double latency = 1.0;
   bool recursive = false;

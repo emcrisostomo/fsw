@@ -25,7 +25,7 @@
 using namespace std;
 
 poll_monitor::poll_monitor(vector<string> paths,
-                           CPP_EVENT_CALLBACK * callback) :
+                           FSW_EVENT_CALLBACK * callback) :
   monitor(paths, callback)
 {
   previous_data = new poll_monitor_data();
@@ -34,7 +34,7 @@ poll_monitor::poll_monitor(vector<string> paths,
 }
 
 poll_monitor::poll_monitor(vector<string> paths,
-                           CPP_EVENT_CALLBACK * callback,
+                           FSW_EVENT_CALLBACK * callback,
                            void * context) :
   monitor(paths, callback, context)
 {

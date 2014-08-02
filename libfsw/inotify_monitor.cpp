@@ -31,7 +31,7 @@ using namespace std;
 static const unsigned int BUFFER_SIZE = (10 * ((sizeof (struct inotify_event)) + NAME_MAX + 1));
 
 inotify_monitor::inotify_monitor(vector<string> paths_to_monitor,
-                                 CPP_EVENT_CALLBACK * callback) :
+                                 FSW_EVENT_CALLBACK * callback) :
   monitor(paths_to_monitor, callback)
 {
   inotify = ::inotify_init();
@@ -43,7 +43,7 @@ inotify_monitor::inotify_monitor(vector<string> paths_to_monitor,
 }
 
 inotify_monitor::inotify_monitor(vector<string> paths_to_monitor,
-                                 CPP_EVENT_CALLBACK * callback,
+                                 FSW_EVENT_CALLBACK * callback,
                                  void * context) :
   monitor(paths_to_monitor, callback, context)
 {

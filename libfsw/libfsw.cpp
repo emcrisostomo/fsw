@@ -34,7 +34,7 @@ static std::mutex session_mutex;
 static FSW_THREAD_LOCAL unsigned int last_error;
 
 // Default library callback.
-CPP_EVENT_CALLBACK libfsw_cpp_callback_proxy;
+FSW_EVENT_CALLBACK libfsw_cpp_callback_proxy;
 FSW_SESSION & get_session(const FSW_HANDLE handle);
 
 void libfsw_cpp_callback_proxy(const std::vector<event> & events, void * handle_ptr)
