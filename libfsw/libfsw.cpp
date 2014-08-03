@@ -233,10 +233,10 @@ void fsw_add_path(const FSW_HANDLE handle, const char * path)
 {
   if (!path)
     throw int(FSW_ERR_INVALID_PATH);
-  
+
   std::lock_guard<std::mutex> session_lock(session_mutex);
   FSW_SESSION & session = get_session(handle);
-  
+
   session.paths.push_back(path);
 }
 
@@ -244,10 +244,10 @@ void fsw_set_callback(const FSW_HANDLE handle, const CEVENT_CALLBACK callback)
 {
   if (!callback)
     throw int(FSW_ERR_INVALID_CALLBACK);
-  
+
   std::lock_guard<std::mutex> session_lock(session_mutex);
   FSW_SESSION & session = get_session(handle);
-  
+
   session.callback = callback;
 }
 

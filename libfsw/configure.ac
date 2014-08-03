@@ -106,4 +106,10 @@ AC_CHECK_DECLS(
   ]
 )
 
+AX_CXX_HAVE_THREAD_LOCAL
+
+if ! test "x${ax_cv_cxx_have_thread_local}" = "xyes" ; then
+  AC_WARN(AC_PACKAGE_NAME [is not reentrant with the current combination of compiler and libraries and should not be used by multiple threads at the same time].)
+fi
+
 AC_OUTPUT

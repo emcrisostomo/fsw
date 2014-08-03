@@ -24,12 +24,16 @@ extern "C"
   typedef unsigned int FSW_HANDLE;
 
 #  define FSW_INVALID_HANDLE -1
-  // TODO Implement Autoconf check
-#  define FSW_THREAD_LOCAL /* thread_local */
+
+#  if defined(HAVE_CXX_THREAD_LOCAL)
+#    define FSW_THREAD_LOCAL thread_local
+#  else
+#    define FSW_THREAD_LOCAL
+#  endif
 
   FSW_HANDLE fsw_init_session(const fsw_monitor_type type = fsw_monitor_type::system_default);
   void fsw_add_path(const FSW_HANDLE handle, const char * path);
-  void fsw_set_callback(const FSW_HANDLE handle, 
+  void fsw_set_callback(const FSW_HANDLE handle,
                         const CEVENT_CALLBACK callback);
   unsigned int fsw_last_error();
   bool fsw_is_verbose();
