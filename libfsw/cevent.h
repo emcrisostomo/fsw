@@ -47,7 +47,7 @@ extern "C"
     unsigned int flags_num;
   } cevent;
 
-  typedef void (*CEVENT_CALLBACK)(const cevent * const * events, unsigned int event_num);
+  typedef void (*CEVENT_CALLBACK)(cevent const * const * const events, const unsigned int event_num);
 
 #  ifdef __cplusplus
 }
