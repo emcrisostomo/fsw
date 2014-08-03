@@ -14,18 +14,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef FSW__FILTER_H
-#  define FSW__FILTER_H
+#ifndef FSW__CFILTER_H
+#  define FSW__CFILTER_H
 
-#  include <string>
-#  include "cfilter.h"
-
-typedef struct monitor_filter
+#  ifdef __cplusplus
+extern "C"
 {
-  std::string text;
+#  endif
+
+enum filter_type
+{
+  filter_include,
+  filter_exclude
+};
+
+typedef struct cmonitor_filter
+{
+  char * text;
   filter_type type;
   bool case_sensitive;
   bool extended;
-} monitor_filter;
+} cmonitor_filter;
 
-#endif  /* FSW__FILTER_H */
+#  ifdef __cplusplus
+}
+#  endif
+
+#endif  /* FSW__CFILTER_H */
