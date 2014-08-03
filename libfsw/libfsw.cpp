@@ -33,6 +33,7 @@ typedef struct FSW_SESSION
   bool recursive;
   bool follow_symlinks;
   vector<monitor_filter> filters;
+  bool running;
 } FSW_SESSION;
 
 static bool srand_initialized = false;
@@ -287,6 +288,26 @@ void fsw_add_filter(const FSW_HANDLE handle,
   FSW_SESSION & session = get_session(handle);
 
   session.filters.push_back({filter.text, filter.type, filter.case_sensitive, filter.extended});
+}
+
+void fsw_run_monitor(const FSW_HANDLE handle)
+{
+  {
+    std::lock_guard<std::mutex> session_lock(session_mutex);
+    FSW_SESSION & session = get_session(handle);
+
+    if (session.running)
+      throw int(FSW_ERR_MONITOR_ALREADY_RUNNING);
+
+    if (!session.monitor)
+      create_monitor(handle, session.type);
+
+    session.monitor->set_filters(session.filters);
+    session.monitor->set_follow_symlinks(session.follow_symlinks);
+    session.monitor->set_latency(session.latency);
+    session.monitor->set_recursive(session.recursive);
+    session.running = true;
+  }
 }
 
 void fsw_destroy_session(const FSW_HANDLE handle)
