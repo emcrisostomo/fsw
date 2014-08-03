@@ -120,11 +120,9 @@ FSW_HANDLE fsw_init_session(const fsw_monitor_type type)
     handle = rand();
   } while (sessions.find(handle) != sessions.end());
 
-  FSW_SESSION session;
+  FSW_SESSION session{};
 
   session.handle = handle;
-  session.callback = nullptr;
-  session.monitor = nullptr;
   session.type = type;
 
   // TODO: configure session
