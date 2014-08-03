@@ -29,6 +29,9 @@ typedef struct FSW_SESSION
   fsw_monitor_type type;
   monitor *monitor;
   CEVENT_CALLBACK callback;
+  double latency;
+  bool recursive;
+  bool follow_symlinks;
 } FSW_SESSION;
 
 static bool srand_initialized = false;
@@ -250,6 +253,33 @@ void fsw_set_callback(const FSW_HANDLE handle, const CEVENT_CALLBACK callback)
 
   session.callback = callback;
 }
+
+  void fsw_set_latency(const FSW_HANDLE handle, const double latency)
+  {
+    if (latency < 0)
+      throw int(FSW_ERR_INVALID_LATENCY);
+    
+    std::lock_guard<std::mutex> session_lock(session_mutex);
+    FSW_SESSION & session = get_session(handle);
+    session.latency = latency;
+  }
+  
+  void fsw_set_recursive(const FSW_HANDLE handle, const bool recursive)
+  {
+    std::lock_guard<std::mutex> session_lock(session_mutex);
+    FSW_SESSION & session = get_session(handle);
+
+    session.recursive = recursive;
+  }
+  
+  void fsw_set_follow_symlinks(const FSW_HANDLE handle, 
+                               const bool follow_symlinks)
+  {
+    std::lock_guard<std::mutex> session_lock(session_mutex);
+    FSW_SESSION & session = get_session(handle);
+
+    session.follow_symlinks = follow_symlinks;    
+  }
 
 void fsw_destroy_session(const FSW_HANDLE handle)
 {
