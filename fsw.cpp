@@ -421,9 +421,20 @@ static void start_monitor(int argc, char ** argv, int optind)
 #endif
   }
 
+  /* libfsw supports case sensitivity and extended flags to be set on any
+   * filter but fsw does not.  For the time being, we apply the same flags to
+   * every filter.
+   */
+  
+  for (auto & filter : filters)
+  {
+    filter.case_sensitive = !Iflag;
+    filter.extended = Eflag;
+  }
+  
   active_monitor->set_latency(lvalue);
   active_monitor->set_recursive(rflag);
-  active_monitor->set_filters(filters, !Iflag, Eflag);
+  active_monitor->set_filters(filters);
   active_monitor->set_follow_symlinks(Lflag);
 
   active_monitor->run();

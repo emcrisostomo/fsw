@@ -3,6 +3,7 @@
 
 #  include "cevent.h"
 #  include "cmonitor.h"
+#  include "cfilter.h"
 
 #  ifdef __cplusplus
 extern "C"
@@ -21,7 +22,7 @@ extern "C"
 #  define FSW_ERR_INVALID_PATH            (1 << 8)
 #  define FSW_ERR_INVALID_CALLBACK        (1 << 9)
 #  define FSW_ERR_INVALID_LATENCY         (1 << 10)
-  
+
   typedef unsigned int FSW_HANDLE;
 
 #  define FSW_INVALID_HANDLE -1
@@ -38,8 +39,9 @@ extern "C"
                         const CEVENT_CALLBACK callback);
   void fsw_set_latency(const FSW_HANDLE handle, const double latency);
   void fsw_set_recursive(const FSW_HANDLE handle, const bool recursive);
-  void fsw_set_follow_symlinks(const FSW_HANDLE handle, 
+  void fsw_set_follow_symlinks(const FSW_HANDLE handle,
                                const bool follow_symlinks);
+  void fsw_add_filter(const FSW_HANDLE handle, const cmonitor_filter filter);
   unsigned int fsw_last_error();
   bool fsw_is_verbose();
   void fsw_set_verbose(FSW_HANDLE handle, bool verbose);

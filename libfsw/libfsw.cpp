@@ -32,6 +32,7 @@ typedef struct FSW_SESSION
   double latency;
   bool recursive;
   bool follow_symlinks;
+  vector<monitor_filter> filters;
 } FSW_SESSION;
 
 static bool srand_initialized = false;
@@ -254,32 +255,41 @@ void fsw_set_callback(const FSW_HANDLE handle, const CEVENT_CALLBACK callback)
   session.callback = callback;
 }
 
-  void fsw_set_latency(const FSW_HANDLE handle, const double latency)
-  {
-    if (latency < 0)
-      throw int(FSW_ERR_INVALID_LATENCY);
-    
-    std::lock_guard<std::mutex> session_lock(session_mutex);
-    FSW_SESSION & session = get_session(handle);
-    session.latency = latency;
-  }
-  
-  void fsw_set_recursive(const FSW_HANDLE handle, const bool recursive)
-  {
-    std::lock_guard<std::mutex> session_lock(session_mutex);
-    FSW_SESSION & session = get_session(handle);
+void fsw_set_latency(const FSW_HANDLE handle, const double latency)
+{
+  if (latency < 0)
+    throw int(FSW_ERR_INVALID_LATENCY);
 
-    session.recursive = recursive;
-  }
-  
-  void fsw_set_follow_symlinks(const FSW_HANDLE handle, 
-                               const bool follow_symlinks)
-  {
-    std::lock_guard<std::mutex> session_lock(session_mutex);
-    FSW_SESSION & session = get_session(handle);
+  std::lock_guard<std::mutex> session_lock(session_mutex);
+  FSW_SESSION & session = get_session(handle);
+  session.latency = latency;
+}
 
-    session.follow_symlinks = follow_symlinks;    
-  }
+void fsw_set_recursive(const FSW_HANDLE handle, const bool recursive)
+{
+  std::lock_guard<std::mutex> session_lock(session_mutex);
+  FSW_SESSION & session = get_session(handle);
+
+  session.recursive = recursive;
+}
+
+void fsw_set_follow_symlinks(const FSW_HANDLE handle,
+                             const bool follow_symlinks)
+{
+  std::lock_guard<std::mutex> session_lock(session_mutex);
+  FSW_SESSION & session = get_session(handle);
+
+  session.follow_symlinks = follow_symlinks;
+}
+
+void fsw_add_filter(const FSW_HANDLE handle,
+                    const cmonitor_filter filter)
+{
+  std::lock_guard<std::mutex> session_lock(session_mutex);
+  FSW_SESSION & session = get_session(handle);
+
+  session.filters.push_back({filter.text, filter.type, filter.case_sensitive, filter.extended});
+}
 
 void fsw_destroy_session(const FSW_HANDLE handle)
 {

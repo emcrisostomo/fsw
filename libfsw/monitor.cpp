@@ -66,15 +66,13 @@ void monitor::set_recursive(bool recursive)
   this->recursive = recursive;
 }
 
-void monitor::add_filter(const monitor_filter &filter,
-                         bool case_sensitive,
-                         bool extended)
+void monitor::add_filter(const monitor_filter &filter)
 {
   regex_t regex;
   int flags = 0;
 
-  if (!case_sensitive) flags |= REG_ICASE;
-  if (extended) flags |= REG_EXTENDED;
+  if (!filter.case_sensitive) flags |= REG_ICASE;
+  if (filter.extended) flags |= REG_EXTENDED;
 
   if (::regcomp(&regex, filter.text.c_str(), flags))
   {
@@ -85,14 +83,12 @@ void monitor::add_filter(const monitor_filter &filter,
   this->filters.push_back({regex, filter.type});
 }
 
-void monitor::set_filters(const std::vector<monitor_filter> &filters,
-                          bool case_sensitive,
-                          bool extended)
+void monitor::set_filters(const std::vector<monitor_filter> &filters)
 {
 #ifdef HAVE_REGCOMP
   for (const monitor_filter &filter : filters)
   {
-    add_filter(filter, case_sensitive, extended);
+    add_filter(filter);
   }
 #endif
 }
