@@ -3,6 +3,9 @@
 #include <time.h>
 #include <stdlib.h>
 #include "config.h"
+#ifdef HAVE_CXX_THREAD
+#  include <thread>
+#endif
 #include "libfsw.h"
 #include "libfsw_map.h"
 #include "filter.h"
@@ -38,6 +41,9 @@ typedef struct FSW_SESSION
 
 static bool srand_initialized = false;
 static fsw_hash_map<FSW_HANDLE, FSW_SESSION> sessions;
+#ifdef HAVE_CXX_THREAD
+static fsw_hash_map<FSW_HANDLE, thread> monitor_threads;
+#endif
 static std::mutex session_mutex;
 static FSW_THREAD_LOCAL unsigned int last_error;
 
@@ -299,6 +305,11 @@ void fsw_run_monitor(const FSW_HANDLE handle)
     if (session.running)
       throw int(FSW_ERR_MONITOR_ALREADY_RUNNING);
 
+#ifdef HAVE_CXX_THREAD
+    if (monitor_threads.find(handle) != monitor_threads.end())
+      throw int(FSW_ERR_STALE_MONITOR_THREAD);
+#endif
+    
     if (!session.monitor)
       create_monitor(handle, session.type);
 
@@ -307,6 +318,13 @@ void fsw_run_monitor(const FSW_HANDLE handle)
     session.monitor->set_latency(session.latency);
     session.monitor->set_recursive(session.recursive);
     session.running = true;
+
+#ifdef HAVE_CXX_THREAD
+    monitor_threads[handle] = thread(&monitor::run, session.monitor);
+#else
+    session.monitor->run();
+#endif
+    
   }
 }
 
