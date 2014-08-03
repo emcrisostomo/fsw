@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef FSW__CEVENT_H
-#  define FSW__CEVENT_H
+#ifndef FSW__CMONITOR_H
+#  define FSW__CMONITOR_H
 
 #  include <ctime>
 
@@ -24,35 +24,18 @@ extern "C"
 {
 #  endif
 
-  enum event_flag
+  enum fsw_monitor_type
   {
-    PlatformSpecific = 1,
-    Created = 2,
-    Updated = 4,
-    Removed = 8,
-    Renamed = 16,
-    OwnerModified = 32,
-    AttributeModified = 64,
-    IsFile = 128,
-    IsDir = 256,
-    IsSymLink = 512,
-    Link = 1024
+    system_default = 0,
+    fsevents,
+    kqueue,
+    inotify,
+    poll
   };
-
-  typedef struct cevent
-  {
-    char * path;
-    time_t evt_time;
-    event_flag *flags;
-    unsigned int flags_num;
-  } cevent;
-
-  typedef void (*CEVENT_CALLBACK)(cevent const * const * const events,
-    const unsigned int event_num);
 
 #  ifdef __cplusplus
 }
 #  endif
 
-#endif  /* FSW__CEVENT_H */
+#endif  /* FSW__CMONITOR_H */
 
