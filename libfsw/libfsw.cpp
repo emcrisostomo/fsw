@@ -50,15 +50,15 @@ monitor * create_inotify_monitor(const FSW_SESSION & session);
 void libfsw_cpp_callback_proxy(const std::vector<event> & events,
                                void * handle_ptr)
 {
+  if (!handle_ptr)
+    throw int(FSW_ERR_MISSING_CONTEXT);
+
   const FSW_HANDLE * handle = static_cast<FSW_HANDLE *> (handle_ptr);
 
   cevent ** cevents = static_cast<cevent **> (::malloc(sizeof (cevent) * events.size()));
 
   if (cevents == nullptr)
-    throw int
-  {
-    FSW_ERR_MEMORY
-  };
+    throw int(FSW_ERR_MEMORY);
 
   for (int i = 0; i < events.size(); ++i)
   {
@@ -227,6 +227,28 @@ monitor * create_inotify_monitor(const FSW_SESSION & session)
 #else
   throw int(FSW_ERR_UNKNOWN_MONITOR);
 #endif
+}
+
+void fsw_add_path(const FSW_HANDLE handle, const char * path)
+{
+  if (!path)
+    throw int(FSW_ERR_INVALID_PATH);
+  
+  std::lock_guard<std::mutex> session_lock(session_mutex);
+  FSW_SESSION & session = get_session(handle);
+  
+  session.paths.push_back(path);
+}
+
+void fsw_set_callback(const FSW_HANDLE handle, const CEVENT_CALLBACK callback)
+{
+  if (!callback)
+    throw int(FSW_ERR_INVALID_CALLBACK);
+  
+  std::lock_guard<std::mutex> session_lock(session_mutex);
+  FSW_SESSION & session = get_session(handle);
+  
+  session.callback = callback;
 }
 
 void fsw_destroy_session(const FSW_HANDLE handle)
