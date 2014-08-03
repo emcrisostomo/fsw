@@ -62,6 +62,11 @@ AC_CHECK_HEADER_STDBOOL
 AC_TYPE_SIZE_T
 AC_TYPE_UINT32_T
 AC_TYPE_MODE_T
+AX_CXX_HAVE_THREAD
+
+if ! test "x${ax_cv_cxx_have_thread}" = "xyes" ; then
+  AC_WARN(AC_PACKAGE_NAME [will not be able to use multiple monitors at the same time nor stop a started monitor].)
+fi
 
 AC_CHECK_MEMBERS([struct stat.st_mtime],
    [],
