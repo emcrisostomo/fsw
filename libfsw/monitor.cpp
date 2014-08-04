@@ -19,6 +19,19 @@
 #include "libfsw_exception.h"
 #include <cstdlib>
 
+/*
+ * Conditionally include monitor headers for default construction.
+ */
+#if defined(HAVE_CORESERVICES_CORESERVICES_H)
+#  include "fsevent_monitor.h"
+#elif defined(HAVE_SYS_EVENT_H)
+#  include "kqueue_monitor.h"
+#elif defined(HAVE_SYS_INOTIFY_H)
+#  include "inotify_monitor.h"
+#else
+#  include "poll_monitor.h"
+#endif
+
 using namespace std;
 
 #ifdef HAVE_REGCOMP
@@ -139,3 +152,19 @@ monitor::~monitor()
   filters.clear();
 #endif
 }
+
+monitor * monitor::create_default_monitor(std::vector<std::string> paths,
+                                          FSW_EVENT_CALLBACK * callback,
+                                          void * context)
+{
+#if defined(HAVE_CORESERVICES_CORESERVICES_H)
+  return new fsevent_monitor(paths, callback, context);
+#elif defined(HAVE_SYS_EVENT_H)
+  return new kqueue_monitor(paths, callback, context);
+#elif defined(HAVE_SYS_INOTIFY_H)
+  return new inotify_monitor(paths, callback, context);
+#else
+  return new poll_monitor(paths, callback, context);
+#endif
+}
+

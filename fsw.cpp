@@ -30,14 +30,8 @@
 #ifdef HAVE_GETOPT_LONG
 #  include <getopt.h>
 #endif
-#ifdef HAVE_CORESERVICES_CORESERVICES_H
-#  include "libfsw/fsevent_monitor.h"
-#endif
 #ifdef HAVE_SYS_EVENT_H
 #  include "libfsw/kqueue_monitor.h"
-#endif
-#ifdef HAVE_SYS_INOTIFY_H
-#  include "libfsw/inotify_monitor.h"
 #endif
 
 using namespace std;
@@ -410,18 +404,11 @@ static void start_monitor(int argc, char ** argv, int optind)
   }
   else
   {
-#if defined(HAVE_CORESERVICES_CORESERVICES_H)
-    active_monitor = new fsevent_monitor(paths, process_events);
-#elif defined(HAVE_SYS_EVENT_H)
-    active_monitor = new kqueue_monitor(paths, process_events);
-#elif defined(HAVE_SYS_INOTIFY_H)
-    active_monitor = new inotify_monitor(paths, process_events);
-#else
-    active_monitor = new poll_monitor(paths, process_events);
-#endif
+    active_monitor = monitor::create_default_monitor(paths, process_events);
   }
 
-  /* libfsw supports case sensitivity and extended flags to be set on any
+  /* 
+   * libfsw supports case sensitivity and extended flags to be set on any
    * filter but fsw does not.  For the time being, we apply the same flags to
    * every filter.
    */

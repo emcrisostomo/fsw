@@ -48,6 +48,7 @@ extern "C"
   int fsw_set_last_error(const int error);
 #  if defined(HAVE_CXX_THREAD_LOCAL)  
   int fsw_last_error();
+  // TODO: implement function to signal a monitor to stop.
 #  endif
   bool fsw_is_verbose();
 

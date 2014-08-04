@@ -50,6 +50,10 @@ public:
 
   virtual void run() = 0;
 
+  static monitor * create_default_monitor(std::vector<std::string> paths,
+                                          FSW_EVENT_CALLBACK * callback,
+                                          void * context = nullptr);
+
 protected:
   bool accept_path(const std::string &path);
   bool accept_path(const char *path);
