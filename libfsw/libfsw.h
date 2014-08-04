@@ -11,6 +11,7 @@ extern "C"
 #  endif
 
   // Error codes
+#  define FSW_OK                            0
 #  define FSW_ERR_SESSION_UNKNOWN           (1 << 0)
 #  define FSW_ERR_MONITOR_ALREADY_EXISTS    (1 << 1)
 #  define FSW_ERR_MEMORY                    (1 << 2)
@@ -31,25 +32,24 @@ extern "C"
 
 #  if defined(HAVE_CXX_THREAD_LOCAL)
 #    define FSW_THREAD_LOCAL thread_local
-#  else
-#    define FSW_THREAD_LOCAL
 #  endif
 
   FSW_HANDLE fsw_init_session(const fsw_monitor_type type = fsw_monitor_type::system_default);
-  void fsw_add_path(const FSW_HANDLE handle, const char * path);
-  void fsw_set_callback(const FSW_HANDLE handle,
-                        const CEVENT_CALLBACK callback);
-  void fsw_set_latency(const FSW_HANDLE handle, const double latency);
-  void fsw_set_recursive(const FSW_HANDLE handle, const bool recursive);
-  void fsw_set_follow_symlinks(const FSW_HANDLE handle,
-                               const bool follow_symlinks);
-  void fsw_add_filter(const FSW_HANDLE handle, const cmonitor_filter filter);
-  void fsw_run_monitor(const FSW_HANDLE handle);
-  void fsw_destroy_session(const FSW_HANDLE handle);
-  unsigned int fsw_last_error();
+  int fsw_add_path(const FSW_HANDLE handle, const char * path);
+  int fsw_set_callback(const FSW_HANDLE handle,
+                       const CEVENT_CALLBACK callback);
+  int fsw_set_latency(const FSW_HANDLE handle, const double latency);
+  int fsw_set_recursive(const FSW_HANDLE handle, const bool recursive);
+  int fsw_set_follow_symlinks(const FSW_HANDLE handle,
+                              const bool follow_symlinks);
+  int fsw_add_filter(const FSW_HANDLE handle, const cmonitor_filter filter);
+  int fsw_run_monitor(const FSW_HANDLE handle);
+  int fsw_destroy_session(const FSW_HANDLE handle);
+#  if defined(HAVE_CXX_THREAD_LOCAL)  
+  int fsw_last_error();
+#  endif
   bool fsw_is_verbose();
-  void fsw_set_verbose(FSW_HANDLE handle, bool verbose);
-
+  
 #  ifdef __cplusplus
 }
 #  endif

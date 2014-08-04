@@ -45,7 +45,9 @@ static fsw_hash_map<FSW_HANDLE, FSW_SESSION> sessions;
 static fsw_hash_map<FSW_HANDLE, thread> monitor_threads;
 #endif
 static std::mutex session_mutex;
+#if defined(HAVE_CXX_THREAD_LOCAL)
 static FSW_THREAD_LOCAL unsigned int last_error;
+#endif
 
 // Default library callback.
 FSW_EVENT_CALLBACK libfsw_cpp_callback_proxy;
@@ -237,66 +239,122 @@ monitor * create_inotify_monitor(const FSW_SESSION & session)
 #endif
 }
 
-void fsw_add_path(const FSW_HANDLE handle, const char * path)
+int fsw_add_path(const FSW_HANDLE handle, const char * path)
 {
   if (!path)
-    throw int(FSW_ERR_INVALID_PATH);
+    return int(FSW_ERR_INVALID_PATH);
 
-  std::lock_guard<std::mutex> session_lock(session_mutex);
-  FSW_SESSION & session = get_session(handle);
+  try
+  {
+    std::lock_guard<std::mutex> session_lock(session_mutex);
+    FSW_SESSION & session = get_session(handle);
 
-  session.paths.push_back(path);
+    session.paths.push_back(path);
+  }
+  catch (int error)
+  {
+    return error;
+  }
+
+  return FSW_OK;
 }
 
-void fsw_set_callback(const FSW_HANDLE handle, const CEVENT_CALLBACK callback)
+int fsw_set_callback(const FSW_HANDLE handle, const CEVENT_CALLBACK callback)
 {
   if (!callback)
-    throw int(FSW_ERR_INVALID_CALLBACK);
+    return int(FSW_ERR_INVALID_CALLBACK);
 
-  std::lock_guard<std::mutex> session_lock(session_mutex);
-  FSW_SESSION & session = get_session(handle);
+  try
+  {
+    std::lock_guard<std::mutex> session_lock(session_mutex);
+    FSW_SESSION & session = get_session(handle);
 
-  session.callback = callback;
+    session.callback = callback;
+  }
+  catch (int error)
+  {
+    return error;
+  }
+
+  return FSW_OK;
 }
 
-void fsw_set_latency(const FSW_HANDLE handle, const double latency)
+int fsw_set_latency(const FSW_HANDLE handle, const double latency)
 {
   if (latency < 0)
-    throw int(FSW_ERR_INVALID_LATENCY);
+    return int(FSW_ERR_INVALID_LATENCY);
 
-  std::lock_guard<std::mutex> session_lock(session_mutex);
-  FSW_SESSION & session = get_session(handle);
-  session.latency = latency;
+  try
+  {
+    std::lock_guard<std::mutex> session_lock(session_mutex);
+    FSW_SESSION & session = get_session(handle);
+
+    session.latency = latency;
+  }
+  catch (int error)
+  {
+    return error;
+  }
+
+  return FSW_OK;
 }
 
-void fsw_set_recursive(const FSW_HANDLE handle, const bool recursive)
+int fsw_set_recursive(const FSW_HANDLE handle, const bool recursive)
 {
-  std::lock_guard<std::mutex> session_lock(session_mutex);
-  FSW_SESSION & session = get_session(handle);
+  try
+  {
+    std::lock_guard<std::mutex> session_lock(session_mutex);
+    FSW_SESSION & session = get_session(handle);
 
-  session.recursive = recursive;
+    session.recursive = recursive;
+  }
+  catch (int error)
+  {
+    return error;
+  }
+
+  return FSW_OK;
 }
 
-void fsw_set_follow_symlinks(const FSW_HANDLE handle,
-                             const bool follow_symlinks)
+int fsw_set_follow_symlinks(const FSW_HANDLE handle,
+                            const bool follow_symlinks)
 {
-  std::lock_guard<std::mutex> session_lock(session_mutex);
-  FSW_SESSION & session = get_session(handle);
+  try
+  {
+    std::lock_guard<std::mutex> session_lock(session_mutex);
+    FSW_SESSION & session = get_session(handle);
 
-  session.follow_symlinks = follow_symlinks;
+    session.follow_symlinks = follow_symlinks;
+  }
+  catch (int error)
+  {
+    return error;
+  }
+
+  return FSW_OK;
 }
 
-void fsw_add_filter(const FSW_HANDLE handle,
-                    const cmonitor_filter filter)
+int fsw_add_filter(const FSW_HANDLE handle,
+                   const cmonitor_filter filter)
 {
-  std::lock_guard<std::mutex> session_lock(session_mutex);
-  FSW_SESSION & session = get_session(handle);
+  try
+  {
+    std::lock_guard<std::mutex> session_lock(session_mutex);
+    FSW_SESSION & session = get_session(handle);
 
-  session.filters.push_back({filter.text, filter.type, filter.case_sensitive, filter.extended});
+    session.filters.push_back({filter.text, filter.type, filter.case_sensitive, filter.extended});
+  }
+  catch (int error)
+  {
+    return error;
+  }
+
+  return FSW_OK;
 }
 
-void fsw_run_monitor(const FSW_HANDLE handle)
+int fsw_run_monitor(const FSW_HANDLE handle)
 {
+  try
   {
     std::lock_guard<std::mutex> session_lock(session_mutex);
     FSW_SESSION & session = get_session(handle);
@@ -308,7 +366,7 @@ void fsw_run_monitor(const FSW_HANDLE handle)
     if (monitor_threads.find(handle) != monitor_threads.end())
       throw int(FSW_ERR_STALE_MONITOR_THREAD);
 #endif
-    
+
     if (!session.monitor)
       create_monitor(handle, session.type);
 
@@ -324,32 +382,47 @@ void fsw_run_monitor(const FSW_HANDLE handle)
     session.monitor->run();
 #endif
   }
+  catch (int error)
+  {
+    return error;
+  }
+
+  return FSW_OK;
 }
 
-void fsw_destroy_session(const FSW_HANDLE handle)
+int fsw_destroy_session(const FSW_HANDLE handle)
 {
-  std::lock_guard<std::mutex> session_lock(session_mutex);
-  FSW_SESSION session = get_session(handle);
-  sessions.erase(handle);
-
-  if (session.monitor)
+  try
   {
-    void * context = session.monitor->get_context();
+    std::lock_guard<std::mutex> session_lock(session_mutex);
+    FSW_SESSION session = get_session(handle);
+    sessions.erase(handle);
 
-    if (!context)
+    if (session.monitor)
     {
-      session.monitor->set_context(nullptr);
-      delete static_cast<FSW_HANDLE *> (context);
-    }
+      void * context = session.monitor->get_context();
 
-    delete session.monitor;
+      if (!context)
+      {
+        session.monitor->set_context(nullptr);
+        delete static_cast<FSW_HANDLE *> (context);
+      }
+
+      delete session.monitor;
+    }
   }
+  catch (int error)
+  {
+    return error;
+  }
+
+  return FSW_OK;
 }
 
 FSW_SESSION & get_session(const FSW_HANDLE handle)
 {
   if (sessions.find(handle) == sessions.end())
-    throw (unsigned int) FSW_ERR_SESSION_UNKNOWN;
+    throw int(FSW_ERR_SESSION_UNKNOWN);
 
   return sessions[handle];
 }
@@ -361,22 +434,15 @@ void fsw_watch_path(FSW_HANDLE handle, char * path)
   session.paths.push_back(path);
 }
 
-unsigned int fsw_last_error()
+#if defined(HAVE_CXX_THREAD_LOCAL)
+
+int fsw_last_error()
 {
   return last_error;
 }
+#endif
 
 bool fsw_is_verbose()
 {
   return false;
-}
-
-void fsw_set_verbose(FSW_HANDLE handle, bool verbose)
-{
-  // TODO
-}
-
-void fsw_add_filter(FSW_HANDLE handle, char * regex, filter_type type)
-{
-
 }
