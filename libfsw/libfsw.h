@@ -25,6 +25,7 @@ extern "C"
 #  define FSW_ERR_INVALID_LATENCY           (1 << 10)
 #  define FSW_ERR_MONITOR_ALREADY_RUNNING   (1 << 11)
 #  define FSW_ERR_STALE_MONITOR_THREAD      (1 << 12)
+#  define FSW_ERR_THREAD_FAULT              (1 << 13)
 
   typedef unsigned int FSW_HANDLE;
 

@@ -63,6 +63,7 @@ monitor * create_inotify_monitor(const FSW_SESSION & session);
 void libfsw_cpp_callback_proxy(const std::vector<event> & events,
                                void * handle_ptr)
 {
+  // TODO: A C friendly error handler should be notified instead of throwing an exception.
   if (!handle_ptr)
     throw int(FSW_ERR_MISSING_CONTEXT);
 
@@ -366,11 +367,11 @@ int fsw_run_monitor(const FSW_HANDLE handle)
     FSW_SESSION & session = get_session(handle);
 
     if (session.running)
-      fsw_set_last_error(int(FSW_ERR_MONITOR_ALREADY_RUNNING));
+      return fsw_set_last_error(int(FSW_ERR_MONITOR_ALREADY_RUNNING));
 
 #ifdef HAVE_CXX_THREAD
     if (monitor_threads.find(handle) != monitor_threads.end())
-      fsw_set_last_error(int(FSW_ERR_STALE_MONITOR_THREAD));
+      return fsw_set_last_error(int(FSW_ERR_STALE_MONITOR_THREAD));
 #endif
 
     if (!session.monitor)
@@ -387,6 +388,10 @@ int fsw_run_monitor(const FSW_HANDLE handle)
 #else
     session.monitor->run();
 #endif
+  }
+  catch (system_error & se)
+  {
+    return fsw_set_last_error(int(FSW_ERR_THREAD_FAULT));
   }
   catch (int error)
   {
