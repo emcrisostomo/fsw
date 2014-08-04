@@ -25,13 +25,13 @@
 #include <ctime>
 #include <cerrno>
 #include <vector>
-#include "libfsw/poll_monitor.h"
+#include "libfsw/c++/poll_monitor.h"
 
 #ifdef HAVE_GETOPT_LONG
 #  include <getopt.h>
 #endif
 #ifdef HAVE_SYS_EVENT_H
-#  include "libfsw/kqueue_monitor.h"
+#  include "libfsw/c++/kqueue_monitor.h"
 #endif
 
 using namespace std;

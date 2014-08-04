@@ -24,15 +24,20 @@ libtool: $(LIBTOOL_DEPS)
 lib_LTLIBRARIES = libfsw.la
 libfsw_la_SOURCES  = c/libfsw.cpp
 libfsw_la_SOURCES += c/libfsw_log.cpp c/libfsw_log.h
-libfsw_la_SOURCES += libfsw_map.h libfsw_set.h
-libfsw_la_SOURCES += libfsw_exception.cpp libfsw_exception.h
-libfsw_la_SOURCES += event.cpp event.h
-libfsw_la_SOURCES += monitor.cpp monitor.h fsw_map.h fsw_set.h
-libfsw_la_SOURCES += fsevent_monitor.cpp fsevent_monitor.h
-libfsw_la_SOURCES += kqueue_monitor.cpp kqueue_monitor.h
-libfsw_la_SOURCES += poll_monitor.cpp poll_monitor.h
-libfsw_la_SOURCES += inotify_monitor.cpp inotify_monitor.h
-libfsw_la_SOURCES += path_utils.cpp path_utils.h
+libfsw_la_SOURCES += c++/libfsw_map.h c++/libfsw_set.h
+libfsw_la_SOURCES += c++/libfsw_exception.cpp c++/libfsw_exception.h
+libfsw_la_SOURCES += c++/event.cpp c++/event.h
+libfsw_la_SOURCES += c++/filter.h
+libfsw_la_SOURCES += c++/monitor.cpp c++/monitor.h
+libfsw_la_SOURCES += c++/fsevent_monitor.cpp c++/fsevent_monitor.h
+libfsw_la_SOURCES += c++/kqueue_monitor.cpp c++/kqueue_monitor.h
+libfsw_la_SOURCES += c++/poll_monitor.cpp c++/poll_monitor.h
+libfsw_la_SOURCES += c++/inotify_monitor.cpp c++/inotify_monitor.h
+libfsw_la_SOURCES += c++/path_utils.cpp c++/path_utils.h
 
 libfsw_cdir = $(pkgincludedir)/c
 libfsw_c_HEADERS = c/libfsw.h c/cevent.h c/cfilter.h c/cmonitor.h
+
+libfsw_cppdir = $(pkgincludedir)/c++
+libfsw_cpp_HEADERS  = c++/monitor.h c++/fsevent_monitor.h c++/kqueue_monitor.h
+libfsw_cpp_HEADERS += c++/poll_monitor.h c++/inotify_monitor.h

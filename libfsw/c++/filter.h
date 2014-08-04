@@ -18,7 +18,7 @@
 #  define FSW__FILTER_H
 
 #  include <string>
-#  include "c/cfilter.h"
+#  include "../c/cfilter.h"
 
 typedef struct monitor_filter
 {

@@ -7,21 +7,21 @@
 #  include <thread>
 #endif
 #include "libfsw.h"
-#include "libfsw_map.h"
-#include "filter.h"
-#include "monitor.h"
+#include "../c++/libfsw_map.h"
+#include "../c++/filter.h"
+#include "../c++/monitor.h"
 
 /* Include the definitions of all the available backends. */
 #ifdef HAVE_CORESERVICES_CORESERVICES_H
-#  include "fsevent_monitor.h"
+#  include "../c++/fsevent_monitor.h"
 #endif
 #ifdef HAVE_SYS_EVENT_H
-#  include "kqueue_monitor.h"
+#  include "../c++/kqueue_monitor.h"
 #endif
 #ifdef HAVE_SYS_INOTIFY_H
-#  include "inotify_monitor.h"
+#  include "../c++/inotify_monitor.h"
 #endif
-#include "poll_monitor.h"
+#include "../c++/poll_monitor.h"
 
 using namespace std;
 
