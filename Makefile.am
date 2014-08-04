@@ -58,3 +58,8 @@ uninstall-local: fswatch-remove-links
 
 fswatch-remove-links:
 	-rm $(DESTDIR)$(bindir)/fswatch-run
+
+distclean-local: distclean-local-check
+.PHONY: distclean-local-check
+distclean-local-check:
+	-rm -rf libfsw scripts
