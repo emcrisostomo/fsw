@@ -28,10 +28,8 @@ class fsevent_monitor : public monitor
 {
 public:
   fsevent_monitor(std::vector<std::string> paths, 
-                  FSW_EVENT_CALLBACK * callback);
-  fsevent_monitor(std::vector<std::string> paths, 
                   FSW_EVENT_CALLBACK * callback, 
-                  void * context);
+                  void * context = nullptr);
   virtual ~fsevent_monitor();
 
   void run();

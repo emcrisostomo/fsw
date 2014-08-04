@@ -32,10 +32,8 @@ class inotify_monitor : public monitor
 {
 public:
   inotify_monitor(std::vector<std::string> paths, 
-                  FSW_EVENT_CALLBACK * callback);
-  inotify_monitor(std::vector<std::string> paths, 
                   FSW_EVENT_CALLBACK * callback,
-                  void * context);
+                  void * context = nullptr);
   virtual ~inotify_monitor();
 
   void run();

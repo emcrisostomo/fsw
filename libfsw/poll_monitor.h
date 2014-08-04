@@ -34,10 +34,9 @@
 class poll_monitor : public monitor
 {
 public:
-  poll_monitor(std::vector<std::string> paths, FSW_EVENT_CALLBACK * callback);
   poll_monitor(std::vector<std::string> paths, 
                FSW_EVENT_CALLBACK * callback, 
-               void * context);
+               void * context = nullptr);
   virtual ~poll_monitor();
   void run();
 

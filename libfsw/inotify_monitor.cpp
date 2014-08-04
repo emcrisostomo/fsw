@@ -31,18 +31,6 @@ using namespace std;
 static const unsigned int BUFFER_SIZE = (10 * ((sizeof (struct inotify_event)) + NAME_MAX + 1));
 
 inotify_monitor::inotify_monitor(vector<string> paths_to_monitor,
-                                 FSW_EVENT_CALLBACK * callback) :
-  monitor(paths_to_monitor, callback)
-{
-  inotify = ::inotify_init();
-  if (inotify == -1)
-  {
-    ::perror("inotify_init");
-    throw libfsw_exception("Cannot initialize inotify.");
-  }
-}
-
-inotify_monitor::inotify_monitor(vector<string> paths_to_monitor,
                                  FSW_EVENT_CALLBACK * callback,
                                  void * context) :
   monitor(paths_to_monitor, callback, context)

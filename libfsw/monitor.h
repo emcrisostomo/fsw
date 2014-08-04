@@ -35,10 +35,9 @@ struct compiled_monitor_filter;
 class monitor
 {
 public:
-  monitor(std::vector<std::string> paths, FSW_EVENT_CALLBACK * callback);
   monitor(std::vector<std::string> paths,
           FSW_EVENT_CALLBACK * callback,
-          void * context);
+          void * context = nullptr);
   virtual ~monitor();
   void set_latency(double latency);
   void set_recursive(bool recursive);

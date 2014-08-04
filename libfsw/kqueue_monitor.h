@@ -31,10 +31,9 @@
 class kqueue_monitor : public monitor
 {
 public:
-  kqueue_monitor(std::vector<std::string> paths, FSW_EVENT_CALLBACK * callback);
   kqueue_monitor(std::vector<std::string> paths, 
                  FSW_EVENT_CALLBACK * callback,
-                 void * context);
+                 void * context = nullptr);
   virtual ~kqueue_monitor();
 
   void run();

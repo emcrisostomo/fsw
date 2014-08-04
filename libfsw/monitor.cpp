@@ -44,15 +44,6 @@ struct compiled_monitor_filter
 
 #endif
 
-monitor::monitor(vector<string> paths, FSW_EVENT_CALLBACK * callback) :
-  paths(paths), callback(callback)
-{
-  if (callback == nullptr)
-  {
-    throw libfsw_exception("Callback cannot be null.");
-  }
-}
-
 monitor::monitor(std::vector<std::string> paths,
                  FSW_EVENT_CALLBACK * callback,
                  void * context) :
