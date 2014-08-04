@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "path_utils.h"
-#include "libfsw_log.h"
+#include "c/libfsw_log.h"
 #include <dirent.h>
 #include <cstdlib>
 #include <errno.h>

@@ -20,7 +20,7 @@
 #  include <string>
 #  include <ctime>
 #  include <vector>
-#  include "cevent.h"
+#  include "c/cevent.h"
 
 class event
 {

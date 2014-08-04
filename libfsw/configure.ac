@@ -21,7 +21,7 @@ AC_PREREQ([2.69])
 AC_INIT([libfsw], [1.4.0], [enrico.m.crisostomo@gmail.com], [], [https://github.com/emcrisostomo/fsw])
 AC_COPYRIGHT([2014 (C) Enrico M. Crisostomo])
 AC_REVISION([$Revision: 1.4.0-1 $])
-AC_CONFIG_SRCDIR([libfsw.cpp])
+AC_CONFIG_SRCDIR([c/libfsw.cpp])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile])
@@ -29,7 +29,7 @@ AC_CONFIG_MACRO_DIRS([m4])
 AC_CONFIG_MACRO_DIR([m4])
 
 # Initialize Automake
-AM_INIT_AUTOMAKE([-Wall -Werror gnu])
+AM_INIT_AUTOMAKE([-Wall -Werror gnu subdir-objects])
 AM_PROG_AR
 
 # Initialize libtool 

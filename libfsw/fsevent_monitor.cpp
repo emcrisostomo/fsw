@@ -19,7 +19,7 @@
 #ifdef HAVE_CORESERVICES_CORESERVICES_H
 
 #  include "libfsw_exception.h"
-#  include "libfsw_log.h"
+#  include "c/libfsw_log.h"
 #  include <iostream>
 #  include "event.h"
 

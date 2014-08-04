@@ -47,7 +47,7 @@ extern "C"
   int fsw_run_monitor(const FSW_HANDLE handle);
   int fsw_destroy_session(const FSW_HANDLE handle);
   int fsw_set_last_error(const int error);
-#  if defined(HAVE_CXX_THREAD_LOCAL)  
+#  if defined(HAVE_CXX_THREAD_LOCAL)
   int fsw_last_error();
   // TODO: implement function to signal a monitor to stop.
 #  endif

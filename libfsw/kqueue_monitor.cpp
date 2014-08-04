@@ -19,7 +19,7 @@
 #ifdef HAVE_SYS_EVENT_H
 
 #  include "libfsw_exception.h"
-#  include "libfsw_log.h"
+#  include "c/libfsw_log.h"
 #  include "path_utils.h"
 #  include <iostream>
 #  include <sys/types.h>
