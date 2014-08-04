@@ -190,15 +190,11 @@ int create_monitor(const FSW_HANDLE handle, const fsw_monitor_type type)
 
 monitor * create_default_monitor(const FSW_SESSION & session)
 {
-#if defined(HAVE_CORESERVICES_CORESERVICES_H)
-  return create_fsevents_monitor(session);
-#elif defined(HAVE_SYS_EVENT_H)
-  return create_kqueue_monitor(session);
-#elif defined(HAVE_SYS_INOTIFY_H)
-  return create_inotify_monitor(session);
-#else
-  return create_poll_monitor(session);
-#endif
+  FSW_HANDLE * handle_ptr = new FSW_HANDLE(session.handle);
+
+  return monitor::create_default_monitor(session.paths, 
+                                         libfsw_cpp_callback_proxy, 
+                                         handle_ptr);  
 }
 
 monitor * create_fsevents_monitor(const FSW_SESSION & session)
