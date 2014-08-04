@@ -132,7 +132,6 @@ FSW_HANDLE fsw_init_session(const fsw_monitor_type type)
   session.handle = handle;
   session.type = type;
 
-  // TODO: configure session
   sessions[handle] = session;
 
   return handle;
