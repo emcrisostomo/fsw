@@ -324,7 +324,6 @@ void fsw_run_monitor(const FSW_HANDLE handle)
 #else
     session.monitor->run();
 #endif
-    
   }
 }
 
@@ -354,12 +353,6 @@ FSW_SESSION & get_session(const FSW_HANDLE handle)
     throw (unsigned int) FSW_ERR_SESSION_UNKNOWN;
 
   return sessions[handle];
-}
-
-monitor * get_monitor(FSW_HANDLE handle)
-{
-  std::lock_guard<std::mutex> session_lock(session_mutex);
-  return static_cast<monitor *> (get_session(handle).monitor);
 }
 
 void fsw_watch_path(FSW_HANDLE handle, char * path)
