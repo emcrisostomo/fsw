@@ -45,11 +45,12 @@ extern "C"
   int fsw_add_filter(const FSW_HANDLE handle, const cmonitor_filter filter);
   int fsw_run_monitor(const FSW_HANDLE handle);
   int fsw_destroy_session(const FSW_HANDLE handle);
+  int fsw_set_last_error(const int error);
 #  if defined(HAVE_CXX_THREAD_LOCAL)  
   int fsw_last_error();
 #  endif
   bool fsw_is_verbose();
-  
+
 #  ifdef __cplusplus
 }
 #  endif
