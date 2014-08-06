@@ -25,19 +25,13 @@
 #include <ctime>
 #include <cerrno>
 #include <vector>
-#include "poll_monitor.h"
+#include "libfsw/c++/poll_monitor.h"
 
 #ifdef HAVE_GETOPT_LONG
 #  include <getopt.h>
 #endif
-#ifdef HAVE_CORESERVICES_CORESERVICES_H
-#  include "fsevent_monitor.h"
-#endif
 #ifdef HAVE_SYS_EVENT_H
-#  include "kqueue_monitor.h"
-#endif
-#ifdef HAVE_SYS_INOTIFY_H
-#  include "inotify_monitor.h"
+#  include "libfsw/c++/kqueue_monitor.h"
 #endif
 
 using namespace std;
@@ -239,45 +233,45 @@ static void register_signal_handlers()
   }
 }
 
-static vector<string> decode_event_flag_name(vector<event_flag> flags)
+static vector<string> decode_event_flag_name(vector<fsw_event_flag> flags)
 {
   vector<string> names;
 
-  for (event_flag flag : flags)
+  for (fsw_event_flag flag : flags)
   {
     switch (flag)
     {
-    case event_flag::PlatformSpecific:
+    case fsw_event_flag::PlatformSpecific:
       names.push_back("PlatformSpecific");
       break;
-    case event_flag::Created:
+    case fsw_event_flag::Created:
       names.push_back("Created");
       break;
-    case event_flag::Updated:
+    case fsw_event_flag::Updated:
       names.push_back("Updated");
       break;
-    case event_flag::Removed:
+    case fsw_event_flag::Removed:
       names.push_back("Removed");
       break;
-    case event_flag::Renamed:
+    case fsw_event_flag::Renamed:
       names.push_back("Renamed");
       break;
-    case event_flag::OwnerModified:
+    case fsw_event_flag::OwnerModified:
       names.push_back("OwnerModified");
       break;
-    case event_flag::AttributeModified:
+    case fsw_event_flag::AttributeModified:
       names.push_back("AttributeModified");
       break;
-    case event_flag::IsFile:
+    case fsw_event_flag::IsFile:
       names.push_back("IsFile");
       break;
-    case event_flag::IsDir:
+    case fsw_event_flag::IsDir:
       names.push_back("IsDir");
       break;
-    case event_flag::IsSymLink:
+    case fsw_event_flag::IsSymLink:
       names.push_back("IsSymLink");
       break;
-    case event_flag::Link:
+    case fsw_event_flag::Link:
       names.push_back("Link");
       break;
     default:
@@ -304,12 +298,12 @@ static void print_event_timestamp(const time_t &evt_time)
   cout << date << " ";
 }
 
-static void print_event_flags(const vector<event_flag> &flags)
+static void print_event_flags(const vector<fsw_event_flag> &flags)
 {
   if (nflag)
   {
     int mask = 0;
-    for (const event_flag &flag : flags)
+    for (const fsw_event_flag &flag : flags)
     {
       mask += static_cast<int> (flag);
     }
@@ -368,7 +362,7 @@ static void write_events(const vector<event> &events)
   }
 }
 
-static void process_events(const vector<event> &events)
+static void process_events(const vector<event> &events, void * context)
 {
   if (oflag)
     write_one_batch_event(events);
@@ -384,7 +378,12 @@ static void start_monitor(int argc, char ** argv, int optind)
   for (auto i = optind; i < argc; ++i)
   {
     char *real_path = ::realpath(argv[i], nullptr);
-    string path = (real_path ? real_path : argv[i]);
+    string path(real_path ? real_path : argv[i]);
+
+    if (real_path)
+    {
+      ::free(real_path);
+    }
 
     fsw_log("Adding path: ");
     fsw_log(path.c_str());
@@ -405,20 +404,24 @@ static void start_monitor(int argc, char ** argv, int optind)
   }
   else
   {
-#if defined(HAVE_CORESERVICES_CORESERVICES_H)
-    active_monitor = new fsevent_monitor(paths, process_events);
-#elif defined(HAVE_SYS_EVENT_H)
-    active_monitor = new kqueue_monitor(paths, process_events);
-#elif defined(HAVE_SYS_INOTIFY_H)
-    active_monitor = new inotify_monitor(paths, process_events);
-#else
-    active_monitor = new poll_monitor(paths, process_events);
-#endif
+    active_monitor = monitor::create_default_monitor(paths, process_events);
+  }
+
+  /* 
+   * libfsw supports case sensitivity and extended flags to be set on any
+   * filter but fsw does not.  For the time being, we apply the same flags to
+   * every filter.
+   */
+
+  for (auto & filter : filters)
+  {
+    filter.case_sensitive = !Iflag;
+    filter.extended = Eflag;
   }
 
   active_monitor->set_latency(lvalue);
   active_monitor->set_recursive(rflag);
-  active_monitor->set_filters(filters, !Iflag, Eflag);
+  active_monitor->set_filters(filters);
   active_monitor->set_follow_symlinks(Lflag);
 
   active_monitor->run();
@@ -468,8 +471,7 @@ static void parse_opts(int argc, char ** argv)
     { nullptr, 0, nullptr, 0}
   };
 
-  while ((ch = getopt_long(
-                           argc,
+  while ((ch = getopt_long(argc,
                            argv,
                            short_options.str().c_str(),
                            long_options,
@@ -492,7 +494,7 @@ static void parse_opts(int argc, char ** argv)
 
 #ifdef HAVE_REGCOMP
     case 'e':
-      filters.push_back({optarg, filter_type::filter_exclude});
+      filters.push_back({optarg, fsw_filter_type::filter_exclude});
       break;
 
     case 'E':
@@ -511,7 +513,7 @@ static void parse_opts(int argc, char ** argv)
 
 #ifdef HAVE_REGCOMP
     case 'i':
-      filters.push_back({optarg, filter_type::filter_include});
+      filters.push_back({optarg, fsw_filter_type::filter_include});
       break;
 
     case 'I':
@@ -617,7 +619,7 @@ int main(int argc, char ** argv)
   }
   catch (...)
   {
-    cerr << "An unknown error occurred and the program will be terminated.\n";
+    cerr << "An unknown error occurred and the program will be terminated." << endl;
 
     return FSW_EXIT_ERROR;
   }

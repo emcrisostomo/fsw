@@ -23,22 +23,23 @@
 #  include <stdio.h>
 #  include <iostream>
 #  include <sstream>
-#  include "fsw_exception.h"
-#  include "fsw_log.h"
+#  include "libfsw_exception.h"
+#  include "libfsw_log.h"
 
 using namespace std;
 
 static const unsigned int BUFFER_SIZE = (10 * ((sizeof (struct inotify_event)) + NAME_MAX + 1));
 
 inotify_monitor::inotify_monitor(vector<string> paths_to_monitor,
-                                 EVENT_CALLBACK callback) :
-  monitor(paths_to_monitor, callback)
+                                 FSW_EVENT_CALLBACK * callback,
+                                 void * context) :
+  monitor(paths_to_monitor, callback, context)
 {
   inotify = ::inotify_init();
   if (inotify == -1)
   {
     ::perror("inotify_init");
-    throw fsw_exception("Cannot initialize inotify.");
+    throw libfsw_exception("Cannot initialize inotify.");
   }
 }
 
@@ -69,7 +70,7 @@ void inotify_monitor::scan(const string &path)
   if (inotify_desc == -1)
   {
     ::perror("inotify_add_watch");
-    throw fsw_exception("Cannot add watch.");
+    throw libfsw_exception("Cannot add watch.");
   }
 
   file_names_by_descriptor[inotify_desc] = path;
@@ -77,7 +78,7 @@ void inotify_monitor::scan(const string &path)
   std::ostringstream s;
   s << "Watching " << path << ".\n";
 
-  fsw_log(s.str().c_str());
+  libfsw_log(s.str().c_str());
 }
 
 void inotify_monitor::collect_initial_data()
@@ -90,12 +91,12 @@ void inotify_monitor::collect_initial_data()
 
 void inotify_monitor::preprocess_dir_event(struct inotify_event * event)
 {
-  vector<event_flag> flags;
+  vector<fsw_event_flag> flags;
 
-  if (event->mask & IN_DELETE_SELF) flags.push_back(event_flag::Removed);
-  if (event->mask & IN_ISDIR) flags.push_back(event_flag::IsDir);
-  if (event->mask & IN_MOVE_SELF) flags.push_back(event_flag::Updated);
-  if (event->mask & IN_UNMOUNT) flags.push_back(event_flag::PlatformSpecific);
+  if (event->mask & IN_DELETE_SELF) flags.push_back(fsw_event_flag::Removed);
+  if (event->mask & IN_ISDIR) flags.push_back(fsw_event_flag::IsDir);
+  if (event->mask & IN_MOVE_SELF) flags.push_back(fsw_event_flag::Updated);
+  if (event->mask & IN_UNMOUNT) flags.push_back(fsw_event_flag::PlatformSpecific);
 
   if (flags.size())
   {
@@ -105,18 +106,18 @@ void inotify_monitor::preprocess_dir_event(struct inotify_event * event)
 
 void inotify_monitor::preprocess_node_event(struct inotify_event * event)
 {
-  vector<event_flag> flags;
+  vector<fsw_event_flag> flags;
 
-  if (event->mask & IN_ACCESS) flags.push_back(event_flag::PlatformSpecific);
-  if (event->mask & IN_ATTRIB) flags.push_back(event_flag::AttributeModified);
-  if (event->mask & IN_CLOSE_NOWRITE) flags.push_back(event_flag::PlatformSpecific);
-  if (event->mask & IN_CLOSE_WRITE) flags.push_back(event_flag::Updated);
-  if (event->mask & IN_CREATE) flags.push_back(event_flag::Created);
-  if (event->mask & IN_DELETE) flags.push_back(event_flag::Removed);
-  if (event->mask & IN_MODIFY) flags.push_back(event_flag::Updated);
-  if (event->mask & IN_MOVED_FROM) flags.push_back(event_flag::Updated);
-  if (event->mask & IN_MOVED_TO) flags.push_back(event_flag::Updated);
-  if (event->mask & IN_OPEN) flags.push_back(event_flag::PlatformSpecific);
+  if (event->mask & IN_ACCESS) flags.push_back(fsw_event_flag::PlatformSpecific);
+  if (event->mask & IN_ATTRIB) flags.push_back(fsw_event_flag::AttributeModified);
+  if (event->mask & IN_CLOSE_NOWRITE) flags.push_back(fsw_event_flag::PlatformSpecific);
+  if (event->mask & IN_CLOSE_WRITE) flags.push_back(fsw_event_flag::Updated);
+  if (event->mask & IN_CREATE) flags.push_back(fsw_event_flag::Created);
+  if (event->mask & IN_DELETE) flags.push_back(fsw_event_flag::Removed);
+  if (event->mask & IN_MODIFY) flags.push_back(fsw_event_flag::Updated);
+  if (event->mask & IN_MOVED_FROM) flags.push_back(fsw_event_flag::Updated);
+  if (event->mask & IN_MOVED_TO) flags.push_back(fsw_event_flag::Updated);
+  if (event->mask & IN_OPEN) flags.push_back(fsw_event_flag::PlatformSpecific);
 
   if (flags.size())
   {
@@ -137,7 +138,7 @@ void inotify_monitor::preprocess_event(struct inotify_event * event)
 {
   if (event->mask & IN_Q_OVERFLOW)
   {
-    throw fsw_exception("Event queue overflowed.");
+    throw libfsw_exception("Event queue overflowed.");
   }
 
   preprocess_dir_event(event);
@@ -165,13 +166,13 @@ void inotify_monitor::run()
 
     if (!record_num)
     {
-      throw fsw_exception("::read() on inotify descriptor read 0 records.");
+      throw libfsw_exception("::read() on inotify descriptor read 0 records.");
     }
 
     if (record_num == -1)
     {
       ::perror("read()");
-      throw fsw_exception("::read() on inotify descriptor returned -1.");
+      throw libfsw_exception("::read() on inotify descriptor returned -1.");
     }
 
     time(&curr_time);

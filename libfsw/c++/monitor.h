@@ -18,6 +18,7 @@
 #  define FSW__MONITOR_H
 
 #  include "config.h"
+#  include "filter.h"
 #  include <vector>
 #  include <string>
 #  ifdef HAVE_REGCOMP
@@ -25,35 +26,32 @@
 #  endif
 #  include "event.h"
 
-typedef void (*EVENT_CALLBACK)(const std::vector<event> &);
+typedef void FSW_EVENT_CALLBACK(const std::vector<event> &, void *);
 
-enum class filter_type
-{
-  filter_include,
-  filter_exclude
-};
-
-struct monitor_filter
-{
-  std::string text;
-  filter_type type;
-};
-
+#  ifdef HAVE_REGCOMP
 struct compiled_monitor_filter;
+#  endif
 
 class monitor
 {
 public:
-  monitor(std::vector<std::string> paths, EVENT_CALLBACK callback);
+  monitor(std::vector<std::string> paths,
+          FSW_EVENT_CALLBACK * callback,
+          void * context = nullptr);
   virtual ~monitor();
   void set_latency(double latency);
   void set_recursive(bool recursive);
-  void set_filters(const std::vector<monitor_filter> &filters,
-                   bool case_sensitive = true,
-                   bool extended = false);
+  void add_filter(const monitor_filter &filter);
+  void set_filters(const std::vector<monitor_filter> &filters);
   void set_follow_symlinks(bool follow);
+  void * get_context();
+  void set_context(void * context);
 
   virtual void run() = 0;
+
+  static monitor * create_default_monitor(std::vector<std::string> paths,
+                                          FSW_EVENT_CALLBACK * callback,
+                                          void * context = nullptr);
 
 protected:
   bool accept_path(const std::string &path);
@@ -61,7 +59,8 @@ protected:
 
 protected:
   std::vector<std::string> paths;
-  EVENT_CALLBACK callback;
+  FSW_EVENT_CALLBACK * callback;
+  void * context = nullptr;
   double latency = 1.0;
   bool recursive = false;
   bool follow_symlinks = false;

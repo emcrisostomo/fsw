@@ -14,23 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef FSW_SET_H
-#  define FSW_SET_H
+#include "libfsw_exception.h"
 
-#  include "config.h"
+using namespace std;
 
-#  if defined(HAVE_UNORDERED_SET)
-#    include <unordered_set>
+libfsw_exception::libfsw_exception(string cause) :
+  cause(cause)
+{
+}
 
-template <typename K>
-using fsw_hash_set = std::unordered_set<K>;
+const char * libfsw_exception::what() const throw ()
+{
+  return (string("Error: ") + this->cause).c_str();
+}
 
-#  else
-#    include <set>
-
-template <typename K>
-using fsw_hash_set = std::set<K>;
-
-#  endif
-
-#endif  /* FSW_SET_H */
+libfsw_exception::~libfsw_exception() throw ()
+{
+}

@@ -18,19 +18,15 @@
 # Process this file with autoconf to produce a configure script.
 #
 AC_PREREQ([2.69])
-AC_INIT([fsw], [1.4.0], [enrico.m.crisostomo@gmail.com], [], [https://github.com/emcrisostomo/fsw])
+AC_INIT([libfsw], [1.4.0], [enrico.m.crisostomo@gmail.com], [], [https://github.com/emcrisostomo/fsw])
 AC_COPYRIGHT([2014 (C) Enrico M. Crisostomo])
 AC_REVISION([$Revision: 1.4.0-1 $])
-AC_CONFIG_SRCDIR([fsw.cpp])
+AC_CONFIG_SRCDIR([c/libfsw.cpp])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_FILES([Makefile libfsw/Makefile])
-AC_CONFIG_FILES([scripts/fswatch-run-bash scripts/fswatch-run-zsh])
+AC_CONFIG_FILES([Makefile])
 AC_CONFIG_MACRO_DIRS([m4])
 AC_CONFIG_MACRO_DIR([m4])
-
-# Other packages
-AC_CONFIG_SUBDIRS([libfsw])
 
 # Initialize Automake
 AM_INIT_AUTOMAKE([-Wall -Werror gnu subdir-objects])
@@ -46,31 +42,6 @@ AC_LANG(C++)
 
 # Checks for programs.
 AC_PROG_CXX([clang++ g++])
-AC_PROG_LN_S
-AC_PATH_PROG([ZSH_PROG], [zsh], [no])
-AC_PATH_PROG([BASH_PROG], [bash], [no])
-
-if test "x${ZSH_PROG}" = "xno" && test "x${BASH_PROG}" = "xno" ; then
-    AC_MSG_WARN([Either ZSH or the Bash shell is required by fswatch-run.])
-fi
-
-AM_CONDITIONAL([HAVE_ZSH], [test "x${ZSH_PROG}" != "xno"])
-AM_CONDITIONAL([HAVE_BASH], [test "x${BASH_PROG}" != "xno"])
-
-if test "x${ZSH_PROG}" = "xno" ; then
-ZSH_PATH=/bin/zsh
-else
-ZSH_PATH=$ZSH_PROG
-fi
-
-if test "x${BASH_PROG}" = "xno" ; then
-BASH_PATH=/bin/bash
-else
-BASH_PATH=$BASH_PROG
-fi
-
-AC_SUBST([ZSH_PATH])
-AC_SUBST([BASH_PATH])
 
 # Configure C++ compiler
 AX_CXX_COMPILE_STDCXX_11(noext)
@@ -91,6 +62,11 @@ AC_CHECK_HEADER_STDBOOL
 AC_TYPE_SIZE_T
 AC_TYPE_UINT32_T
 AC_TYPE_MODE_T
+AX_CXX_HAVE_THREAD
+
+if ! test "x${ax_cv_cxx_have_thread}" = "xyes" ; then
+  AC_WARN(AC_PACKAGE_NAME [will not be able to use multiple monitors at the same time nor stop a started monitor].)
+fi
 
 AC_CHECK_MEMBERS([struct stat.st_mtime],
    [],
@@ -134,5 +110,11 @@ AC_CHECK_DECLS(
     [#include <sys/time.h>]
   ]
 )
+
+AX_CXX_HAVE_THREAD_LOCAL
+
+if ! test "x${ax_cv_cxx_have_thread_local}" = "xyes" ; then
+  AC_WARN(AC_PACKAGE_NAME [is missing some functions because the current combination of compiler and libraries do not support the thread_local storage specifier].)
+fi
 
 AC_OUTPUT

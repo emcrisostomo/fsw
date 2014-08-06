@@ -14,20 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef FSW_EXCEPTION_H
-#  define FSW_EXCEPTION_H
+#ifndef LIBFSW_SET_H
+#  define LIBFSW_SET_H
 
-#  include <exception>
-#  include <string>
+#  include "config.h"
 
-class fsw_exception : public std::exception
-{
-public:
-  fsw_exception(std::string cause);
-  virtual const char * what() const throw ();
-  virtual ~fsw_exception() throw ();
-private:
-  const std::string cause;
-};
+#  if defined(HAVE_UNORDERED_SET)
+#    include <unordered_set>
 
-#endif  /* FSW_EXCEPTION_H */
+template <typename K>
+using fsw_hash_set = std::unordered_set<K>;
+
+#  else
+#    include <set>
+
+template <typename K>
+using fsw_hash_set = std::set<K>;
+
+#  endif
+
+#endif  /* LIBFSW_SET_H */

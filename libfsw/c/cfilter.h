@@ -14,20 +14,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "fsw_exception.h"
+#ifndef FSW__CFILTER_H
+#  define FSW__CFILTER_H
 
-using namespace std;
-
-fsw_exception::fsw_exception(string cause) :
-  cause(cause)
+#  ifdef __cplusplus
+extern "C"
 {
-}
+#  endif
 
-const char * fsw_exception::what() const throw ()
-{
-  return (string("Error: ") + this->cause).c_str();
-}
+  enum fsw_filter_type
+  {
+    filter_include,
+    filter_exclude
+  };
 
-fsw_exception::~fsw_exception() throw ()
-{
+  typedef struct fsw_cmonitor_filter
+  {
+    char * text;
+    fsw_filter_type type;
+    bool case_sensitive;
+    bool extended;
+  } fsw_cmonitor_filter;
+
+#  ifdef __cplusplus
 }
+#  endif
+
+#endif  /* FSW__CFILTER_H */

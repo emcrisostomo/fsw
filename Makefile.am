@@ -14,17 +14,25 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+ACLOCAL_AMFLAGS = -I m4
+
+# Refresh configuration if libtool dependencies change
+LIBTOOL_DEPS = @LIBTOOL_DEPS@
+libtool: $(LIBTOOL_DEPS)
+	$(SHELL) ./config.status libtool
+
+SUBDIRS = libfsw
+
 bin_PROGRAMS = fsw
-fsw_SOURCES  = fsw.cpp fsw.h fsw_log.cpp fsw_log.h path_utils.cpp path_utils.h
-fsw_SOURCES += fsw_exception.cpp fsw_exception.h event.cpp event.h
-fsw_SOURCES += monitor.cpp monitor.h fsw_map.h fsw_set.h
-fsw_SOURCES += fsevent_monitor.cpp fsevent_monitor.h
-fsw_SOURCES += kqueue_monitor.cpp kqueue_monitor.h
-fsw_SOURCES += poll_monitor.cpp poll_monitor.h
-fsw_SOURCES += inotify_monitor.cpp inotify_monitor.h
+fsw_SOURCES  = fsw.cpp fsw.h fsw_log.cpp fsw_log.h
+
+# Link fsw against dependent libraries
+fsw_LDADD = libfsw/libfsw.la
+
+fsw_LDFLAGS =
 
 if USE_CORESERVICES
-  fsw_LDFLAGS = -framework CoreServices
+  fsw_LDFLAGS += -framework CoreServices
 endif
 
 man_MANS = fsw.7
@@ -49,3 +57,8 @@ uninstall-local: fswatch-remove-links
 
 fswatch-remove-links:
 	-rm $(DESTDIR)$(bindir)/fswatch-run
+
+distclean-local: distclean-local-check
+.PHONY: distclean-local-check
+distclean-local-check:
+	-rm -rf libfsw scripts

@@ -14,30 +14,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "event.h"
+#include "libfsw.h"
+#include "libfsw_log.h"
+#include <iostream>
 
 using namespace std;
 
-event::event(string path, time_t evt_time, vector<event_flag> flags) :
-  path(path), evt_time(evt_time), evt_flags(flags)
+void libfsw_log(const char * msg)
 {
+  if (fsw_is_verbose())
+  {
+    cout << msg;
+  }
 }
 
-event::~event()
+void libfsw_perror(const char * msg)
 {
-}
-
-string event::get_path() const
-{
-  return path;
-}
-
-time_t event::get_time() const
-{
-  return evt_time;
-}
-
-vector<event_flag> event::get_flags() const
-{
-  return evt_flags;
+  // TODO
+  if (fsw_is_verbose())
+  {
+    perror(msg);
+  }
 }

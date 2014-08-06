@@ -26,12 +26,14 @@
 #    include <ctime>
 #    include <string>
 #    include <vector>
-#    include "fsw_map.h"
+#    include "libfsw_map.h"
 
 class inotify_monitor : public monitor
 {
 public:
-  inotify_monitor(std::vector<std::string> paths, EVENT_CALLBACK callback);
+  inotify_monitor(std::vector<std::string> paths, 
+                  FSW_EVENT_CALLBACK * callback,
+                  void * context = nullptr);
   virtual ~inotify_monitor();
 
   void run();

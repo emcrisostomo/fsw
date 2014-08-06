@@ -15,8 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "path_utils.h"
-#include "fsw.h"
-#include "fsw_log.h"
+#include "c/libfsw_log.h"
 #include <dirent.h>
 #include <cstdlib>
 #include <errno.h>
@@ -33,12 +32,13 @@ void get_directory_children(const string &path, vector<string> &children)
     if (errno == EMFILE || errno == ENFILE)
     {
       perror("opendir");
-      ::exit(FSW_EXIT_ENFILE);
+      // ::exit(FSW_EXIT_ENFILE);
     }
     else
     {
-      fsw_perror("opendir");
+      libfsw_perror("opendir");
     }
+    
     return;
   }
 
@@ -55,7 +55,10 @@ bool read_link_path(const string &path, string &link_path)
   char *real_path = ::realpath(path.c_str(), nullptr);
   link_path = (real_path ? real_path : path);
 
-  return (real_path != nullptr);
+  bool ret = (real_path != nullptr);
+  ::free(real_path);
+  
+  return ret;
 }
 
 bool stat_path(const string &path, struct stat &fd_stat)
@@ -63,7 +66,8 @@ bool stat_path(const string &path, struct stat &fd_stat)
   if (::lstat(path.c_str(), &fd_stat) != 0)
   {
     string err = string("Cannot stat() ") + path;
-    fsw_perror(err.c_str());
+    libfsw_perror(err.c_str());
+    
     return false;
   }
 

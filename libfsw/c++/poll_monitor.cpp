@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "poll_monitor.h"
-#include "fsw_log.h"
+#include "c/libfsw_log.h"
 #include "path_utils.h"
 #include <unistd.h>
 #include <cstdlib>
@@ -24,8 +24,10 @@
 
 using namespace std;
 
-poll_monitor::poll_monitor(vector<string> paths, EVENT_CALLBACK callback) :
-  monitor(paths, callback)
+poll_monitor::poll_monitor(vector<string> paths,
+                           FSW_EVENT_CALLBACK * callback,
+                           void * context) :
+  monitor(paths, callback, context)
 {
   previous_data = new poll_monitor_data();
   new_data = new poll_monitor_data();
@@ -61,16 +63,16 @@ bool poll_monitor::intermediate_scan_callback(const string &path,
   if (previous_data->tracked_files.count(path))
   {
     watched_file_info pwfi = previous_data->tracked_files[path];
-    vector<event_flag> flags;
+    vector<fsw_event_flag> flags;
 
     if (FSW_MTIME(stat) > pwfi.mtime)
     {
-      flags.push_back(event_flag::Updated);
+      flags.push_back(fsw_event_flag::Updated);
     }
 
     if (FSW_CTIME(stat) > pwfi.ctime)
     {
-      flags.push_back(event_flag::AttributeModified);
+      flags.push_back(fsw_event_flag::AttributeModified);
     }
 
     if (flags.size() > 0)
@@ -82,8 +84,8 @@ bool poll_monitor::intermediate_scan_callback(const string &path,
   }
   else
   {
-    vector<event_flag> flags;
-    flags.push_back(event_flag::Created);
+    vector<fsw_event_flag> flags;
+    flags.push_back(fsw_event_flag::Created);
 
     events.push_back({path, curr_time, flags});
   }
@@ -130,8 +132,8 @@ void poll_monitor::scan(const string &path, poll_monitor_scan_callback fn)
 
 void poll_monitor::find_removed_files()
 {
-  vector<event_flag> flags;
-  flags.push_back(event_flag::Removed);
+  vector<fsw_event_flag> flags;
+  flags.push_back(fsw_event_flag::Removed);
 
   for (auto &removed : previous_data->tracked_files)
   {
@@ -176,7 +178,7 @@ void poll_monitor::notify_events()
 {
   if (events.size())
   {
-    callback(events);
+    callback(events, context);
     events.clear();
   }
 }
@@ -188,7 +190,7 @@ void poll_monitor::run()
   while (true)
   {
 #ifdef DEBUG
-    fsw_log("Done scanning.\n");
+    libfsw_log("Done scanning.\n");
 #endif
 
     ::sleep(latency < MIN_POLL_LATENCY ? MIN_POLL_LATENCY : latency);

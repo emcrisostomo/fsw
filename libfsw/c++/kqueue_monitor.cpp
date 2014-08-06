@@ -18,8 +18,8 @@
 
 #ifdef HAVE_SYS_EVENT_H
 
-#  include "fsw_exception.h"
-#  include "fsw_log.h"
+#  include "libfsw_exception.h"
+#  include "c/libfsw_log.h"
 #  include "path_utils.h"
 #  include <iostream>
 #  include <sys/types.h>
@@ -35,7 +35,7 @@ using namespace std;
 typedef struct KqueueFlagType
 {
   uint32_t flag;
-  event_flag type;
+  fsw_event_flag type;
 } KqueueFlagType;
 
 static vector<KqueueFlagType> create_flag_type_vector();
@@ -44,20 +44,21 @@ static const vector<KqueueFlagType> event_flag_type = create_flag_type_vector();
 vector<KqueueFlagType> create_flag_type_vector()
 {
   vector<KqueueFlagType> flags;
-  flags.push_back({NOTE_DELETE, event_flag::Removed});
-  flags.push_back({NOTE_WRITE, event_flag::Updated});
-  flags.push_back({NOTE_EXTEND, event_flag::PlatformSpecific});
-  flags.push_back({NOTE_ATTRIB, event_flag::AttributeModified});
-  flags.push_back({NOTE_LINK, event_flag::Link});
-  flags.push_back({NOTE_RENAME, event_flag::Renamed});
-  flags.push_back({NOTE_REVOKE, event_flag::PlatformSpecific});
+  flags.push_back({NOTE_DELETE, fsw_event_flag::Removed});
+  flags.push_back({NOTE_WRITE, fsw_event_flag::Updated});
+  flags.push_back({NOTE_EXTEND, fsw_event_flag::PlatformSpecific});
+  flags.push_back({NOTE_ATTRIB, fsw_event_flag::AttributeModified});
+  flags.push_back({NOTE_LINK, fsw_event_flag::Link});
+  flags.push_back({NOTE_RENAME, fsw_event_flag::Renamed});
+  flags.push_back({NOTE_REVOKE, fsw_event_flag::PlatformSpecific});
 
   return flags;
 }
 
 kqueue_monitor::kqueue_monitor(vector<string> paths_to_monitor,
-                               EVENT_CALLBACK callback) :
-  monitor(paths_to_monitor, callback)
+                               FSW_EVENT_CALLBACK * callback,
+                               void * context) :
+  monitor(paths_to_monitor, callback, context)
 {
 }
 
@@ -66,9 +67,9 @@ kqueue_monitor::~kqueue_monitor()
   if (kq != -1) ::close(kq);
 }
 
-static vector<event_flag> decode_flags(uint32_t flag)
+static vector<fsw_event_flag> decode_flags(uint32_t flag)
 {
-  vector<event_flag> evt_flags;
+  vector<fsw_event_flag> evt_flags;
 
   for (const KqueueFlagType &type : event_flag_type)
   {
@@ -125,7 +126,7 @@ bool kqueue_monitor::add_watch(const string & path, const struct stat &fd_stat)
   if (fd == -1)
   {
     string err = string("Cannot open ") + path;
-    fsw_perror(err.c_str());
+    libfsw_perror(err.c_str());
 
     return false;
   }
@@ -234,21 +235,21 @@ void kqueue_monitor::scan_root_paths()
     if (!scan(path))
     {
       string err = "Notice: " + path + " cannot be found. Will retry later.\n";
-      fsw_log(err.c_str());
+      libfsw_log(err.c_str());
     }
   }
 }
 
 void kqueue_monitor::initialize_kqueue()
 {
-  if (kq != -1) throw fsw_exception("kqueue already running.");
+  if (kq != -1) throw libfsw_exception("kqueue already running.");
 
   kq = ::kqueue();
 
   if (kq == -1)
   {
     perror("::kqueue()");
-    throw fsw_exception("kqueue failed.");
+    throw libfsw_exception("kqueue failed.");
   }
 }
 
@@ -267,7 +268,7 @@ int kqueue_monitor::wait_for_events(const vector<struct kevent> &changes,
   if (event_num == -1)
   {
     perror("::kevent returned -1");
-    throw fsw_exception("Invalid event number.");
+    throw libfsw_exception("Invalid event number.");
   }
 
   return event_num;
@@ -328,7 +329,7 @@ void kqueue_monitor::process_events(const vector<struct kevent> &changes,
 
   if (events.size())
   {
-    callback(events);
+    callback(events, context);
   }
 }
 

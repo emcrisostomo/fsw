@@ -21,7 +21,7 @@
 #  include "monitor.h"
 #  include <sys/stat.h>
 #  include <ctime>
-#  include "fsw_map.h"
+#  include "libfsw_map.h"
 
 #  if defined HAVE_STRUCT_STAT_ST_MTIME
 #    define FSW_MTIME(stat) (stat.st_mtime)
@@ -34,7 +34,9 @@
 class poll_monitor : public monitor
 {
 public:
-  poll_monitor(std::vector<std::string> paths, EVENT_CALLBACK callback);
+  poll_monitor(std::vector<std::string> paths, 
+               FSW_EVENT_CALLBACK * callback, 
+               void * context = nullptr);
   virtual ~poll_monitor();
   void run();
 

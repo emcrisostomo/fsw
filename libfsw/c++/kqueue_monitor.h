@@ -22,8 +22,8 @@
 #  ifdef HAVE_SYS_EVENT_H
 
 #    include "monitor.h"
-#    include "fsw_map.h"
-#    include "fsw_set.h"
+#    include "libfsw_map.h"
+#    include "libfsw_set.h"
 #    include <string>
 #    include <vector>
 #    include <sys/stat.h>
@@ -31,7 +31,9 @@
 class kqueue_monitor : public monitor
 {
 public:
-  kqueue_monitor(std::vector<std::string> paths, EVENT_CALLBACK callback);
+  kqueue_monitor(std::vector<std::string> paths, 
+                 FSW_EVENT_CALLBACK * callback,
+                 void * context = nullptr);
   virtual ~kqueue_monitor();
 
   void run();
