@@ -63,16 +63,16 @@ bool poll_monitor::intermediate_scan_callback(const string &path,
   if (previous_data->tracked_files.count(path))
   {
     watched_file_info pwfi = previous_data->tracked_files[path];
-    vector<event_flag> flags;
+    vector<fsw_event_flag> flags;
 
     if (FSW_MTIME(stat) > pwfi.mtime)
     {
-      flags.push_back(event_flag::Updated);
+      flags.push_back(fsw_event_flag::Updated);
     }
 
     if (FSW_CTIME(stat) > pwfi.ctime)
     {
-      flags.push_back(event_flag::AttributeModified);
+      flags.push_back(fsw_event_flag::AttributeModified);
     }
 
     if (flags.size() > 0)
@@ -84,8 +84,8 @@ bool poll_monitor::intermediate_scan_callback(const string &path,
   }
   else
   {
-    vector<event_flag> flags;
-    flags.push_back(event_flag::Created);
+    vector<fsw_event_flag> flags;
+    flags.push_back(fsw_event_flag::Created);
 
     events.push_back({path, curr_time, flags});
   }
@@ -132,8 +132,8 @@ void poll_monitor::scan(const string &path, poll_monitor_scan_callback fn)
 
 void poll_monitor::find_removed_files()
 {
-  vector<event_flag> flags;
-  flags.push_back(event_flag::Removed);
+  vector<fsw_event_flag> flags;
+  flags.push_back(fsw_event_flag::Removed);
 
   for (auto &removed : previous_data->tracked_files)
   {

@@ -35,7 +35,7 @@ using namespace std;
 typedef struct KqueueFlagType
 {
   uint32_t flag;
-  event_flag type;
+  fsw_event_flag type;
 } KqueueFlagType;
 
 static vector<KqueueFlagType> create_flag_type_vector();
@@ -44,13 +44,13 @@ static const vector<KqueueFlagType> event_flag_type = create_flag_type_vector();
 vector<KqueueFlagType> create_flag_type_vector()
 {
   vector<KqueueFlagType> flags;
-  flags.push_back({NOTE_DELETE, event_flag::Removed});
-  flags.push_back({NOTE_WRITE, event_flag::Updated});
-  flags.push_back({NOTE_EXTEND, event_flag::PlatformSpecific});
-  flags.push_back({NOTE_ATTRIB, event_flag::AttributeModified});
-  flags.push_back({NOTE_LINK, event_flag::Link});
-  flags.push_back({NOTE_RENAME, event_flag::Renamed});
-  flags.push_back({NOTE_REVOKE, event_flag::PlatformSpecific});
+  flags.push_back({NOTE_DELETE, fsw_event_flag::Removed});
+  flags.push_back({NOTE_WRITE, fsw_event_flag::Updated});
+  flags.push_back({NOTE_EXTEND, fsw_event_flag::PlatformSpecific});
+  flags.push_back({NOTE_ATTRIB, fsw_event_flag::AttributeModified});
+  flags.push_back({NOTE_LINK, fsw_event_flag::Link});
+  flags.push_back({NOTE_RENAME, fsw_event_flag::Renamed});
+  flags.push_back({NOTE_REVOKE, fsw_event_flag::PlatformSpecific});
 
   return flags;
 }
@@ -67,9 +67,9 @@ kqueue_monitor::~kqueue_monitor()
   if (kq != -1) ::close(kq);
 }
 
-static vector<event_flag> decode_flags(uint32_t flag)
+static vector<fsw_event_flag> decode_flags(uint32_t flag)
 {
-  vector<event_flag> evt_flags;
+  vector<fsw_event_flag> evt_flags;
 
   for (const KqueueFlagType &type : event_flag_type)
   {

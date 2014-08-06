@@ -24,7 +24,7 @@ extern "C"
 {
 #  endif
 
-  enum event_flag
+  enum fsw_event_flag
   {
     PlatformSpecific = 1,
     Created = 2,
@@ -39,15 +39,15 @@ extern "C"
     Link = 1024
   };
 
-  typedef struct cevent
+  typedef struct fsw_cevent
   {
     char * path;
     time_t evt_time;
-    event_flag *flags;
+    fsw_event_flag *flags;
     unsigned int flags_num;
-  } cevent;
+  } fsw_cevent;
 
-  typedef void (*CEVENT_CALLBACK)(cevent const * const * const events,
+  typedef void (*FSW_CEVENT_CALLBACK)(fsw_cevent const * const * const events,
     const unsigned int event_num);
 
 #  ifdef __cplusplus

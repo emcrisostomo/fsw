@@ -38,7 +38,7 @@ extern "C"
   FSW_HANDLE fsw_init_session(const fsw_monitor_type type = fsw_monitor_type::system_default);
   int fsw_add_path(const FSW_HANDLE handle, const char * path);
   int fsw_set_callback(const FSW_HANDLE handle,
-                       const CEVENT_CALLBACK callback);
+                       const FSW_CEVENT_CALLBACK callback);
   int fsw_set_latency(const FSW_HANDLE handle, const double latency);
   int fsw_set_recursive(const FSW_HANDLE handle, const bool recursive);
   int fsw_set_follow_symlinks(const FSW_HANDLE handle,

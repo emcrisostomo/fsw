@@ -233,45 +233,45 @@ static void register_signal_handlers()
   }
 }
 
-static vector<string> decode_event_flag_name(vector<event_flag> flags)
+static vector<string> decode_event_flag_name(vector<fsw_event_flag> flags)
 {
   vector<string> names;
 
-  for (event_flag flag : flags)
+  for (fsw_event_flag flag : flags)
   {
     switch (flag)
     {
-    case event_flag::PlatformSpecific:
+    case fsw_event_flag::PlatformSpecific:
       names.push_back("PlatformSpecific");
       break;
-    case event_flag::Created:
+    case fsw_event_flag::Created:
       names.push_back("Created");
       break;
-    case event_flag::Updated:
+    case fsw_event_flag::Updated:
       names.push_back("Updated");
       break;
-    case event_flag::Removed:
+    case fsw_event_flag::Removed:
       names.push_back("Removed");
       break;
-    case event_flag::Renamed:
+    case fsw_event_flag::Renamed:
       names.push_back("Renamed");
       break;
-    case event_flag::OwnerModified:
+    case fsw_event_flag::OwnerModified:
       names.push_back("OwnerModified");
       break;
-    case event_flag::AttributeModified:
+    case fsw_event_flag::AttributeModified:
       names.push_back("AttributeModified");
       break;
-    case event_flag::IsFile:
+    case fsw_event_flag::IsFile:
       names.push_back("IsFile");
       break;
-    case event_flag::IsDir:
+    case fsw_event_flag::IsDir:
       names.push_back("IsDir");
       break;
-    case event_flag::IsSymLink:
+    case fsw_event_flag::IsSymLink:
       names.push_back("IsSymLink");
       break;
-    case event_flag::Link:
+    case fsw_event_flag::Link:
       names.push_back("Link");
       break;
     default:
@@ -298,12 +298,12 @@ static void print_event_timestamp(const time_t &evt_time)
   cout << date << " ";
 }
 
-static void print_event_flags(const vector<event_flag> &flags)
+static void print_event_flags(const vector<fsw_event_flag> &flags)
 {
   if (nflag)
   {
     int mask = 0;
-    for (const event_flag &flag : flags)
+    for (const fsw_event_flag &flag : flags)
     {
       mask += static_cast<int> (flag);
     }

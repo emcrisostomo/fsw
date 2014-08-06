@@ -31,7 +31,7 @@ typedef struct FSW_SESSION
   vector<string> paths;
   fsw_monitor_type type;
   monitor *monitor;
-  CEVENT_CALLBACK callback;
+  FSW_CEVENT_CALLBACK callback;
   double latency;
   bool recursive;
   bool follow_symlinks;
@@ -69,7 +69,7 @@ void libfsw_cpp_callback_proxy(const std::vector<event> & events,
 
   const FSW_HANDLE * handle = static_cast<FSW_HANDLE *> (handle_ptr);
 
-  cevent ** cevents = static_cast<cevent **> (::malloc(sizeof (cevent) * events.size()));
+  fsw_cevent ** cevents = static_cast<fsw_cevent **> (::malloc(sizeof (fsw_cevent) * events.size()));
 
   if (cevents == nullptr)
     throw int(FSW_ERR_MEMORY);
@@ -77,7 +77,7 @@ void libfsw_cpp_callback_proxy(const std::vector<event> & events,
   for (int i = 0; i < events.size(); ++i)
   {
     const event evt = events[i];
-    cevent *cevt = new cevent();
+    fsw_cevent *cevt = new fsw_cevent();
 
     // Copy event into C event wrapper.
     const string path = evt.get_path();
@@ -90,13 +90,13 @@ void libfsw_cpp_callback_proxy(const std::vector<event> & events,
 
     cevt->evt_time = evt.get_time();
 
-    const vector<event_flag> flags = evt.get_flags();
+    const vector<fsw_event_flag> flags = evt.get_flags();
     cevt->flags_num = flags.size();
 
     if (!cevt->flags_num) cevt->flags = nullptr;
     else
     {
-      cevt->flags = static_cast<event_flag *> (::malloc(sizeof (event_flag) * cevt->flags_num));
+      cevt->flags = static_cast<fsw_event_flag *> (::malloc(sizeof (fsw_event_flag) * cevt->flags_num));
       if (!cevt->flags) throw int(FSW_ERR_MEMORY);
     }
 
@@ -266,7 +266,7 @@ int fsw_add_path(const FSW_HANDLE handle, const char * path)
   return fsw_set_last_error(FSW_OK);
 }
 
-int fsw_set_callback(const FSW_HANDLE handle, const CEVENT_CALLBACK callback)
+int fsw_set_callback(const FSW_HANDLE handle, const FSW_CEVENT_CALLBACK callback)
 {
   if (!callback)
     return fsw_set_last_error(int(FSW_ERR_INVALID_CALLBACK));

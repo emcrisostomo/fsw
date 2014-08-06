@@ -25,16 +25,16 @@
 class event
 {
 public:
-  event(std::string path, time_t evt_time, std::vector<event_flag> flags);
+  event(std::string path, time_t evt_time, std::vector<fsw_event_flag> flags);
   virtual ~event();
   std::string get_path() const;
   time_t get_time() const;
-  std::vector<event_flag> get_flags() const;
+  std::vector<fsw_event_flag> get_flags() const;
 
 private:
   std::string path;
   time_t evt_time;
-  std::vector<event_flag> evt_flags;
+  std::vector<fsw_event_flag> evt_flags;
 };
 
 #endif  /* FSW_EVENT_H */

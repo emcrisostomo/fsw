@@ -91,12 +91,12 @@ void inotify_monitor::collect_initial_data()
 
 void inotify_monitor::preprocess_dir_event(struct inotify_event * event)
 {
-  vector<event_flag> flags;
+  vector<fsw_event_flag> flags;
 
-  if (event->mask & IN_DELETE_SELF) flags.push_back(event_flag::Removed);
-  if (event->mask & IN_ISDIR) flags.push_back(event_flag::IsDir);
-  if (event->mask & IN_MOVE_SELF) flags.push_back(event_flag::Updated);
-  if (event->mask & IN_UNMOUNT) flags.push_back(event_flag::PlatformSpecific);
+  if (event->mask & IN_DELETE_SELF) flags.push_back(fsw_event_flag::Removed);
+  if (event->mask & IN_ISDIR) flags.push_back(fsw_event_flag::IsDir);
+  if (event->mask & IN_MOVE_SELF) flags.push_back(fsw_event_flag::Updated);
+  if (event->mask & IN_UNMOUNT) flags.push_back(fsw_event_flag::PlatformSpecific);
 
   if (flags.size())
   {
@@ -106,18 +106,18 @@ void inotify_monitor::preprocess_dir_event(struct inotify_event * event)
 
 void inotify_monitor::preprocess_node_event(struct inotify_event * event)
 {
-  vector<event_flag> flags;
+  vector<fsw_event_flag> flags;
 
-  if (event->mask & IN_ACCESS) flags.push_back(event_flag::PlatformSpecific);
-  if (event->mask & IN_ATTRIB) flags.push_back(event_flag::AttributeModified);
-  if (event->mask & IN_CLOSE_NOWRITE) flags.push_back(event_flag::PlatformSpecific);
-  if (event->mask & IN_CLOSE_WRITE) flags.push_back(event_flag::Updated);
-  if (event->mask & IN_CREATE) flags.push_back(event_flag::Created);
-  if (event->mask & IN_DELETE) flags.push_back(event_flag::Removed);
-  if (event->mask & IN_MODIFY) flags.push_back(event_flag::Updated);
-  if (event->mask & IN_MOVED_FROM) flags.push_back(event_flag::Updated);
-  if (event->mask & IN_MOVED_TO) flags.push_back(event_flag::Updated);
-  if (event->mask & IN_OPEN) flags.push_back(event_flag::PlatformSpecific);
+  if (event->mask & IN_ACCESS) flags.push_back(fsw_event_flag::PlatformSpecific);
+  if (event->mask & IN_ATTRIB) flags.push_back(fsw_event_flag::AttributeModified);
+  if (event->mask & IN_CLOSE_NOWRITE) flags.push_back(fsw_event_flag::PlatformSpecific);
+  if (event->mask & IN_CLOSE_WRITE) flags.push_back(fsw_event_flag::Updated);
+  if (event->mask & IN_CREATE) flags.push_back(fsw_event_flag::Created);
+  if (event->mask & IN_DELETE) flags.push_back(fsw_event_flag::Removed);
+  if (event->mask & IN_MODIFY) flags.push_back(fsw_event_flag::Updated);
+  if (event->mask & IN_MOVED_FROM) flags.push_back(fsw_event_flag::Updated);
+  if (event->mask & IN_MOVED_TO) flags.push_back(fsw_event_flag::Updated);
+  if (event->mask & IN_OPEN) flags.push_back(fsw_event_flag::PlatformSpecific);
 
   if (flags.size())
   {
