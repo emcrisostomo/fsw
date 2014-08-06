@@ -46,6 +46,7 @@ static fsw_hash_map<FSW_HANDLE, FSW_SESSION> sessions;
 static fsw_hash_map<FSW_HANDLE, thread> monitor_threads;
 #endif
 static std::mutex session_mutex;
+static std::mutex thread_mutex;
 #if defined(HAVE_CXX_THREAD_LOCAL)
 static FSW_THREAD_LOCAL unsigned int last_error;
 #endif
@@ -194,9 +195,9 @@ monitor * create_default_monitor(const FSW_SESSION & session)
 {
   FSW_HANDLE * handle_ptr = new FSW_HANDLE(session.handle);
 
-  return monitor::create_default_monitor(session.paths, 
-                                         libfsw_cpp_callback_proxy, 
-                                         handle_ptr);  
+  return monitor::create_default_monitor(session.paths,
+                                         libfsw_cpp_callback_proxy,
+                                         handle_ptr);
 }
 
 monitor * create_fsevents_monitor(const FSW_SESSION & session)
@@ -385,6 +386,7 @@ int fsw_run_monitor(const FSW_HANDLE handle)
     session.running = true;
 
 #ifdef HAVE_CXX_THREAD
+    std::lock_guard<std::mutex> thread_lock(thread_mutex);
     monitor_threads[handle] = thread(&monitor::run, session.monitor);
 #else
     session.monitor->run();
@@ -401,6 +403,32 @@ int fsw_run_monitor(const FSW_HANDLE handle)
 
   return fsw_set_last_error(FSW_OK);
 }
+
+#ifdef HAVE_CXX_THREAD
+
+int fsw_monitor_join(const FSW_HANDLE handle)
+{
+  try
+  {
+    std::lock_guard<std::mutex> session_lock(thread_mutex);
+
+    if (monitor_threads.find(handle) == monitor_threads.end())
+      return fsw_set_last_error(int(FSW_ERR_UNKNOWN_MONITOR));
+
+    monitor_threads[handle].join();
+  }
+  catch (system_error & se)
+  {
+    return fsw_set_last_error(int(FSW_ERR_THREAD_FAULT));
+  }
+  catch (int error)
+  {
+    return fsw_set_last_error(error);
+  }
+
+  return fsw_set_last_error(FSW_OK);
+}
+#endif
 
 int fsw_destroy_session(const FSW_HANDLE handle)
 {
