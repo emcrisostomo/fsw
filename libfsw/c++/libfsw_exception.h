@@ -20,14 +20,18 @@
 #  include <exception>
 #  include <string>
 
-class libfsw_exception : public std::exception
+namespace fsw
 {
-public:
-  libfsw_exception(std::string cause);
-  virtual const char * what() const throw ();
-  virtual ~libfsw_exception() throw ();
-private:
-  const std::string cause;
-};
+
+  class libfsw_exception : public std::exception
+  {
+  public:
+    libfsw_exception(std::string cause);
+    virtual const char * what() const throw ();
+    virtual ~libfsw_exception() throw ();
+  private:
+    const std::string cause;
+  };
+}
 
 #endif  /* LIBFSW_EXCEPTION_H */

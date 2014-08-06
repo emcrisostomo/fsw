@@ -23,53 +23,57 @@
 
 using namespace std;
 
-void get_directory_children(const string &path, vector<string> &children)
+namespace fsw
 {
-  DIR *dir = ::opendir(path.c_str());
 
-  if (!dir)
+  void get_directory_children(const string &path, vector<string> &children)
   {
-    if (errno == EMFILE || errno == ENFILE)
+    DIR *dir = ::opendir(path.c_str());
+
+    if (!dir)
     {
-      perror("opendir");
-      // ::exit(FSW_EXIT_ENFILE);
+      if (errno == EMFILE || errno == ENFILE)
+      {
+        perror("opendir");
+        // ::exit(FSW_EXIT_ENFILE);
+      }
+      else
+      {
+        libfsw_perror("opendir");
+      }
+
+      return;
     }
-    else
+
+    while (struct dirent * ent = readdir(dir))
     {
-      libfsw_perror("opendir");
+      children.push_back(ent->d_name);
     }
-    
-    return;
+
+    ::closedir(dir);
   }
 
-  while (struct dirent * ent = readdir(dir))
+  bool read_link_path(const string &path, string &link_path)
   {
-    children.push_back(ent->d_name);
+    char *real_path = ::realpath(path.c_str(), nullptr);
+    link_path = (real_path ? real_path : path);
+
+    bool ret = (real_path != nullptr);
+    ::free(real_path);
+
+    return ret;
   }
 
-  ::closedir(dir);
-}
-
-bool read_link_path(const string &path, string &link_path)
-{
-  char *real_path = ::realpath(path.c_str(), nullptr);
-  link_path = (real_path ? real_path : path);
-
-  bool ret = (real_path != nullptr);
-  ::free(real_path);
-  
-  return ret;
-}
-
-bool stat_path(const string &path, struct stat &fd_stat)
-{
-  if (::lstat(path.c_str(), &fd_stat) != 0)
+  bool stat_path(const string &path, struct stat &fd_stat)
   {
-    string err = string("Cannot stat() ") + path;
-    libfsw_perror(err.c_str());
-    
-    return false;
-  }
+    if (::lstat(path.c_str(), &fd_stat) != 0)
+    {
+      string err = string("Cannot stat() ") + path;
+      libfsw_perror(err.c_str());
 
-  return true;
+      return false;
+    }
+
+    return true;
+  }
 }

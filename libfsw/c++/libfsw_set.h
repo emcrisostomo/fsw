@@ -22,14 +22,20 @@
 #  if defined(HAVE_UNORDERED_SET)
 #    include <unordered_set>
 
-template <typename K>
-using fsw_hash_set = std::unordered_set<K>;
+namespace fsw
+{
+  template <typename K>
+  using fsw_hash_set = std::unordered_set<K>;
+}
 
 #  else
 #    include <set>
 
-template <typename K>
-using fsw_hash_set = std::set<K>;
+namespace fsw
+{
+  template <typename K>
+  using fsw_hash_set = std::set<K>;
+}
 
 #  endif
 

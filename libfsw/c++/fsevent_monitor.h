@@ -24,31 +24,35 @@
 #    include "monitor.h"
 #    include <CoreServices/CoreServices.h>
 
-class fsevent_monitor : public monitor
+namespace fsw
 {
-public:
-  fsevent_monitor(std::vector<std::string> paths, 
-                  FSW_EVENT_CALLBACK * callback, 
-                  void * context = nullptr);
-  virtual ~fsevent_monitor();
 
-  void run();
-  void set_numeric_event(bool numeric);
+  class fsevent_monitor : public monitor
+  {
+  public:
+    fsevent_monitor(std::vector<std::string> paths,
+                    FSW_EVENT_CALLBACK * callback,
+                    void * context = nullptr);
+    virtual ~fsevent_monitor();
 
-private:
-  fsevent_monitor(const fsevent_monitor& orig);
-  fsevent_monitor& operator=(const fsevent_monitor & that);
+    void run();
+    void set_numeric_event(bool numeric);
 
-  static void fsevent_callback(ConstFSEventStreamRef streamRef,
-                               void *clientCallBackInfo,
-                               size_t numEvents,
-                               void *eventPaths,
-                               const FSEventStreamEventFlags eventFlags[],
-                               const FSEventStreamEventId eventIds[]);
+  private:
+    fsevent_monitor(const fsevent_monitor& orig);
+    fsevent_monitor& operator=(const fsevent_monitor & that);
 
-  FSEventStreamRef stream = nullptr;
-  bool numeric_event = false;
-};
+    static void fsevent_callback(ConstFSEventStreamRef streamRef,
+                                 void *clientCallBackInfo,
+                                 size_t numEvents,
+                                 void *eventPaths,
+                                 const FSEventStreamEventFlags eventFlags[],
+                                 const FSEventStreamEventId eventIds[]);
+
+    FSEventStreamRef stream = nullptr;
+    bool numeric_event = false;
+  };
+}
 
 #  endif  /* HAVE_CORESERVICES_CORESERVICES_H */
 #endif  /* FSW_FSEVENT_MONITOR_H */

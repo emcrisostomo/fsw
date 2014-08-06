@@ -34,128 +34,130 @@
 
 using namespace std;
 
+namespace fsw
+{
 #ifdef HAVE_REGCOMP
 
-struct compiled_monitor_filter
-{
-  regex_t regex;
-  fsw_filter_type type;
-};
+  struct compiled_monitor_filter
+  {
+    regex_t regex;
+    fsw_filter_type type;
+  };
 
 #endif
 
-monitor::monitor(std::vector<std::string> paths,
-                 FSW_EVENT_CALLBACK * callback,
-                 void * context) :
-  paths(paths), callback(callback), context(context)
-{
-  if (callback == nullptr)
+  monitor::monitor(std::vector<std::string> paths,
+                   FSW_EVENT_CALLBACK * callback,
+                   void * context) :
+    paths(paths), callback(callback), context(context)
   {
-    throw libfsw_exception("Callback cannot be null.");
-  }
-}
-
-void monitor::set_latency(double latency)
-{
-  if (latency < 0)
-  {
-    throw libfsw_exception("Latency cannot be negative.");
-  }
-
-  this->latency = latency;
-}
-
-void monitor::set_recursive(bool recursive)
-{
-  this->recursive = recursive;
-}
-
-void monitor::add_filter(const monitor_filter &filter)
-{
-  regex_t regex;
-  int flags = 0;
-
-  if (!filter.case_sensitive) flags |= REG_ICASE;
-  if (filter.extended) flags |= REG_EXTENDED;
-
-  if (::regcomp(&regex, filter.text.c_str(), flags))
-  {
-    string err = "An error occurred during the compilation of " + filter.text;
-    throw libfsw_exception(err);
-  }
-
-  this->filters.push_back({regex, filter.type});
-}
-
-void monitor::set_filters(const std::vector<monitor_filter> &filters)
-{
-#ifdef HAVE_REGCOMP
-  for (const monitor_filter &filter : filters)
-  {
-    add_filter(filter);
-  }
-#endif
-}
-
-void monitor::set_follow_symlinks(bool follow)
-{
-  follow_symlinks = follow;
-}
-
-bool monitor::accept_path(const string &path)
-{
-  return accept_path(path.c_str());
-}
-
-bool monitor::accept_path(const char *path)
-{
-#ifdef HAVE_REGCOMP
-  for (auto &filter : filters)
-  {
-    if (::regexec(&filter.regex, path, 0, nullptr, 0) == 0)
+    if (callback == nullptr)
     {
-      return filter.type == fsw_filter_type::filter_include;
+      throw libfsw_exception("Callback cannot be null.");
     }
   }
-#endif
 
-  return true;
-}
-
-void * monitor::get_context()
-{
-  return context;
-}
-
-void monitor::set_context(void * context)
-{
-  this->context = context;
-}
-
-monitor::~monitor()
-{
-#ifdef HAVE_REGCOMP
-  for (auto &re : filters)
+  void monitor::set_latency(double latency)
   {
-    ::regfree(&re.regex);
+    if (latency < 0)
+    {
+      throw libfsw_exception("Latency cannot be negative.");
+    }
+
+    this->latency = latency;
   }
 
-  filters.clear();
-#endif
-}
+  void monitor::set_recursive(bool recursive)
+  {
+    this->recursive = recursive;
+  }
 
-monitor * monitor::create_default_monitor(std::vector<std::string> paths,
-                                          FSW_EVENT_CALLBACK * callback,
-                                          void * context)
-{
+  void monitor::add_filter(const monitor_filter &filter)
+  {
+    regex_t regex;
+    int flags = 0;
+
+    if (!filter.case_sensitive) flags |= REG_ICASE;
+    if (filter.extended) flags |= REG_EXTENDED;
+
+    if (::regcomp(&regex, filter.text.c_str(), flags))
+    {
+      string err = "An error occurred during the compilation of " + filter.text;
+      throw libfsw_exception(err);
+    }
+
+    this->filters.push_back({regex, filter.type});
+  }
+
+  void monitor::set_filters(const std::vector<monitor_filter> &filters)
+  {
+#ifdef HAVE_REGCOMP
+    for (const monitor_filter &filter : filters)
+    {
+      add_filter(filter);
+    }
+#endif
+  }
+
+  void monitor::set_follow_symlinks(bool follow)
+  {
+    follow_symlinks = follow;
+  }
+
+  bool monitor::accept_path(const string &path)
+  {
+    return accept_path(path.c_str());
+  }
+
+  bool monitor::accept_path(const char *path)
+  {
+#ifdef HAVE_REGCOMP
+    for (auto &filter : filters)
+    {
+      if (::regexec(&filter.regex, path, 0, nullptr, 0) == 0)
+      {
+        return filter.type == fsw_filter_type::filter_include;
+      }
+    }
+#endif
+
+    return true;
+  }
+
+  void * monitor::get_context()
+  {
+    return context;
+  }
+
+  void monitor::set_context(void * context)
+  {
+    this->context = context;
+  }
+
+  monitor::~monitor()
+  {
+#ifdef HAVE_REGCOMP
+    for (auto &re : filters)
+    {
+      ::regfree(&re.regex);
+    }
+
+    filters.clear();
+#endif
+  }
+
+  monitor * monitor::create_default_monitor(std::vector<std::string> paths,
+                                            FSW_EVENT_CALLBACK * callback,
+                                            void * context)
+  {
 #if defined(HAVE_CORESERVICES_CORESERVICES_H)
-  return new fsevent_monitor(paths, callback, context);
+    return new fsevent_monitor(paths, callback, context);
 #elif defined(HAVE_SYS_EVENT_H)
-  return new kqueue_monitor(paths, callback, context);
+    return new kqueue_monitor(paths, callback, context);
 #elif defined(HAVE_SYS_INOTIFY_H)
-  return new inotify_monitor(paths, callback, context);
+    return new inotify_monitor(paths, callback, context);
 #else
-  return new poll_monitor(paths, callback, context);
+    return new poll_monitor(paths, callback, context);
 #endif
+  }
 }
-

@@ -24,180 +24,184 @@
 
 using namespace std;
 
-poll_monitor::poll_monitor(vector<string> paths,
-                           FSW_EVENT_CALLBACK * callback,
-                           void * context) :
-  monitor(paths, callback, context)
+namespace fsw
 {
-  previous_data = new poll_monitor_data();
-  new_data = new poll_monitor_data();
-  time(&curr_time);
-}
 
-poll_monitor::~poll_monitor()
-{
-  delete previous_data;
-  delete new_data;
-}
-
-bool poll_monitor::initial_scan_callback(const string &path,
-                                         const struct stat &stat)
-{
-  if (previous_data->tracked_files.count(path))
-    return false;
-
-  watched_file_info wfi{FSW_MTIME(stat), FSW_CTIME(stat)};
-  previous_data->tracked_files[path] = wfi;
-
-  return true;
-}
-
-bool poll_monitor::intermediate_scan_callback(const string &path,
-                                              const struct stat &stat)
-{
-  if (new_data->tracked_files.count(path)) return false;
-
-  watched_file_info wfi{FSW_MTIME(stat), FSW_CTIME(stat)};
-  new_data->tracked_files[path] = wfi;
-
-  if (previous_data->tracked_files.count(path))
+  poll_monitor::poll_monitor(vector<string> paths,
+                             FSW_EVENT_CALLBACK * callback,
+                             void * context) :
+    monitor(paths, callback, context)
   {
-    watched_file_info pwfi = previous_data->tracked_files[path];
-    vector<fsw_event_flag> flags;
+    previous_data = new poll_monitor_data();
+    new_data = new poll_monitor_data();
+    time(&curr_time);
+  }
 
-    if (FSW_MTIME(stat) > pwfi.mtime)
+  poll_monitor::~poll_monitor()
+  {
+    delete previous_data;
+    delete new_data;
+  }
+
+  bool poll_monitor::initial_scan_callback(const string &path,
+                                           const struct stat &stat)
+  {
+    if (previous_data->tracked_files.count(path))
+      return false;
+
+    watched_file_info wfi{FSW_MTIME(stat), FSW_CTIME(stat)};
+    previous_data->tracked_files[path] = wfi;
+
+    return true;
+  }
+
+  bool poll_monitor::intermediate_scan_callback(const string &path,
+                                                const struct stat &stat)
+  {
+    if (new_data->tracked_files.count(path)) return false;
+
+    watched_file_info wfi{FSW_MTIME(stat), FSW_CTIME(stat)};
+    new_data->tracked_files[path] = wfi;
+
+    if (previous_data->tracked_files.count(path))
     {
-      flags.push_back(fsw_event_flag::Updated);
+      watched_file_info pwfi = previous_data->tracked_files[path];
+      vector<fsw_event_flag> flags;
+
+      if (FSW_MTIME(stat) > pwfi.mtime)
+      {
+        flags.push_back(fsw_event_flag::Updated);
+      }
+
+      if (FSW_CTIME(stat) > pwfi.ctime)
+      {
+        flags.push_back(fsw_event_flag::AttributeModified);
+      }
+
+      if (flags.size() > 0)
+      {
+        events.push_back({path, curr_time, flags});
+      }
+
+      previous_data->tracked_files.erase(path);
     }
-
-    if (FSW_CTIME(stat) > pwfi.ctime)
+    else
     {
-      flags.push_back(fsw_event_flag::AttributeModified);
-    }
+      vector<fsw_event_flag> flags;
+      flags.push_back(fsw_event_flag::Created);
 
-    if (flags.size() > 0)
-    {
       events.push_back({path, curr_time, flags});
     }
 
-    previous_data->tracked_files.erase(path);
-  }
-  else
-  {
-    vector<fsw_event_flag> flags;
-    flags.push_back(fsw_event_flag::Created);
-
-    events.push_back({path, curr_time, flags});
+    return true;
   }
 
-  return true;
-}
-
-bool poll_monitor::add_path(const string &path,
-                            const struct stat &fd_stat,
-                            poll_monitor_scan_callback poll_callback)
-{
-  return ((*this).*(poll_callback))(path, fd_stat);
-}
-
-void poll_monitor::scan(const string &path, poll_monitor_scan_callback fn)
-{
-  struct stat fd_stat;
-  if (!stat_path(path, fd_stat)) return;
-
-  if (follow_symlinks && S_ISLNK(fd_stat.st_mode))
+  bool poll_monitor::add_path(const string &path,
+                              const struct stat &fd_stat,
+                              poll_monitor_scan_callback poll_callback)
   {
-    string link_path;
-    if (read_link_path(path, link_path))
-      scan(link_path, fn);
-
-    return;
+    return ((*this).*(poll_callback))(path, fd_stat);
   }
 
-  if (!S_ISDIR(fd_stat.st_mode) && !accept_path(path)) return;
-  if (!add_path(path, fd_stat, fn)) return;
-  if (!recursive) return;
-  if (!S_ISDIR(fd_stat.st_mode)) return;
-
-  vector<string> children;
-  get_directory_children(path, children);
-
-  for (string &child : children)
+  void poll_monitor::scan(const string &path, poll_monitor_scan_callback fn)
   {
-    if (child.compare(".") == 0 || child.compare("..") == 0) continue;
+    struct stat fd_stat;
+    if (!stat_path(path, fd_stat)) return;
 
-    scan(path + "/" + child, fn);
-  }
-}
-
-void poll_monitor::find_removed_files()
-{
-  vector<fsw_event_flag> flags;
-  flags.push_back(fsw_event_flag::Removed);
-
-  for (auto &removed : previous_data->tracked_files)
-  {
-    if (accept_path(removed.first))
+    if (follow_symlinks && S_ISLNK(fd_stat.st_mode))
     {
-      events.push_back({removed.first, curr_time, flags});
+      string link_path;
+      if (read_link_path(path, link_path))
+        scan(link_path, fn);
+
+      return;
+    }
+
+    if (!S_ISDIR(fd_stat.st_mode) && !accept_path(path)) return;
+    if (!add_path(path, fd_stat, fn)) return;
+    if (!recursive) return;
+    if (!S_ISDIR(fd_stat.st_mode)) return;
+
+    vector<string> children;
+    get_directory_children(path, children);
+
+    for (string &child : children)
+    {
+      if (child.compare(".") == 0 || child.compare("..") == 0) continue;
+
+      scan(path + "/" + child, fn);
     }
   }
-}
 
-void poll_monitor::swap_data_containers()
-{
-  delete previous_data;
-  previous_data = new_data;
-  new_data = new poll_monitor_data();
-}
-
-void poll_monitor::collect_data()
-{
-  poll_monitor_scan_callback fn = &poll_monitor::intermediate_scan_callback;
-
-  for (string &path : paths)
+  void poll_monitor::find_removed_files()
   {
-    scan(path, fn);
+    vector<fsw_event_flag> flags;
+    flags.push_back(fsw_event_flag::Removed);
+
+    for (auto &removed : previous_data->tracked_files)
+    {
+      if (accept_path(removed.first))
+      {
+        events.push_back({removed.first, curr_time, flags});
+      }
+    }
   }
 
-  find_removed_files();
-  swap_data_containers();
-}
-
-void poll_monitor::collect_initial_data()
-{
-  poll_monitor_scan_callback fn = &poll_monitor::initial_scan_callback;
-
-  for (string &path : paths)
+  void poll_monitor::swap_data_containers()
   {
-    scan(path, fn);
+    delete previous_data;
+    previous_data = new_data;
+    new_data = new poll_monitor_data();
   }
-}
 
-void poll_monitor::notify_events()
-{
-  if (events.size())
+  void poll_monitor::collect_data()
   {
-    callback(events, context);
-    events.clear();
+    poll_monitor_scan_callback fn = &poll_monitor::intermediate_scan_callback;
+
+    for (string &path : paths)
+    {
+      scan(path, fn);
+    }
+
+    find_removed_files();
+    swap_data_containers();
   }
-}
 
-void poll_monitor::run()
-{
-  collect_initial_data();
-
-  while (true)
+  void poll_monitor::collect_initial_data()
   {
+    poll_monitor_scan_callback fn = &poll_monitor::initial_scan_callback;
+
+    for (string &path : paths)
+    {
+      scan(path, fn);
+    }
+  }
+
+  void poll_monitor::notify_events()
+  {
+    if (events.size())
+    {
+      callback(events, context);
+      events.clear();
+    }
+  }
+
+  void poll_monitor::run()
+  {
+    collect_initial_data();
+
+    while (true)
+    {
 #ifdef DEBUG
-    libfsw_log("Done scanning.\n");
+      libfsw_log("Done scanning.\n");
 #endif
 
-    ::sleep(latency < MIN_POLL_LATENCY ? MIN_POLL_LATENCY : latency);
+      ::sleep(latency < MIN_POLL_LATENCY ? MIN_POLL_LATENCY : latency);
 
-    time(&curr_time);
+      time(&curr_time);
 
-    collect_data();
-    notify_events();
+      collect_data();
+      notify_events();
+    }
   }
 }

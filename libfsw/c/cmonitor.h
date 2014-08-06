@@ -26,11 +26,11 @@ extern "C"
 
   enum fsw_monitor_type
   {
-    system_default = 0,
-    fsevents,
-    kqueue,
-    inotify,
-    poll
+    system_default_monitor_type = 0,
+    fsevents_monitor_type,
+    kqueue_monitor_type,
+    inotify_monitor_type,
+    poll_monitor_type
   };
 
 #  ifdef __cplusplus

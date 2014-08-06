@@ -18,16 +18,20 @@
 
 using namespace std;
 
-libfsw_exception::libfsw_exception(string cause) :
-  cause(cause)
+namespace fsw
 {
-}
 
-const char * libfsw_exception::what() const throw ()
-{
-  return (string("Error: ") + this->cause).c_str();
-}
+  libfsw_exception::libfsw_exception(string cause) :
+    cause(cause)
+  {
+  }
 
-libfsw_exception::~libfsw_exception() throw ()
-{
+  const char * libfsw_exception::what() const throw ()
+  {
+    return (string("Error: ") + this->cause).c_str();
+  }
+
+  libfsw_exception::~libfsw_exception() throw ()
+  {
+  }
 }

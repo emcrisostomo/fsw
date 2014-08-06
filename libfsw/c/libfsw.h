@@ -35,7 +35,7 @@ extern "C"
 #    define FSW_THREAD_LOCAL thread_local
 #  endif
 
-  FSW_HANDLE fsw_init_session(const fsw_monitor_type type = fsw_monitor_type::system_default);
+  FSW_HANDLE fsw_init_session(const fsw_monitor_type type = fsw_monitor_type::system_default_monitor_type);
   int fsw_add_path(const FSW_HANDLE handle, const char * path);
   int fsw_set_callback(const FSW_HANDLE handle,
                        const FSW_CEVENT_CALLBACK callback);

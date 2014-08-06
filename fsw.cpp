@@ -38,7 +38,7 @@ using namespace std;
 
 static const unsigned int TIME_FORMAT_BUFF_SIZE = 128;
 
-static monitor *active_monitor = nullptr;
+static fsw::monitor *active_monitor = nullptr;
 static vector<monitor_filter> filters;
 static bool _0flag = false;
 static bool _1flag = false;
@@ -394,17 +394,17 @@ static void start_monitor(int argc, char ** argv, int optind)
 
   if (pflag)
   {
-    active_monitor = new poll_monitor(paths, process_events);
+    active_monitor = new fsw::poll_monitor(paths, process_events);
   }
   else if (kflag)
   {
 #ifdef HAVE_SYS_EVENT_H
-    active_monitor = new kqueue_monitor(paths, process_events);
+    active_monitor = new fsw::kqueue_monitor(paths, process_events);
 #endif
   }
   else
   {
-    active_monitor = monitor::create_default_monitor(paths, process_events);
+    active_monitor = fsw::monitor::create_default_monitor(paths, process_events);
   }
 
   /* 

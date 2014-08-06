@@ -24,6 +24,7 @@
 #include "../c++/poll_monitor.h"
 
 using namespace std;
+using namespace fsw;
 
 typedef struct FSW_SESSION
 {
@@ -160,19 +161,19 @@ int create_monitor(const FSW_HANDLE handle, const fsw_monitor_type type)
     monitor * current_monitor;
     switch (type)
     {
-    case fsw_monitor_type::fsevents:
+    case fsw_monitor_type::fsevents_monitor_type:
       current_monitor = create_fsevents_monitor(session);
       break;
-    case fsw_monitor_type::kqueue:
+    case fsw_monitor_type::kqueue_monitor_type:
       current_monitor = create_kqueue_monitor(session);
       break;
-    case fsw_monitor_type::inotify:
+    case fsw_monitor_type::inotify_monitor_type:
       current_monitor = create_inotify_monitor(session);
       break;
-    case fsw_monitor_type::poll:
+    case fsw_monitor_type::poll_monitor_type:
       current_monitor = create_poll_monitor(session);
       break;
-    case fsw_monitor_type::system_default:
+    case fsw_monitor_type::system_default_monitor_type:
       current_monitor = create_default_monitor(session);
       break;
     default:

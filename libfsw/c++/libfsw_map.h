@@ -22,14 +22,19 @@
 #  if defined(HAVE_UNORDERED_MAP)
 #    include <unordered_map>
 
-template <typename K, typename V>
-using fsw_hash_map = std::unordered_map<K, V>;
-
+namespace fsw
+{
+  template <typename K, typename V>
+  using fsw_hash_map = std::unordered_map<K, V>;
+}
 #  else
 #    include <map>
 
-template <typename K, typename V>
-using fsw_hash_map = std::map<K, V>;
+namespace fsw
+{
+  template <typename K, typename V>
+  using fsw_hash_map = std::map<K, V>;
+}
 
 #  endif
 
