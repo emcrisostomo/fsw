@@ -22,19 +22,19 @@ extern "C"
 {
 #  endif
 
-enum filter_type
-{
-  filter_include,
-  filter_exclude
-};
+  enum fsw_filter_type
+  {
+    filter_include,
+    filter_exclude
+  };
 
-typedef struct cmonitor_filter
-{
-  char * text;
-  filter_type type;
-  bool case_sensitive;
-  bool extended;
-} cmonitor_filter;
+  typedef struct fsw_cmonitor_filter
+  {
+    char * text;
+    fsw_filter_type type;
+    bool case_sensitive;
+    bool extended;
+  } fsw_cmonitor_filter;
 
 #  ifdef __cplusplus
 }

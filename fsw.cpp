@@ -494,7 +494,7 @@ static void parse_opts(int argc, char ** argv)
 
 #ifdef HAVE_REGCOMP
     case 'e':
-      filters.push_back({optarg, filter_type::filter_exclude});
+      filters.push_back({optarg, fsw_filter_type::filter_exclude});
       break;
 
     case 'E':
@@ -513,7 +513,7 @@ static void parse_opts(int argc, char ** argv)
 
 #ifdef HAVE_REGCOMP
     case 'i':
-      filters.push_back({optarg, filter_type::filter_include});
+      filters.push_back({optarg, fsw_filter_type::filter_include});
       break;
 
     case 'I':

@@ -39,7 +39,7 @@ using namespace std;
 struct compiled_monitor_filter
 {
   regex_t regex;
-  filter_type type;
+  fsw_filter_type type;
 };
 
 #endif
@@ -114,7 +114,7 @@ bool monitor::accept_path(const char *path)
   {
     if (::regexec(&filter.regex, path, 0, nullptr, 0) == 0)
     {
-      return filter.type == filter_type::filter_include;
+      return filter.type == fsw_filter_type::filter_include;
     }
   }
 #endif

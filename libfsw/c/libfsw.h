@@ -43,7 +43,7 @@ extern "C"
   int fsw_set_recursive(const FSW_HANDLE handle, const bool recursive);
   int fsw_set_follow_symlinks(const FSW_HANDLE handle,
                               const bool follow_symlinks);
-  int fsw_add_filter(const FSW_HANDLE handle, const cmonitor_filter filter);
+  int fsw_add_filter(const FSW_HANDLE handle, const fsw_cmonitor_filter filter);
   int fsw_run_monitor(const FSW_HANDLE handle);
   int fsw_destroy_session(const FSW_HANDLE handle);
   int fsw_set_last_error(const int error);

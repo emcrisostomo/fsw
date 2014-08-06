@@ -342,7 +342,7 @@ int fsw_set_follow_symlinks(const FSW_HANDLE handle,
 }
 
 int fsw_add_filter(const FSW_HANDLE handle,
-                   const cmonitor_filter filter)
+                   const fsw_cmonitor_filter filter)
 {
   try
   {

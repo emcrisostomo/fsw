@@ -23,7 +23,7 @@
 typedef struct monitor_filter
 {
   std::string text;
-  filter_type type;
+  fsw_filter_type type;
   bool case_sensitive;
   bool extended;
 } monitor_filter;
