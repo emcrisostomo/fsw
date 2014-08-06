@@ -384,14 +384,14 @@ static void start_monitor(int argc, char ** argv, int optind)
     {
       ::free(real_path);
     }
-    
+
     fsw_log("Adding path: ");
     fsw_log(path.c_str());
     fsw_log("\n");
 
     paths.push_back(path);
   }
-  
+
   if (pflag)
   {
     active_monitor = new poll_monitor(paths, process_events);
@@ -412,13 +412,13 @@ static void start_monitor(int argc, char ** argv, int optind)
    * filter but fsw does not.  For the time being, we apply the same flags to
    * every filter.
    */
-  
+
   for (auto & filter : filters)
   {
     filter.case_sensitive = !Iflag;
     filter.extended = Eflag;
   }
-  
+
   active_monitor->set_latency(lvalue);
   active_monitor->set_recursive(rflag);
   active_monitor->set_filters(filters);
@@ -471,8 +471,7 @@ static void parse_opts(int argc, char ** argv)
     { nullptr, 0, nullptr, 0}
   };
 
-  while ((ch = getopt_long(
-                           argc,
+  while ((ch = getopt_long(argc,
                            argv,
                            short_options.str().c_str(),
                            long_options,
@@ -620,7 +619,7 @@ int main(int argc, char ** argv)
   }
   catch (...)
   {
-    cerr << "An unknown error occurred and the program will be terminated.\n";
+    cerr << "An unknown error occurred and the program will be terminated." << endl;
 
     return FSW_EXIT_ERROR;
   }
