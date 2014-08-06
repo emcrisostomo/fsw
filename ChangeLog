@@ -18,6 +18,12 @@ ChangeLog
 	  - Bump v. 1.4.0.
 	  - Add separate module configuration for libfsw.
 	  - Add libtool configuration.
+	* configure-debug.sh: Add basic configure scripts for release and
+	  debug builds.
+	* configure-debug-static.sh: Add different scripts for debug dynamic
+	  and static builds.
+	* configure-release.sh: Add basic configure scripts for release and
+	  debug builds.
 	* event.cpp: Move to libfsw.
 	* event.h: Move to libfsw.
 	* fsevent_monitor.cpp: Move to libfsw.
