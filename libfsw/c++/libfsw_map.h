@@ -17,7 +17,9 @@
 #ifndef LIBFSW_MAP_H
 #  define LIBFSW_MAP_H
 
-#  include "config.h"
+#  ifdef HAVE_CONFIG_H
+#    include "config.h"
+#  endif
 
 #  if defined(HAVE_UNORDERED_MAP)
 #    include <unordered_map>

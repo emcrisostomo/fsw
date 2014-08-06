@@ -17,7 +17,9 @@
 #ifndef LIBFSW_SET_H
 #  define LIBFSW_SET_H
 
-#  include "config.h"
+#  ifdef HAVE_CONFIG_H
+#    include "config.h"
+#  endif
 
 #  if defined(HAVE_UNORDERED_SET)
 #    include <unordered_set>

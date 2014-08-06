@@ -17,7 +17,9 @@
 #ifndef FSW_INOTIFY_MONITOR_H
 #  define FSW_INOTIFY_MONITOR_H
 
-#  include "config.h"
+#  ifdef HAVE_CONFIG_H
+#    include "config.h"
+#  endif
 
 #  ifdef HAVE_SYS_INOTIFY_H
 

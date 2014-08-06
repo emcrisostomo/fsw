@@ -17,7 +17,9 @@
 #ifndef FSW_KQUEUE_MONITOR_H
 #  define FSW_KQUEUE_MONITOR_H
 
-#  include "config.h"
+#  ifdef HAVE_CONFIG_H
+#    include "config.h"
+#  endif
 
 #  ifdef HAVE_SYS_EVENT_H
 

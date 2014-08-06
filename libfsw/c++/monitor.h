@@ -17,7 +17,9 @@
 #ifndef FSW__MONITOR_H
 #  define FSW__MONITOR_H
 
-#  include "config.h"
+#  ifdef HAVE_CONFIG_H
+#    include "config.h"
+#  endif
 #  include "filter.h"
 #  include <vector>
 #  include <string>

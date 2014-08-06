@@ -17,7 +17,9 @@
 #ifndef FSW_FSEVENT_MONITOR_H
 #  define FSW_FSEVENT_MONITOR_H
 
-#  include "config.h"
+#  ifdef HAVE_CONFIG_H
+#    include "config.h"
+#  endif
 
 #  ifdef HAVE_CORESERVICES_CORESERVICES_H
 

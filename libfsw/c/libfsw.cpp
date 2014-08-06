@@ -2,11 +2,12 @@
 #include <mutex>
 #include <time.h>
 #include <stdlib.h>
-#include "config.h"
+
+#include "libfsw.h"
+
 #ifdef HAVE_CXX_THREAD
 #  include <thread>
 #endif
-#include "libfsw.h"
 #include "../c++/libfsw_map.h"
 #include "../c++/filter.h"
 #include "../c++/monitor.h"
