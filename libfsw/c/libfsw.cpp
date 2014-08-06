@@ -101,7 +101,7 @@ void libfsw_cpp_callback_proxy(const std::vector<event> & events,
       if (!cevt->flags) throw int(FSW_ERR_MEMORY);
     }
 
-    for (int e = 0; i < cevt->flags_num; ++e)
+    for (int e = 0; e < cevt->flags_num; ++e)
     {
       cevt->flags[e] = flags[e];
     }
