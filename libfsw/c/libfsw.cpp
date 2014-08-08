@@ -1,3 +1,7 @@
+#ifdef HAVE_CONFIG_H
+#  include "libfsw_config.h"
+#endif
+
 #include <iostream>
 #include <mutex>
 #include <time.h>
@@ -405,10 +409,9 @@ int fsw_run_monitor(const FSW_HANDLE handle)
   return fsw_set_last_error(FSW_OK);
 }
 
-#ifdef HAVE_CXX_THREAD
-
 int fsw_monitor_join(const FSW_HANDLE handle)
 {
+#ifdef HAVE_CXX_THREAD
   try
   {
     std::lock_guard<std::mutex> session_lock(thread_mutex);
@@ -428,8 +431,10 @@ int fsw_monitor_join(const FSW_HANDLE handle)
   }
 
   return fsw_set_last_error(FSW_OK);
-}
+#else
+  return fsw_set_last_error(FSW_ERR_UNSUPPORTED_OPERATION);
 #endif
+}
 
 int fsw_destroy_session(const FSW_HANDLE handle)
 {
@@ -477,13 +482,14 @@ int fsw_set_last_error(const int error)
   return error;
 }
 
-#if defined(HAVE_CXX_THREAD_LOCAL)
-
 int fsw_last_error()
 {
+#if defined(HAVE_CXX_THREAD_LOCAL)
   return last_error;
-}
+#else
+  return fsw_set_last_error(FSW_ERR_UNSUPPORTED_OPERATION);
 #endif
+}
 
 bool fsw_is_verbose()
 {

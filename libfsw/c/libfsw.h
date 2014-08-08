@@ -1,9 +1,6 @@
 #ifndef LIBFSW_H
 #  define LIBFSW_H
 
-#  ifdef HAVE_CONFIG_H
-#    include "libfsw_config.h"
-#  endif
 #  include "cevent.h"
 #  include "cmonitor.h"
 #  include "cfilter.h"
@@ -29,6 +26,7 @@ extern "C"
 #  define FSW_ERR_MONITOR_ALREADY_RUNNING   (1 << 11)
 #  define FSW_ERR_STALE_MONITOR_THREAD      (1 << 12)
 #  define FSW_ERR_THREAD_FAULT              (1 << 13)
+#  define FSW_ERR_UNSUPPORTED_OPERATION     (1 << 14)
 
   typedef unsigned int FSW_HANDLE;
 
@@ -38,7 +36,7 @@ extern "C"
 #    define FSW_THREAD_LOCAL thread_local
 #  endif
 
-  FSW_HANDLE fsw_init_session(const fsw_monitor_type type = fsw_monitor_type::system_default_monitor_type);
+  FSW_HANDLE fsw_init_session(const fsw_monitor_type type = system_default_monitor_type);
   int fsw_add_path(const FSW_HANDLE handle, const char * path);
   int fsw_set_callback(const FSW_HANDLE handle,
                        const FSW_CEVENT_CALLBACK callback);
@@ -48,15 +46,11 @@ extern "C"
                               const bool follow_symlinks);
   int fsw_add_filter(const FSW_HANDLE handle, const fsw_cmonitor_filter filter);
   int fsw_run_monitor(const FSW_HANDLE handle);
-#  ifdef HAVE_CXX_THREAD
   int fsw_monitor_join(const FSW_HANDLE handle);
-#  endif
   int fsw_destroy_session(const FSW_HANDLE handle);
   int fsw_set_last_error(const int error);
-#  if defined(HAVE_CXX_THREAD_LOCAL)
   int fsw_last_error();
   // TODO: implement function to signal a monitor to stop.
-#  endif
   bool fsw_is_verbose();
 
 #  ifdef __cplusplus

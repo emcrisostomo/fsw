@@ -29,6 +29,7 @@ namespace fsw
   template <typename K, typename V>
   using fsw_hash_map = std::unordered_map<K, V>;
 }
+
 #  else
 #    include <map>
 
