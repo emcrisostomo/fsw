@@ -14,12 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "kqueue_monitor.h"
+#ifdef HAVE_CONFIG_H
+#  include "libfsw_config.h"
+#endif
 
 #ifdef HAVE_SYS_EVENT_H
 
+#  include "kqueue_monitor.h"
+#  include "libfsw_map.h"
+#  include "libfsw_set.h"
 #  include "libfsw_exception.h"
-#  include "c/libfsw_log.h"
+#  include "../c/libfsw_log.h"
 #  include "path_utils.h"
 #  include <iostream>
 #  include <sys/types.h>
@@ -33,6 +38,15 @@ using namespace std;
 
 namespace fsw
 {
+
+  struct kqueue_monitor_load
+  {
+    fsw_hash_map<std::string, int> descriptors_by_file_name;
+    fsw_hash_map<int, std::string> file_names_by_descriptor;
+    fsw_hash_set<int> descriptors_to_remove;
+    fsw_hash_set<int> descriptors_to_rescan;
+    fsw_hash_map<int, mode_t> file_modes;
+  };
 
   typedef struct KqueueFlagType
   {
@@ -60,13 +74,14 @@ namespace fsw
   kqueue_monitor::kqueue_monitor(vector<string> paths_to_monitor,
                                  FSW_EVENT_CALLBACK * callback,
                                  void * context) :
-    monitor(paths_to_monitor, callback, context)
+    monitor(paths_to_monitor, callback, context), load(new kqueue_monitor_load())
   {
   }
 
   kqueue_monitor::~kqueue_monitor()
   {
     if (kq != -1) ::close(kq);
+    delete load;
   }
 
   static vector<fsw_event_flag> decode_flags(uint32_t flag)
@@ -99,7 +114,7 @@ namespace fsw
 
   bool kqueue_monitor::is_path_watched(const string & path)
   {
-    return descriptors_by_file_name.find(path) != descriptors_by_file_name.end();
+    return load->descriptors_by_file_name.find(path) != load->descriptors_by_file_name.end();
   }
 
   bool kqueue_monitor::add_watch(const string & path, const struct stat &fd_stat)
@@ -134,9 +149,9 @@ namespace fsw
     }
 
     // if the descriptor could be opened, track it
-    descriptors_by_file_name[path] = fd;
-    file_names_by_descriptor[fd] = path;
-    file_modes[fd] = fd_stat.st_mode;
+    load->descriptors_by_file_name[path] = fd;
+    load->file_names_by_descriptor[fd] = path;
+    load->file_modes[fd] = fd_stat.st_mode;
 
     return true;
   }
@@ -175,41 +190,41 @@ namespace fsw
 
   void kqueue_monitor::remove_watch(int fd)
   {
-    string name = file_names_by_descriptor[fd];
-    file_names_by_descriptor.erase(fd);
-    descriptors_by_file_name.erase(name);
-    file_modes.erase(fd);
+    string name = load->file_names_by_descriptor[fd];
+    load->file_names_by_descriptor.erase(fd);
+    load->descriptors_by_file_name.erase(name);
+    load->file_modes.erase(fd);
     ::close(fd);
   }
 
   void kqueue_monitor::remove_watch(const string &path)
   {
-    int fd = descriptors_by_file_name[path];
-    descriptors_by_file_name.erase(path);
-    file_names_by_descriptor.erase(fd);
-    file_modes.erase(fd);
+    int fd = load->descriptors_by_file_name[path];
+    load->descriptors_by_file_name.erase(path);
+    load->file_names_by_descriptor.erase(fd);
+    load->file_modes.erase(fd);
     ::close(fd);
   }
 
   void kqueue_monitor::remove_deleted()
   {
-    auto fd = descriptors_to_remove.begin();
+    auto fd = load->descriptors_to_remove.begin();
 
-    while (fd != descriptors_to_remove.end())
+    while (fd != load->descriptors_to_remove.end())
     {
       remove_watch(*fd);
 
-      descriptors_to_remove.erase(fd++);
+      load->descriptors_to_remove.erase(fd++);
     }
   }
 
   void kqueue_monitor::rescan_pending()
   {
-    auto fd = descriptors_to_rescan.begin();
+    auto fd = load->descriptors_to_rescan.begin();
 
-    while (fd != descriptors_to_rescan.end())
+    while (fd != load->descriptors_to_rescan.end())
     {
-      string fd_path = file_names_by_descriptor[*fd];
+      string fd_path = load->file_names_by_descriptor[*fd];
 
       // Rescan the hierarchy rooted at fd_path.
       // If the path does not exist any longer, nothing needs to be done since
@@ -224,7 +239,7 @@ namespace fsw
       remove_watch(fd_path);
       scan(fd_path);
 
-      descriptors_to_rescan.erase(fd++);
+      load->descriptors_to_rescan.erase(fd++);
     }
   }
 
@@ -308,21 +323,21 @@ namespace fsw
       // either been created or deleted.
       if ((e.fflags & NOTE_DELETE))
       {
-        descriptors_to_remove.insert(e.ident);
+        load->descriptors_to_remove.insert(e.ident);
       }
       else if ((e.fflags & NOTE_RENAME) || (e.fflags & NOTE_REVOKE)
-               || ((e.fflags & NOTE_WRITE) && S_ISDIR(file_modes[e.ident])))
+               || ((e.fflags & NOTE_WRITE) && S_ISDIR(load->file_modes[e.ident])))
       {
-        descriptors_to_rescan.insert(e.ident);
+        load->descriptors_to_rescan.insert(e.ident);
       }
 
       // Invoke the callback passing every path for which an event has been
       // received with a non empty filter flag.
       if (e.fflags)
       {
-        if (accept_path(file_names_by_descriptor[e.ident]))
+        if (accept_path(load->file_names_by_descriptor[e.ident]))
         {
-          events.push_back({file_names_by_descriptor[e.ident],
+          events.push_back({load->file_names_by_descriptor[e.ident],
                            curr_time,
                            decode_flags(e.fflags)});
         }
@@ -353,7 +368,7 @@ namespace fsw
       vector<struct ::kevent> changes;
       vector<struct kevent> event_list;
 
-      for (const pair<int, string> &fd_path : file_names_by_descriptor)
+      for (const pair<int, string> &fd_path : load->file_names_by_descriptor)
       {
         struct kevent change;
 

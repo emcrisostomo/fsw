@@ -17,21 +17,9 @@
 #ifndef FSW_POLL_MONITOR_H
 #  define FSW_POLL_MONITOR_H
 
-#  ifdef HAVE_CONFIG_H
-#    include "config.h"
-#  endif
 #  include "monitor.h"
 #  include <sys/stat.h>
 #  include <ctime>
-#  include "libfsw_map.h"
-
-#  if defined HAVE_STRUCT_STAT_ST_MTIME
-#    define FSW_MTIME(stat) (stat.st_mtime)
-#    define FSW_CTIME(stat) (stat.st_ctime)
-#  elif defined HAVE_STRUCT_STAT_ST_MTIMESPEC
-#    define FSW_MTIME(stat) (stat.st_mtimespec.tv_sec)
-#    define FSW_CTIME(stat) (stat.st_ctimespec.tv_sec)
-#  endif
 
 namespace fsw
 {
@@ -61,10 +49,7 @@ namespace fsw
       time_t ctime;
     } watched_file_info;
 
-    typedef struct poll_monitor_data
-    {
-      fsw_hash_map<std::string, watched_file_info> tracked_files;
-    } poll_monitor_data;
+    struct poll_monitor_data;
 
     void scan(const std::string &path, poll_monitor_scan_callback fn);
     void collect_initial_data();

@@ -14,9 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#ifdef HAVE_CONFIG_H
+#  include "libfsw_config.h"
+#endif
+
 #include "poll_monitor.h"
 #include "c/libfsw_log.h"
 #include "path_utils.h"
+#include "libfsw_map.h"
 #include <unistd.h>
 #include <cstdlib>
 #include <fcntl.h>
@@ -24,8 +29,22 @@
 
 using namespace std;
 
+#if defined HAVE_STRUCT_STAT_ST_MTIME
+#  define FSW_MTIME(stat) (stat.st_mtime)
+#  define FSW_CTIME(stat) (stat.st_ctime)
+#elif defined HAVE_STRUCT_STAT_ST_MTIMESPEC
+#  define FSW_MTIME(stat) (stat.st_mtimespec.tv_sec)
+#  define FSW_CTIME(stat) (stat.st_ctimespec.tv_sec)
+#endif
+
 namespace fsw
 {
+
+  typedef struct poll_monitor::poll_monitor_data
+  {
+    fsw_hash_map<std::string, poll_monitor::watched_file_info> tracked_files;
+  }
+  poll_monitor_data;
 
   poll_monitor::poll_monitor(vector<string> paths,
                              FSW_EVENT_CALLBACK * callback,

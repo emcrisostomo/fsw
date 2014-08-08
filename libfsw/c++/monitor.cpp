@@ -14,9 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#ifdef HAVE_CONFIG_H
+#  include "libfsw_config.h"
+#endif
 #include "monitor.h"
 #include "libfsw_exception.h"
 #include <cstdlib>
+#ifdef HAVE_REGCOMP
+#  include <regex.h>
+#endif
+
 
 /*
  * Conditionally include monitor headers for default construction.
@@ -35,15 +42,14 @@ using namespace std;
 
 namespace fsw
 {
-#ifdef HAVE_REGCOMP
 
   struct compiled_monitor_filter
   {
+#ifdef HAVE_REGCOMP    
     regex_t regex;
     fsw_filter_type type;
-  };
-
 #endif
+  };
 
   monitor::monitor(std::vector<std::string> paths,
                    FSW_EVENT_CALLBACK * callback,

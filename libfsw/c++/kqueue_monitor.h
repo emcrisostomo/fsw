@@ -17,15 +17,9 @@
 #ifndef FSW_KQUEUE_MONITOR_H
 #  define FSW_KQUEUE_MONITOR_H
 
-#  ifdef HAVE_CONFIG_H
-#    include "config.h"
-#  endif
-
 #  ifdef HAVE_SYS_EVENT_H
 
 #    include "monitor.h"
-#    include "libfsw_map.h"
-#    include "libfsw_set.h"
 #    include <string>
 #    include <vector>
 #    include <sys/stat.h>
@@ -33,6 +27,8 @@
 
 namespace fsw
 {
+
+  struct kqueue_monitor_load;
 
   class kqueue_monitor : public monitor
   {
@@ -65,11 +61,7 @@ namespace fsw
 
     int kq = -1;
     // initial load
-    fsw_hash_map<std::string, int> descriptors_by_file_name;
-    fsw_hash_map<int, std::string> file_names_by_descriptor;
-    fsw_hash_set<int> descriptors_to_remove;
-    fsw_hash_set<int> descriptors_to_rescan;
-    fsw_hash_map<int, mode_t> file_modes;
+    kqueue_monitor_load * load;
 
     static const unsigned int MIN_SPIN_LATENCY = 1;
   };

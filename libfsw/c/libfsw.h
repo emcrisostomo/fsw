@@ -2,7 +2,7 @@
 #  define LIBFSW_H
 
 #  ifdef HAVE_CONFIG_H
-#    include "config.h"
+#    include "libfsw_config.h"
 #  endif
 #  include "cevent.h"
 #  include "cmonitor.h"

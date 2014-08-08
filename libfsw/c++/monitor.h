@@ -17,24 +17,16 @@
 #ifndef FSW__MONITOR_H
 #  define FSW__MONITOR_H
 
-#  ifdef HAVE_CONFIG_H
-#    include "config.h"
-#  endif
 #  include "filter.h"
 #  include <vector>
 #  include <string>
-#  ifdef HAVE_REGCOMP
-#    include <regex.h>
-#  endif
 #  include "event.h"
 
 namespace fsw
 {
   typedef void FSW_EVENT_CALLBACK(const std::vector<event> &, void *);
 
-#  ifdef HAVE_REGCOMP
   struct compiled_monitor_filter;
-#  endif
 
   class monitor
   {
@@ -70,9 +62,7 @@ namespace fsw
     bool follow_symlinks = false;
 
   private:
-#  ifdef HAVE_REGCOMP
     std::vector<compiled_monitor_filter> filters;
-#  endif
   };
 }
 
