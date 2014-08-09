@@ -17,14 +17,8 @@
 #ifndef FSW_FSEVENT_MONITOR_H
 #  define FSW_FSEVENT_MONITOR_H
 
-#  ifdef HAVE_CONFIG_H
-#    include "libfsw_config.h"
-#  endif
-
-#  ifdef HAVE_CORESERVICES_CORESERVICES_H
-
-#    include "monitor.h"
-#    include <CoreServices/CoreServices.h>
+#  include "monitor.h"
+#  include <CoreServices/CoreServices.h>
 
 namespace fsw
 {
@@ -56,5 +50,4 @@ namespace fsw
   };
 }
 
-#  endif  /* HAVE_CORESERVICES_CORESERVICES_H */
 #endif  /* FSW_FSEVENT_MONITOR_H */

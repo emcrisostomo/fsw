@@ -14,9 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "fsevent_monitor.h"
+#  ifdef HAVE_CONFIG_H
+#    include "libfsw_config.h"
+#  endif
 
-#ifdef HAVE_CORESERVICES_CORESERVICES_H
+#include "fsevent_monitor.h"
 
 #  include "libfsw_exception.h"
 #  include "c/libfsw_log.h"
@@ -198,5 +200,3 @@ namespace fsw
     }
   }
 }
-
-#endif  /* HAVE_CORESERVICES_CORESERVICES_H */
