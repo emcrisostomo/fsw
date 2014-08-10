@@ -56,6 +56,7 @@ AC_CHECK_HEADERS([unordered_map unordered_set])
 AC_CHECK_HEADERS([sys/inotify.h])
 
 AM_CONDITIONAL([USE_CORESERVICES], [test "x${ac_cv_header_CoreServices_CoreServices_h}" = "xyes"])
+AM_CONDITIONAL([USE_KQUEUE], [test "x${ac_cv_header_sys_event_h}" = "xyes"])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADER_STDBOOL
