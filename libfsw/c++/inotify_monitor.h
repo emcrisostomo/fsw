@@ -17,18 +17,12 @@
 #ifndef FSW_INOTIFY_MONITOR_H
 #  define FSW_INOTIFY_MONITOR_H
 
-#  ifdef HAVE_CONFIG_H
-#    include "libfsw_config.h"
-#  endif
-
-#  ifdef HAVE_SYS_INOTIFY_H
-
-#    include "monitor.h"
-#    include <sys/inotify.h>
-#    include <ctime>
-#    include <string>
-#    include <vector>
-#    include "libfsw_map.h"
+#  include "monitor.h"
+#  include <sys/inotify.h>
+#  include <ctime>
+#  include <string>
+#  include <vector>
+#  include "libfsw_map.h"
 
 namespace fsw
 {
@@ -61,5 +55,4 @@ namespace fsw
   };
 }
 
-#  endif  /* HAVE_SYS_INOTIFY_H */
 #endif  /* FSW_INOTIFY_MONITOR_H */

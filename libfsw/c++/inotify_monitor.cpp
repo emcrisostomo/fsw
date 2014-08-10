@@ -14,17 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#ifdef HAVE_CONFIG_H
+#  include "libfsw_config.h"
+#endif
+
 #include "inotify_monitor.h"
-
-#ifdef HAVE_SYS_INOTIFY_H
-
-#  include <limits.h>
-#  include <unistd.h>
-#  include <stdio.h>
-#  include <iostream>
-#  include <sstream>
-#  include "libfsw_exception.h"
-#  include "libfsw_log.h"
+#include <limits.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <iostream>
+#include <sstream>
+#include "libfsw_exception.h"
+#include "libfsw_log.h"
 
 using namespace std;
 
@@ -193,5 +194,3 @@ namespace fsw
     }
   }
 }
-
-#endif  /* HAVE_SYS_INOTIFY_H */

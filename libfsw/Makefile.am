@@ -28,14 +28,16 @@ libfsw_la_SOURCES += c++/libfsw_map.h c++/libfsw_set.h
 libfsw_la_SOURCES += c++/libfsw_exception.cpp
 libfsw_la_SOURCES += c++/event.cpp
 libfsw_la_SOURCES += c++/monitor.cpp
+libfsw_la_SOURCES += c++/poll_monitor.cpp
 if USE_CORESERVICES
   libfsw_la_SOURCES += c++/fsevent_monitor.cpp
 endif
 if USE_KQUEUE
   libfsw_la_SOURCES += c++/kqueue_monitor.cpp
 endif
-libfsw_la_SOURCES += c++/poll_monitor.cpp
-libfsw_la_SOURCES += c++/inotify_monitor.cpp
+if USE_INOTIFY
+  libfsw_la_SOURCES += c++/inotify_monitor.cpp
+endif
 libfsw_la_SOURCES += c++/path_utils.cpp c++/path_utils.h
 
 libfsw_cdir = $(pkgincludedir)/c
@@ -49,5 +51,8 @@ endif
 if USE_KQUEUE
   libfsw_cpp_HEADERS += c++/kqueue_monitor.h
 endif
-libfsw_cpp_HEADERS += c++/poll_monitor.h c++/inotify_monitor.h
+if USE_INOTIFY
+  libfsw_cpp_HEADERS += c++/inotify_monitor.h
+endif
+libfsw_cpp_HEADERS += c++/poll_monitor.h
 libfsw_cpp_HEADERS += c++/filter.h c++/event.h c++/libfsw_exception.h

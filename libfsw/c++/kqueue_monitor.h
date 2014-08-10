@@ -17,13 +17,11 @@
 #ifndef FSW_KQUEUE_MONITOR_H
 #  define FSW_KQUEUE_MONITOR_H
 
-#  ifdef HAVE_SYS_EVENT_H
-
-#    include "monitor.h"
-#    include <string>
-#    include <vector>
-#    include <sys/stat.h>
-#    include <sys/event.h>
+#  include "monitor.h"
+#  include <string>
+#  include <vector>
+#  include <sys/stat.h>
+#  include <sys/event.h>
 
 namespace fsw
 {
@@ -67,5 +65,4 @@ namespace fsw
   };
 }
 
-#  endif  /* HAVE_SYS_EVENT_H */
 #endif  /* FSW_KQUEUE_MONITOR_H */
