@@ -24,23 +24,34 @@
 #include <stdio.h>
 #include <iostream>
 #include <sstream>
+#include <ctime>
 #include "libfsw_exception.h"
 #include "libfsw_log.h"
+#include "libfsw_map.h"
 
 using namespace std;
 
 namespace fsw
 {
 
+  struct inotify_monitor_load
+  {
+    int inotify_monitor_handle = -1;
+    std::vector<event> events;
+    fsw_hash_map<int, std::string> file_names_by_descriptor;
+    time_t curr_time;
+  };
+
   static const unsigned int BUFFER_SIZE = (10 * ((sizeof (struct inotify_event)) + NAME_MAX + 1));
 
   inotify_monitor::inotify_monitor(vector<string> paths_to_monitor,
                                    FSW_EVENT_CALLBACK * callback,
                                    void * context) :
-    monitor(paths_to_monitor, callback, context)
+    monitor(paths_to_monitor, callback, context), load(new inotify_monitor_load())
   {
-    inotify_monitor = ::inotify_init();
-    if (inotify_monitor == -1)
+    load->inotify_monitor_handle = ::inotify_init();
+
+    if (load->inotify_monitor_handle == -1)
     {
       ::perror("inotify_init");
       throw libfsw_exception("Cannot initialize inotify.");
@@ -50,26 +61,28 @@ namespace fsw
   inotify_monitor::~inotify_monitor()
   {
     // close inotify watchers
-    for (auto inotify_desc_pair : file_names_by_descriptor)
+    for (auto inotify_desc_pair : load->file_names_by_descriptor)
     {
-      if (::inotify_rm_watch(inotify_monitor, inotify_desc_pair.first))
+      if (::inotify_rm_watch(load->inotify_monitor_handle, inotify_desc_pair.first))
       {
         ::perror("rm");
       }
     }
 
     // close inotify
-    if (inotify_monitor > 0)
+    if (load->inotify_monitor_handle > 0)
     {
-      ::close(inotify_monitor);
+      ::close(load->inotify_monitor_handle);
     }
+
+    delete load;
   }
 
   void inotify_monitor::scan(const string &path)
   {
     if (!accept_path(path)) return;
 
-    int inotify_desc = ::inotify_add_watch(inotify_monitor, path.c_str(), IN_ALL_EVENTS);
+    int inotify_desc = ::inotify_add_watch(load->inotify_monitor_handle, path.c_str(), IN_ALL_EVENTS);
 
     if (inotify_desc == -1)
     {
@@ -77,7 +90,7 @@ namespace fsw
       throw libfsw_exception("Cannot add watch.");
     }
 
-    file_names_by_descriptor[inotify_desc] = path;
+    load->file_names_by_descriptor[inotify_desc] = path;
 
     std::ostringstream s;
     s << "Watching " << path << ".\n";
@@ -104,7 +117,7 @@ namespace fsw
 
     if (flags.size())
     {
-      events.push_back({file_names_by_descriptor[event->wd], curr_time, flags});
+      load->events.push_back({load->file_names_by_descriptor[event->wd], load->curr_time, flags});
     }
   }
 
@@ -126,7 +139,7 @@ namespace fsw
     if (flags.size())
     {
       ostringstream path_stream;
-      path_stream << file_names_by_descriptor[event->wd];
+      path_stream << load->file_names_by_descriptor[event->wd];
 
       if (event->len > 1)
       {
@@ -134,7 +147,7 @@ namespace fsw
         path_stream << event->name;
       }
 
-      events.push_back({path_stream.str(), curr_time, flags});
+      load->events.push_back({path_stream.str(), load->curr_time, flags});
     }
   }
 
@@ -151,10 +164,10 @@ namespace fsw
 
   void inotify_monitor::notify_events()
   {
-    if (events.size())
+    if (load->events.size())
     {
-      callback(events);
-      events.clear();
+      callback(load->events);
+      load->events.clear();
     }
   }
 
@@ -166,7 +179,9 @@ namespace fsw
 
     while (true)
     {
-      ssize_t record_num = ::read(inotify_monitor, buffer, BUFFER_SIZE);
+      ssize_t record_num = ::read(load->inotify_monitor_handle,
+                                  buffer,
+                                  BUFFER_SIZE);
 
       if (!record_num)
       {
@@ -179,7 +194,7 @@ namespace fsw
         throw libfsw_exception("::read() on inotify descriptor returned -1.");
       }
 
-      time(&curr_time);
+      time(&load->curr_time);
 
       for (char *p = buffer; p < buffer + record_num;)
       {

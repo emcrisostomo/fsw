@@ -19,14 +19,13 @@
 
 #  include "monitor.h"
 #  include <sys/inotify.h>
-#  include <ctime>
 #  include <string>
 #  include <vector>
-#  include "libfsw_map.h"
 
 namespace fsw
 {
-
+  struct inotify_monitor_load;
+  
   class inotify_monitor : public monitor
   {
   public:
@@ -48,10 +47,7 @@ namespace fsw
     void preprocess_node_event(struct inotify_event * event);
     void scan(const std::string &path);
 
-    int inotify_monitor = -1;
-    std::vector<event> events;
-    fsw_hash_map<int, std::string> file_names_by_descriptor;
-    time_t curr_time;
+    inotify_monitor_load * load;
   };
 }
 
