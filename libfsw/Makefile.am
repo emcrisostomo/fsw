@@ -22,6 +22,7 @@ libtool: $(LIBTOOL_DEPS)
 	$(SHELL) ./config.status libtool
 
 lib_LTLIBRARIES = libfsw.la
+
 libfsw_la_SOURCES  = c/libfsw.cpp
 libfsw_la_SOURCES += c/libfsw_log.cpp c/libfsw_log.h
 libfsw_la_SOURCES += c++/libfsw_map.h c++/libfsw_set.h
@@ -40,10 +41,14 @@ if USE_INOTIFY
 endif
 libfsw_la_SOURCES += c++/path_utils.cpp c++/path_utils.h
 
+# Define separate include directories for C and C++ headers.
 libfsw_cdir = $(pkgincludedir)/c
+libfsw_cppdir = $(pkgincludedir)/c++
+
+# Distribute C headers.
 libfsw_c_HEADERS = c/libfsw.h c/cevent.h c/cfilter.h c/cmonitor.h
 
-libfsw_cppdir = $(pkgincludedir)/c++
+# Distribute C++ headers conditionally adding available backends.
 libfsw_cpp_HEADERS  = c++/monitor.h
 if USE_CORESERVICES
   libfsw_cpp_HEADERS += c++/fsevent_monitor.h 
