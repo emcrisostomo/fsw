@@ -39,8 +39,8 @@ namespace fsw
     void run();
 
   private:
-    kqueue_monitor(const kqueue_monitor& orig);
-    kqueue_monitor& operator=(const kqueue_monitor & that);
+    kqueue_monitor(const kqueue_monitor& orig) = delete;
+    kqueue_monitor& operator=(const kqueue_monitor & that) = delete;
 
     void initialize_kqueue();
     bool scan(const std::string &path);

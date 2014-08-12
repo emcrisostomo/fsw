@@ -35,8 +35,8 @@ namespace fsw
     void set_numeric_event(bool numeric);
 
   private:
-    fsevent_monitor(const fsevent_monitor& orig);
-    fsevent_monitor& operator=(const fsevent_monitor & that);
+    fsevent_monitor(const fsevent_monitor& orig) = delete;
+    fsevent_monitor& operator=(const fsevent_monitor & that) = delete;
 
     static void fsevent_callback(ConstFSEventStreamRef streamRef,
                                  void *clientCallBackInfo,

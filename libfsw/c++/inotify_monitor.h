@@ -37,8 +37,8 @@ namespace fsw
     void run();
 
   private:
-    inotify_monitor(const inotify_monitor& orig);
-    inotify_monitor& operator=(const inotify_monitor & that);
+    inotify_monitor(const inotify_monitor& orig) = delete;
+    inotify_monitor& operator=(const inotify_monitor & that) = delete;
 
     void collect_initial_data();
     void notify_events();

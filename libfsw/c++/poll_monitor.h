@@ -36,8 +36,8 @@ namespace fsw
     static const unsigned int MIN_POLL_LATENCY = 1;
 
   private:
-    poll_monitor(const poll_monitor& orig);
-    poll_monitor& operator=(const poll_monitor & that);
+    poll_monitor(const poll_monitor& orig) = delete;
+    poll_monitor& operator=(const poll_monitor & that) = delete;
 
     typedef bool (poll_monitor::*poll_monitor_scan_callback)(
       const std::string &path,
