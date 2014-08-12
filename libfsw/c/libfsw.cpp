@@ -169,8 +169,7 @@ int create_monitor(const FSW_HANDLE handle, const fsw_monitor_type type)
   }
   catch (libfsw_exception ex)
   {
-    // TODO: Add an int member to libfsw_exception
-    return fsw_set_last_error(FSW_ERR_UNKNOWN_MONITOR_TYPE);
+    return fsw_set_last_error(int(ex));
   }
   catch (int error)
   {

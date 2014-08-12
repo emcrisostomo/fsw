@@ -21,17 +21,27 @@ using namespace std;
 namespace fsw
 {
 
-  libfsw_exception::libfsw_exception(string cause) :
-    cause(cause)
+  libfsw_exception::libfsw_exception(string cause, int code) :
+    cause(cause), code(code)
   {
   }
 
-  const char * libfsw_exception::what() const throw ()
+  const char * libfsw_exception::what() const noexcept
   {
     return (string("Error: ") + this->cause).c_str();
   }
 
-  libfsw_exception::~libfsw_exception() throw ()
+  int libfsw_exception::error_code() const noexcept
+  {
+    return code;
+  }
+
+  libfsw_exception::operator int() const noexcept
+  {
+    return code;
+  }
+
+  libfsw_exception::~libfsw_exception()
   {
   }
 }

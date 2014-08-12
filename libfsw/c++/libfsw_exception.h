@@ -26,11 +26,17 @@ namespace fsw
   class libfsw_exception : public std::exception
   {
   public:
-    libfsw_exception(std::string cause);
-    virtual const char * what() const throw ();
-    virtual ~libfsw_exception() throw ();
+    // TODO default code value should be taken from an error header
+    libfsw_exception(std::string cause, int code = 0);
+    virtual const char * what() const noexcept;
+    virtual int error_code() const noexcept;
+    virtual ~libfsw_exception();
+    
+    explicit operator int() const noexcept;
+    
   private:
     const std::string cause;
+    const int code;
   };
 }
 
