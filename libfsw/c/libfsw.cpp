@@ -27,6 +27,7 @@
 #  include "../c++/inotify_monitor.h"
 #endif
 #include "../c++/poll_monitor.h"
+#include "../c++/libfsw_exception.h"
 
 using namespace std;
 using namespace fsw;
@@ -61,11 +62,6 @@ FSW_EVENT_CALLBACK libfsw_cpp_callback_proxy;
 FSW_SESSION & get_session(const FSW_HANDLE handle);
 
 int create_monitor(FSW_HANDLE handle, const fsw_monitor_type type);
-monitor * create_default_monitor(const FSW_SESSION & session);
-monitor * create_fsevents_monitor(const FSW_SESSION & session);
-monitor * create_kqueue_monitor(const FSW_SESSION & session);
-monitor * create_poll_monitor(const FSW_SESSION & session);
-monitor * create_inotify_monitor(const FSW_SESSION & session);
 
 void libfsw_cpp_callback_proxy(const std::vector<event> & events,
                                void * handle_ptr)
@@ -164,29 +160,17 @@ int create_monitor(const FSW_HANDLE handle, const fsw_monitor_type type)
     if (!session.paths.size())
       return fsw_set_last_error(int(FSW_ERR_PATHS_NOT_SET));
 
-    monitor * current_monitor;
-    switch (type)
-    {
-    case fsw_monitor_type::fsevents_monitor_type:
-      current_monitor = create_fsevents_monitor(session);
-      break;
-    case fsw_monitor_type::kqueue_monitor_type:
-      current_monitor = create_kqueue_monitor(session);
-      break;
-    case fsw_monitor_type::inotify_monitor_type:
-      current_monitor = create_inotify_monitor(session);
-      break;
-    case fsw_monitor_type::poll_monitor_type:
-      current_monitor = create_poll_monitor(session);
-      break;
-    case fsw_monitor_type::system_default_monitor_type:
-      current_monitor = create_default_monitor(session);
-      break;
-    default:
-      throw int(FSW_ERR_UNKNOWN_MONITOR_TYPE);
-    }
-
+    FSW_HANDLE * handle_ptr = new FSW_HANDLE(session.handle);
+    monitor * current_monitor = monitor::create_monitor(type, 
+                                                        session.paths, 
+                                                        libfsw_cpp_callback_proxy, 
+                                                        handle_ptr);
     session.monitor = current_monitor;
+  }
+  catch (libfsw_exception ex)
+  {
+    // TODO: Add an int member to libfsw_exception
+    return fsw_set_last_error(FSW_ERR_UNKNOWN_MONITOR_TYPE);
   }
   catch (int error)
   {
@@ -194,63 +178,6 @@ int create_monitor(const FSW_HANDLE handle, const fsw_monitor_type type)
   }
 
   return fsw_set_last_error(FSW_OK);
-}
-
-monitor * create_default_monitor(const FSW_SESSION & session)
-{
-  FSW_HANDLE * handle_ptr = new FSW_HANDLE(session.handle);
-
-  return monitor::create_default_monitor(session.paths,
-                                         libfsw_cpp_callback_proxy,
-                                         handle_ptr);
-}
-
-monitor * create_fsevents_monitor(const FSW_SESSION & session)
-{
-#if defined(HAVE_CORESERVICES_CORESERVICES_H)
-  FSW_HANDLE * handle_ptr = new FSW_HANDLE(session.handle);
-
-  return new fsevent_monitor(session.paths,
-                             libfsw_cpp_callback_proxy,
-                             static_cast<void *> (handle_ptr));
-#else
-  throw int(FSW_ERR_UNKNOWN_MONITOR);
-#endif
-}
-
-monitor * create_kqueue_monitor(const FSW_SESSION & session)
-{
-#if defined(HAVE_SYS_EVENT_H)
-  FSW_HANDLE * handle_ptr = new FSW_HANDLE(session.handle);
-
-  return new kqueue_monitor(session.paths,
-                            libfsw_cpp_callback_proxy,
-                            static_cast<void *> (handle_ptr));
-#else
-  throw int(FSW_ERR_UNKNOWN_MONITOR);
-#endif
-}
-
-monitor * create_poll_monitor(const FSW_SESSION & session)
-{
-  FSW_HANDLE * handle_ptr = new FSW_HANDLE(session.handle);
-
-  return new poll_monitor(session.paths,
-                          libfsw_cpp_callback_proxy,
-                          static_cast<void *> (handle_ptr));
-}
-
-monitor * create_inotify_monitor(const FSW_SESSION & session)
-{
-#if defined(HAVE_SYS_INOTIFY_H)
-  FSW_HANDLE * handle_ptr = new FSW_HANDLE(session.handle);
-
-  return new inotify_monitor(session.paths,
-                             libfsw_cpp_callback_proxy,
-                             static_cast<void *> (handle_ptr));
-#else
-  throw int(FSW_ERR_UNKNOWN_MONITOR);
-#endif
 }
 
 int fsw_add_path(const FSW_HANDLE handle, const char * path)
