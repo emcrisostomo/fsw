@@ -59,7 +59,7 @@ namespace fsw
   {
     if (callback == nullptr)
     {
-      throw libfsw_exception("Callback cannot be null.");
+      throw libfsw_exception("Callback cannot be null.", FSW_ERR_CALLBACK_NOT_SET);
     }
   }
 
@@ -67,7 +67,7 @@ namespace fsw
   {
     if (latency < 0)
     {
-      throw libfsw_exception("Latency cannot be negative.");
+      throw libfsw_exception("Latency cannot be negative.", FSW_ERR_INVALID_LATENCY);
     }
 
     this->latency = latency;
@@ -89,7 +89,7 @@ namespace fsw
     if (::regcomp(&regex, filter.text.c_str(), flags))
     {
       string err = "An error occurred during the compilation of " + filter.text;
-      throw libfsw_exception(err);
+      throw libfsw_exception(err, FSW_ERR_INVALID_REGEX);
     }
 
     this->filters.push_back({regex, filter.type});
@@ -181,28 +181,28 @@ namespace fsw
 #if defined(HAVE_CORESERVICES_CORESERVICES_H)
       return new fsevent_monitor(paths, callback, context);
 #else
-      throw libfsw_exception("Unsupported monitor.");
+      throw libfsw_exception("Unsupported monitor.", FSW_ERR_UNKNOWN_MONITOR_TYPE);
 #endif      
 
     case kqueue_monitor_type:
 #if defined(HAVE_SYS_EVENT_H)
       return new kqueue_monitor(paths, callback, context);
 #else
-      throw libfsw_exception("Unsupported monitor.");
+      throw libfsw_exception("Unsupported monitor.", FSW_ERR_UNKNOWN_MONITOR_TYPE);
 #endif      
 
     case inotify_monitor_type:
 #if defined(HAVE_SYS_INOTIFY_H)
       return new inotify_monitor(paths, callback, context);
 #else
-      throw libfsw_exception("Unsupported monitor.");
+      throw libfsw_exception("Unsupported monitor.", FSW_ERR_UNKNOWN_MONITOR_TYPE);
 #endif      
 
     case poll_monitor_type:
       return new poll_monitor(paths, callback, context);
 
     default:
-      throw libfsw_exception("Unsupported monitor.");
+      throw libfsw_exception("Unsupported monitor.", FSW_ERR_UNKNOWN_MONITOR_TYPE);
     }
   }
 }
