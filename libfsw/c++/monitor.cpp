@@ -30,13 +30,14 @@
  */
 #if defined(HAVE_CORESERVICES_CORESERVICES_H)
 #  include "fsevent_monitor.h"
-#elif defined(HAVE_SYS_EVENT_H)
-#  include "kqueue_monitor.h"
-#elif defined(HAVE_SYS_INOTIFY_H)
-#  include "inotify_monitor.h"
-#else
-#  include "poll_monitor.h"
 #endif
+#if defined(HAVE_SYS_EVENT_H)
+#  include "kqueue_monitor.h"
+#endif
+#if defined(HAVE_SYS_INOTIFY_H)
+#  include "inotify_monitor.h"
+#endif
+#include "poll_monitor.h"
 
 using namespace std;
 
@@ -164,5 +165,44 @@ namespace fsw
 #else
     return new poll_monitor(paths, callback, context);
 #endif
+  }
+
+  monitor * monitor::create_monitor(fsw_monitor_type type,
+                                    std::vector<std::string> paths,
+                                    FSW_EVENT_CALLBACK * callback,
+                                    void * context)
+  {
+    switch (type)
+    {
+    case system_default_monitor_type:
+      return monitor::create_default_monitor(paths, callback, context);
+
+    case fsevents_monitor_type:
+#if defined(HAVE_CORESERVICES_CORESERVICES_H)
+      return new fsevent_monitor(paths, callback, context);
+#else
+      throw libfsw_exception("Unsupported monitor.");
+#endif      
+
+    case kqueue_monitor_type:
+#if defined(HAVE_SYS_EVENT_H)
+      return new kqueue_monitor(paths, callback, context);
+#else
+      throw libfsw_exception("Unsupported monitor.");
+#endif      
+
+    case inotify_monitor_type:
+#if defined(HAVE_SYS_INOTIFY_H)
+      return new inotify_monitor(paths, callback, context);
+#else
+      throw libfsw_exception("Unsupported monitor.");
+#endif      
+
+    case poll_monitor_type:
+      return new poll_monitor(paths, callback, context);
+
+    default:
+      throw libfsw_exception("Unsupported monitor.");
+    }
   }
 }

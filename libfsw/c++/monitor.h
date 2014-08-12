@@ -21,6 +21,7 @@
 #  include <vector>
 #  include <string>
 #  include "event.h"
+#  include "../c/cmonitor.h"
 
 namespace fsw
 {
@@ -48,6 +49,11 @@ namespace fsw
     static monitor * create_default_monitor(std::vector<std::string> paths,
                                             FSW_EVENT_CALLBACK * callback,
                                             void * context = nullptr);
+
+    static monitor * create_monitor(fsw_monitor_type type,
+                                    std::vector<std::string> paths,
+                                    FSW_EVENT_CALLBACK * callback,
+                                    void * context = nullptr);
 
   protected:
     bool accept_path(const std::string &path);
