@@ -17,6 +17,7 @@
 #ifndef LIBFSW_EXCEPTION_H
 #  define LIBFSW_EXCEPTION_H
 
+#  include "../c/error.h"
 #  include <exception>
 #  include <string>
 
@@ -27,13 +28,13 @@ namespace fsw
   {
   public:
     // TODO default code value should be taken from an error header
-    libfsw_exception(std::string cause, int code = 0);
+    libfsw_exception(std::string cause, int code = FSW_ERR_UNKNOWN_ERROR);
     virtual const char * what() const noexcept;
     virtual int error_code() const noexcept;
     virtual ~libfsw_exception();
-    
+
     explicit operator int() const noexcept;
-    
+
   private:
     const std::string cause;
     const int code;
