@@ -205,4 +205,10 @@ namespace fsw
       throw libfsw_exception("Unsupported monitor.", FSW_ERR_UNKNOWN_MONITOR_TYPE);
     }
   }
+  
+  void monitor::start()
+  {
+    lock_guard<mutex> run_guard(run_mutex);
+    this->run();
+  }
 }

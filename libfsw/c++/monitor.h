@@ -20,6 +20,7 @@
 #  include "filter.h"
 #  include <vector>
 #  include <string>
+#  include <mutex>
 #  include "event.h"
 #  include "../c/cmonitor.h"
 
@@ -45,8 +46,7 @@ namespace fsw
     void set_follow_symlinks(bool follow);
     void * get_context();
     void set_context(void * context);
-
-    virtual void run() = 0;
+    void start();
 
     static monitor * create_default_monitor(std::vector<std::string> paths,
                                             FSW_EVENT_CALLBACK * callback,
@@ -61,6 +61,8 @@ namespace fsw
     bool accept_path(const std::string &path);
     bool accept_path(const char *path);
 
+    virtual void run() = 0;
+
   protected:
     std::vector<std::string> paths;
     FSW_EVENT_CALLBACK * callback;
@@ -70,6 +72,7 @@ namespace fsw
     bool follow_symlinks = false;
 
   private:
+    std::mutex run_mutex;
     std::vector<compiled_monitor_filter> filters;
   };
 }
