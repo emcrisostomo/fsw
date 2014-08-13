@@ -426,7 +426,7 @@ static void start_monitor(int argc, char ** argv, int optind)
   active_monitor->set_filters(filters);
   active_monitor->set_follow_symlinks(Lflag);
 
-  active_monitor->run();
+  active_monitor->start();
 }
 
 static void parse_opts(int argc, char ** argv)

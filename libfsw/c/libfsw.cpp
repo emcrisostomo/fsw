@@ -332,12 +332,7 @@ int fsw_run_monitor(const FSW_HANDLE handle)
     session.monitor->set_recursive(session.recursive);
     session.running = true;
 
-#ifdef HAVE_CXX_THREAD
-    std::lock_guard<std::mutex> thread_lock(thread_mutex);
-    monitor_threads[handle] = thread(&monitor::run, session.monitor);
-#else
-    session.monitor->run();
-#endif
+    session.monitor->start();
   }
   catch (system_error & se)
   {
