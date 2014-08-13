@@ -36,6 +36,8 @@ namespace fsw
             FSW_EVENT_CALLBACK * callback,
             void * context = nullptr);
     virtual ~monitor();
+    monitor(const monitor& orig) = delete;
+    monitor& operator=(const monitor & that) = delete;
     void set_latency(double latency);
     void set_recursive(bool recursive);
     void add_filter(const monitor_filter &filter);
