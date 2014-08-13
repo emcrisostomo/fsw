@@ -64,6 +64,7 @@ typedef struct FSW_SESSION
 
 static bool srand_initialized = false;
 static fsw_hash_map<FSW_HANDLE, FSW_SESSION> sessions;
+static fsw_hash_map<FSW_HANDLE, unique_ptr<mutex>> session_mutexes;
 #ifdef HAVE_CXX_THREAD
 static fsw_hash_map<FSW_HANDLE, thread> monitor_threads;
 #endif
@@ -148,14 +149,17 @@ FSW_HANDLE fsw_init_session(const fsw_monitor_type type)
   do
   {
     handle = rand();
-  } while (sessions.find(handle) != sessions.end());
+  }
+  while (sessions.find(handle) != sessions.end());
 
   FSW_SESSION session{};
 
   session.handle = handle;
   session.type = type;
 
+  // Store the handle and a mutex to guard access to session instances.
   sessions[handle] = session;
+  session_mutexes[handle] = unique_ptr<mutex>(new mutex);
 
   return handle;
 }
@@ -177,9 +181,9 @@ int create_monitor(const FSW_HANDLE handle, const fsw_monitor_type type)
       return fsw_set_last_error(int(FSW_ERR_PATHS_NOT_SET));
 
     FSW_HANDLE * handle_ptr = new FSW_HANDLE(session.handle);
-    monitor * current_monitor = monitor::create_monitor(type, 
-                                                        session.paths, 
-                                                        libfsw_cpp_callback_proxy, 
+    monitor * current_monitor = monitor::create_monitor(type,
+                                                        session.paths,
+                                                        libfsw_cpp_callback_proxy,
                                                         handle_ptr);
     session.monitor = current_monitor;
   }
@@ -308,7 +312,7 @@ int fsw_add_filter(const FSW_HANDLE handle,
   return fsw_set_last_error(FSW_OK);
 }
 
-int fsw_run_monitor(const FSW_HANDLE handle)
+int fsw_start_monitor(const FSW_HANDLE handle)
 {
   try
   {
@@ -318,6 +322,9 @@ int fsw_run_monitor(const FSW_HANDLE handle)
     if (session.running)
       return fsw_set_last_error(int(FSW_ERR_MONITOR_ALREADY_RUNNING));
 
+    unique_ptr<mutex> & sm = session_mutexes[handle];
+    lock_guard<mutex> lock_sm(*sm.get());
+    
 #ifdef HAVE_CXX_THREAD
     if (monitor_threads.find(handle) != monitor_threads.end())
       return fsw_set_last_error(int(FSW_ERR_STALE_MONITOR_THREAD));
@@ -379,7 +386,12 @@ int fsw_destroy_session(const FSW_HANDLE handle)
   {
     std::lock_guard<std::mutex> session_lock(session_mutex);
     FSW_SESSION session = get_session(handle);
+
+    unique_ptr<mutex> & sm = session_mutexes[handle];
+    lock_guard<mutex> sm_lock(*sm.get());
+
     sessions.erase(handle);
+    session_mutexes.erase(handle);
 
     if (session.monitor)
     {
