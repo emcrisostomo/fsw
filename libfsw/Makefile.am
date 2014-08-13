@@ -46,7 +46,7 @@ libfsw_cdir = $(pkgincludedir)/c
 libfsw_cppdir = $(pkgincludedir)/c++
 
 # Distribute C headers.
-libfsw_c_HEADERS = c/libfsw.h c/cevent.h c/cfilter.h c/cmonitor.h
+libfsw_c_HEADERS = c/libfsw.h c/cevent.h c/cfilter.h c/cmonitor.h c/error.h
 
 # Distribute C++ headers conditionally adding available backends.
 libfsw_cpp_HEADERS  = c++/monitor.h
