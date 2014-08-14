@@ -87,22 +87,6 @@ AC_TYPE_SIZE_T
 AC_TYPE_UINT32_T
 AC_TYPE_MODE_T
 
-AC_CHECK_MEMBERS([struct stat.st_mtime],
-   [],
-   [],
-   [
-     AC_INCLUDES_DEFAULT
-     #include <sys/stat.h>
-   ])
-
-AC_CHECK_MEMBERS([struct stat.st_mtimespec],
-   [],
-   [],
-   [
-     AC_INCLUDES_DEFAULT
-     #include <sys/stat.h>
-   ])
-
 # Checks for library functions.
 AC_FUNC_STRTOD
 AC_CHECK_FUNCS([getopt_long])
