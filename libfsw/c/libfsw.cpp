@@ -67,7 +67,6 @@ static fsw_hash_map<FSW_HANDLE, unique_ptr<FSW_SESSION>> sessions;
 static fsw_hash_map<FSW_HANDLE, unique_ptr<mutex>> session_mutexes;
 // TODO Check if HAVE_CXX_THREAD is still used
 static std::mutex session_mutex;
-static std::mutex thread_mutex;
 #if defined(HAVE_CXX_THREAD_LOCAL)
 static FSW_THREAD_LOCAL unsigned int last_error;
 #endif
