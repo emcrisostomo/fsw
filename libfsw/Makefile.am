@@ -41,6 +41,12 @@ if USE_INOTIFY
 endif
 libfsw_la_SOURCES += c++/path_utils.cpp c++/path_utils.h
 
+libfsw_la_LDFLAGS =
+
+if USE_CORESERVICES
+  libfsw_la_LDFLAGS += -framework CoreServices
+endif
+
 # Define separate include directories for C and C++ headers.
 libfsw_cdir = $(pkgincludedir)/c
 libfsw_cppdir = $(pkgincludedir)/c++

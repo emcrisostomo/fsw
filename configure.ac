@@ -80,9 +80,6 @@ AX_CXXFLAGS_WARN_ALL
 
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h unistd.h getopt.h fcntl.h sys/time.h])
-AC_CHECK_HEADERS([CoreServices/CoreServices.h])
-
-AM_CONDITIONAL([USE_CORESERVICES], [test "x${ac_cv_header_CoreServices_CoreServices_h}" = "xyes"])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADER_STDBOOL

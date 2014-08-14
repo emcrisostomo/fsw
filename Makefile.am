@@ -29,12 +29,6 @@ fsw_SOURCES  = fsw.cpp fsw.h fsw_log.cpp fsw_log.h
 # Link fsw against dependent libraries
 fsw_LDADD = libfsw/libfsw.la
 
-fsw_LDFLAGS =
-
-if USE_CORESERVICES
-  fsw_LDFLAGS += -framework CoreServices
-endif
-
 man_MANS = fsw.7
 EXTRA_DIST = $(man_MANS)
 dist_doc_DATA  = README.bsd README.freebsd README.gnu-build-system README.md
