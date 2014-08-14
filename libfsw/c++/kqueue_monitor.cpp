@@ -28,7 +28,7 @@
 #  include "path_utils.h"
 #  include <iostream>
 #  include <sys/types.h>
-#  include <sys/time.h>
+#  include <ctime>
 #  include <cstdio>
 #  include <cmath>
 #  include <unistd.h>
