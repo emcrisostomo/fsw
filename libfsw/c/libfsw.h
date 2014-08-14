@@ -45,7 +45,6 @@ extern "C"
                               const bool follow_symlinks);
   int fsw_add_filter(const FSW_HANDLE handle, const fsw_cmonitor_filter filter);
   int fsw_start_monitor(const FSW_HANDLE handle);
-  int fsw_monitor_join(const FSW_HANDLE handle);
   int fsw_destroy_session(const FSW_HANDLE handle);
   int fsw_set_last_error(const int error);
   int fsw_last_error();

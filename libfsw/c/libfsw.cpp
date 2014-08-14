@@ -65,9 +65,7 @@ typedef struct FSW_SESSION
 static bool srand_initialized = false;
 static fsw_hash_map<FSW_HANDLE, unique_ptr<FSW_SESSION>> sessions;
 static fsw_hash_map<FSW_HANDLE, unique_ptr<mutex>> session_mutexes;
-#ifdef HAVE_CXX_THREAD
-static fsw_hash_map<FSW_HANDLE, thread> monitor_threads;
-#endif
+// TODO Check if HAVE_CXX_THREAD is still used
 static std::mutex session_mutex;
 static std::mutex thread_mutex;
 #if defined(HAVE_CXX_THREAD_LOCAL)
@@ -329,11 +327,6 @@ int fsw_start_monitor(const FSW_HANDLE handle)
 
     session_lock.unlock();
 
-#ifdef HAVE_CXX_THREAD
-    if (monitor_threads.find(handle) != monitor_threads.end())
-      return fsw_set_last_error(int(FSW_ERR_STALE_MONITOR_THREAD));
-#endif
-
     if (!session->monitor)
       create_monitor(handle, session->type);
 
@@ -355,33 +348,6 @@ int fsw_start_monitor(const FSW_HANDLE handle)
   }
 
   return fsw_set_last_error(FSW_OK);
-}
-
-int fsw_monitor_join(const FSW_HANDLE handle)
-{
-#ifdef HAVE_CXX_THREAD
-  try
-  {
-    std::lock_guard<std::mutex> session_lock(thread_mutex);
-
-    if (monitor_threads.find(handle) == monitor_threads.end())
-      return fsw_set_last_error(int(FSW_ERR_UNKNOWN_MONITOR));
-
-    monitor_threads[handle].join();
-  }
-  catch (system_error & se)
-  {
-    return fsw_set_last_error(int(FSW_ERR_THREAD_FAULT));
-  }
-  catch (int error)
-  {
-    return fsw_set_last_error(error);
-  }
-
-  return fsw_set_last_error(FSW_OK);
-#else
-  return fsw_set_last_error(FSW_ERR_UNSUPPORTED_OPERATION);
-#endif
 }
 
 int fsw_destroy_session(const FSW_HANDLE handle)
