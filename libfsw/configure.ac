@@ -50,10 +50,10 @@ AX_CXXFLAGS_WARN_ALL
 # Checks for libraries.
 
 # Checks for header files.
-AC_CHECK_HEADERS([stdlib.h unistd.h getopt.h fcntl.h sys/event.h sys/time.h])
+AC_CHECK_HEADERS([stdlib.h unistd.h fcntl.h])
+AC_CHECK_HEADERS([sys/event.h sys/inotify.h])
 AC_CHECK_HEADERS([CoreServices/CoreServices.h])
 AC_CHECK_HEADERS([unordered_map unordered_set])
-AC_CHECK_HEADERS([sys/inotify.h])
 
 AM_CONDITIONAL([USE_CORESERVICES], [test "x${ac_cv_header_CoreServices_CoreServices_h}" = "xyes"])
 AM_CONDITIONAL([USE_KQUEUE], [test "x${ac_cv_header_sys_event_h}" = "xyes"])
@@ -83,7 +83,6 @@ AC_CHECK_MEMBERS([struct stat.st_mtimespec],
 
 # Checks for library functions.
 AC_FUNC_STRTOD
-AC_CHECK_FUNCS([getopt_long])
 AC_CHECK_FUNCS(
   [realpath],
   ,
