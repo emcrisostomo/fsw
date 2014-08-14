@@ -32,9 +32,6 @@
 #ifdef HAVE_GETOPT_LONG
 #  include <getopt.h>
 #endif
-#ifdef HAVE_SYS_EVENT_H
-#  include "libfsw/c++/kqueue_monitor.h"
-#endif
 
 using namespace std;
 
@@ -401,7 +398,7 @@ static void start_monitor(int argc, char ** argv, int optind)
   else if (kflag)
   {
 #ifdef HAVE_SYS_EVENT_H
-    active_monitor = new fsw::kqueue_monitor(paths, process_events);
+    active_monitor = fsw::monitor::create_monitor(kqueue_monitor_type, paths, process_events);
 #endif
   }
   else
