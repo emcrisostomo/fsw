@@ -27,7 +27,7 @@
 #include <ctime>
 #include <cerrno>
 #include <vector>
-#include "libfsw/c++/poll_monitor.h"
+#include "libfsw/c++/monitor.h"
 
 #ifdef HAVE_GETOPT_LONG
 #  include <getopt.h>
@@ -393,7 +393,7 @@ static void start_monitor(int argc, char ** argv, int optind)
 
   if (pflag)
   {
-    active_monitor = new fsw::poll_monitor(paths, process_events);
+    active_monitor = fsw::monitor::create_monitor(poll_monitor_type, paths, process_events);
   }
   else if (kflag)
   {
