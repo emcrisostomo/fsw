@@ -20,7 +20,7 @@
 
 #include <iostream>
 #include <mutex>
-#include <time.h>
+#include <ctime>
 #include <stdlib.h>
 #include "libfsw.h"
 #include "../c++/libfsw_map.h"
