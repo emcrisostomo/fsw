@@ -18,6 +18,7 @@
 #  include "libfsw_config.h"
 #endif
 
+#include <atomic>
 #include <iostream>
 #include <mutex>
 #include <ctime>
@@ -42,7 +43,7 @@ typedef struct FSW_SESSION
   bool recursive;
   bool follow_symlinks;
   vector<monitor_filter> filters;
-  bool running;
+  atomic<bool> running;
 } FSW_SESSION;
 
 static bool srand_initialized = false;
@@ -300,11 +301,11 @@ int fsw_start_monitor(const FSW_HANDLE handle)
 
     FSW_SESSION * session = get_session(handle);
 
-    unique_ptr<mutex> & sm = session_mutexes[handle];
-    lock_guard<mutex> lock_sm(*sm.get());
-
-    if (session->running)
+    if (session->running.load(memory_order_acquire))
       return fsw_set_last_error(int(FSW_ERR_MONITOR_ALREADY_RUNNING));
+
+    unique_ptr<mutex> & sm = session_mutexes.at(handle);
+    lock_guard<mutex> lock_sm(*sm.get());
 
     session_lock.unlock();
 
@@ -315,7 +316,7 @@ int fsw_start_monitor(const FSW_HANDLE handle)
     session->monitor->set_follow_symlinks(session->follow_symlinks);
     session->monitor->set_latency(session->latency);
     session->monitor->set_recursive(session->recursive);
-    session->running = true;
+    session->running.store(true, memory_order_release);
 
     session->monitor->start();
   }
