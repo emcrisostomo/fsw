@@ -22,12 +22,7 @@
 #include <mutex>
 #include <time.h>
 #include <stdlib.h>
-
 #include "libfsw.h"
-
-#ifdef HAVE_CXX_THREAD
-#  include <thread>
-#endif
 #include "../c++/libfsw_map.h"
 #include "../c++/filter.h"
 #include "../c++/monitor.h"
@@ -65,7 +60,6 @@ typedef struct FSW_SESSION
 static bool srand_initialized = false;
 static fsw_hash_map<FSW_HANDLE, unique_ptr<FSW_SESSION>> sessions;
 static fsw_hash_map<FSW_HANDLE, unique_ptr<mutex>> session_mutexes;
-// TODO Check if HAVE_CXX_THREAD is still used
 static std::mutex session_mutex;
 #if defined(HAVE_CXX_THREAD_LOCAL)
 static FSW_THREAD_LOCAL unsigned int last_error;
