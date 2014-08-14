@@ -82,7 +82,6 @@ AC_CHECK_MEMBERS([struct stat.st_mtimespec],
    ])
 
 # Checks for library functions.
-AC_FUNC_STRTOD
 AC_CHECK_FUNCS(
   [realpath],
   ,
