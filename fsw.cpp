@@ -86,9 +86,7 @@ static void usage(ostream& stream)
   stream << " -i, --include=REGEX   Include paths matching REGEX.\n";
   stream << " -I, --insensitive     Use case insensitive regular expressions.\n";
 #  endif
-#  if defined(HAVE_SYS_EVENT_H)
   stream << " -k, --kqueue          Use the kqueue monitor.\n";
-#  endif
   stream << " -l, --latency=DOUBLE  Set the latency.\n";
   stream << " -L, --follow-links    Follow symbolic links.\n";
   stream << " -n, --numeric         Print a numeric event mask.\n";
@@ -113,9 +111,7 @@ static void usage(ostream& stream)
 #  ifdef HAVE_REGCOMP
   option_string += "i";
 #  endif
-#  ifdef HAVE_SYS_EVENT_H
   option_string += "k";
-#  endif
   option_string += "lLnoprtuvx";
   option_string += "]";
 
@@ -136,9 +132,7 @@ static void usage(ostream& stream)
   stream << " -i  Use case insensitive regular expressions.\n";
   stream << " -i  Include paths matching REGEX.\n";
 #  endif
-#  ifdef HAVE_SYS_EVENT_H
   stream << " -k  Use the kqueue monitor.\n";
-#  endif
   stream << " -l  Set the latency.\n";
   stream << " -L  Follow symbolic links.\n";
   stream << " -n  Print a numeric event masks.\n";
@@ -397,9 +391,7 @@ static void start_monitor(int argc, char ** argv, int optind)
   }
   else if (kflag)
   {
-#ifdef HAVE_SYS_EVENT_H
     active_monitor = fsw::monitor::create_monitor(kqueue_monitor_type, paths, process_events);
-#endif
   }
   else
   {
@@ -435,9 +427,7 @@ static void parse_opts(int argc, char ** argv)
 #ifdef HAVE_REGCOMP
   short_options << "e:Ei:I";
 #endif
-#ifdef HAVE_SYS_EVENT_H
   short_options << "k";
-#endif
 
 #ifdef HAVE_GETOPT_LONG
   int option_index = 0;
@@ -454,9 +444,7 @@ static void parse_opts(int argc, char ** argv)
     { "include", required_argument, nullptr, 'i'},
     { "insensitive", no_argument, nullptr, 'I'},
 #  endif
-#  ifdef HAVE_SYS_EVENT_H
     { "kqueue", no_argument, nullptr, 'k'},
-#  endif
     { "latency", required_argument, nullptr, 'l'},
     { "follow-links", no_argument, nullptr, 'L'},
     { "numeric", no_argument, nullptr, 'n'},
@@ -520,11 +508,9 @@ static void parse_opts(int argc, char ** argv)
       break;
 #endif
 
-#ifdef HAVE_SYS_EVENT_H
     case 'k':
       kflag = true;
       break;
-#endif
 
     case 'l':
       lflag = true;
