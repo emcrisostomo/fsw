@@ -337,10 +337,6 @@ int fsw_start_monitor(const FSW_HANDLE handle)
 
     session->monitor->start();
   }
-  catch (system_error & se)
-  {
-    return fsw_set_last_error(int(FSW_ERR_THREAD_FAULT));
-  }
   catch (int error)
   {
     return fsw_set_last_error(error);
