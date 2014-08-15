@@ -129,8 +129,7 @@ FSW_HANDLE fsw_init_session(const fsw_monitor_type type)
   do
   {
     handle = rand();
-  }
-  while (sessions.find(handle) != sessions.end());
+  }  while (sessions.find(handle) != sessions.end());
 
   FSW_SESSION *session = new FSW_SESSION{};
 
@@ -292,6 +291,27 @@ int fsw_add_filter(const FSW_HANDLE handle,
   return fsw_set_last_error(FSW_OK);
 }
 
+template <typename T>
+class monitor_start_guard
+{
+  atomic<T> & a;
+  T val;
+
+public:
+
+  monitor_start_guard(atomic<T> & a,
+                      T val,
+                      memory_order sync = memory_order_seq_cst)
+    : a(a), val(val)
+  {
+  }
+
+  ~monitor_start_guard()
+  {
+    a.store(val, memory_order_release);
+  }
+};
+
 int fsw_start_monitor(const FSW_HANDLE handle)
 {
   try
@@ -317,6 +337,8 @@ int fsw_start_monitor(const FSW_HANDLE handle)
     session->monitor->set_latency(session->latency);
     session->monitor->set_recursive(session->recursive);
     session->running.store(true, memory_order_release);
+
+    monitor_start_guard<bool> guard(session->running, false);
 
     session->monitor->start();
   }
