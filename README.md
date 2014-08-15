@@ -70,7 +70,7 @@ instructions detailed in the Installation section below and the INSTALL file.
 
 Getting a copy of the source repository is not recommended, unless you are a
 developer, you have the GNU Build System installed on your machine and you know
-how to boostrap it on the sources.
+how to bootstrap it on the sources.
 
 [release]: https://github.com/emcrisostomo/fsw/releases
 
@@ -162,7 +162,7 @@ no event details are required, then the following command can be used:
     $ fsw -o path | xargs -n1 -I{} program
 
 The behaviour is consistent with earlier versions of `fswatch` (v. 0.x).
-Please, read the _Compability Issues with fswatch v. 0.x_ section for further
+Please, read the _Compatibility Issues with fswatch v. 0.x_ section for further
 information.
 
 For more information, refer to the `fsw` man page.
