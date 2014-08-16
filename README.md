@@ -1,5 +1,5 @@
 History
--------
+=======
 
 [Alan Dipert][alan] wrote the first implementation of `fswatch` in 2009.  This 
 version ran exclusively on OS X and relied on the [FSEvents][fse] API to get
